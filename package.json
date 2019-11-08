@@ -1,0 +1,47 @@
+{
+  "name": "vue-router-cache",
+  "version": "0.0.1",
+  "description": "a cache and manage vue-router with single case or multiple cases mode plugin",
+  "main": "dist/vue-router-cache.js",
+  "umd:main": "dist/vue-router-cache.umd.js",
+  "module": "dist/vue-router-cache.esm.js",
+  "keywords": [
+    "vue",
+    "vue-router",
+    "cache and manage vue-router-dom",
+    "vue-router plugin",
+    "keep-alive",
+    "vue-router-cache",
+    "history-direction",
+    "vue-router-cache"
+  ],
+  "scripts": {
+    "dev": "cross-env TARGET=esm EXAMPLE=base node scripts/dev.js",
+    "dev:base": "cross-env TARGET=esm EXAMPLE=base node scripts/dev.js",
+    "dev:action": "cross-env TARGET=esm EXAMPLE=action node scripts/build.js",
+    "build": "cross-env node scripts/build.js",
+    "test": "echo test"
+  },
+  "author": "kallsave <415034609@qq.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "cross-env": "^6.0.3",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "jest": "^24.9.0",
+    "ncp": "^2.0.0",
+    "rollup": "^1.26.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-copy": "^3.1.0",
+    "rollup-plugin-eslint": "^7.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "terser": "^4.3.9",
+    "zlib": "^1.0.5"
+  }
+}
