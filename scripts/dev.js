@@ -8,7 +8,6 @@ const EXAMPLE = process.env.EXAMPLE
 const TARGET = process.env.TARGET
 
 async function buildEntry() {
-
   const build = buildMap[TARGET]
 
   if (build) {
@@ -29,13 +28,13 @@ async function buildEntry() {
   }
   await (() => {
     return new Promise((resolve) => {
-      const cmd = `cd EXAMPLEs/${EXAMPLE} & npm run dev`
+      const cmd = `cd examples/${EXAMPLE} && npm run dev`
       const childProcess = exec(cmd, function (err, stdout, stderr) {
         if (err) {
           console.log('err:', err)
           return
         }
-        console.log(`start EXAMPLEs ${EXAMPLE}`)
+        console.log(`start examples ${EXAMPLE}`)
       })
 
       childProcess.stdout.on('data', (data) => {
@@ -45,8 +44,5 @@ async function buildEntry() {
     })
   })()
 }
-
-
-
 
 buildEntry()

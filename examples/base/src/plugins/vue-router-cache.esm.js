@@ -101,8 +101,8 @@ function () {
       this.list = [];
     }
   }, {
-    key: "_add",
-    value: function _add(item) {
+    key: "_pop",
+    value: function _pop(item) {
       this.list.unshift(item);
 
       if (this.list.length > this.max) {
@@ -112,14 +112,14 @@ function () {
       return null;
     }
   }, {
-    key: "add",
-    value: function add() {
+    key: "pop",
+    value: function pop() {
       var removeList = [];
 
       for (var i = 0; i < arguments.length; i++) {
         var item = arguments[i];
 
-        var removeItem = this._add(item);
+        var removeItem = this._pop(item);
 
         if (removeItem) {
           removeList.push(removeItem);
@@ -129,8 +129,8 @@ function () {
       return removeList;
     }
   }, {
-    key: "reduce",
-    value: function reduce() {
+    key: "shift",
+    value: function shift() {
       if (this.list.length) {
         return this.list.shift();
       }
@@ -230,10 +230,10 @@ function () {
   }, {
     key: "replace",
     value: function replace(item) {
-      var removeItem = this.reduce();
+      var removeItem = this.shift();
 
       if (removeItem) {
-        this._add(item);
+        this._pop(item);
 
         return removeItem;
       }
@@ -301,8 +301,8 @@ function (_Stack) {
   }
 
   _createClass(MapStack, [{
-    key: "_add",
-    value: function _add(item) {
+    key: "_pop",
+    value: function _pop(item) {
       var index = this.list.indexOf(item);
 
       if (index !== -1) {
@@ -380,8 +380,8 @@ var routerCacheHelper = {
       this.removeGlobalCacheFromItem(removeItem);
     }
   },
-  reduce: function reduce() {
-    var removeItem = globalStack.reduce();
+  shift: function shift() {
+    var removeItem = globalStack.shift();
 
     if (removeItem) {
       this.removeGlobalCacheFromItem(removeItem);
@@ -517,14 +517,14 @@ defineReactive(config, 'getHistoryStack', config.max, function (newVal) {
 
   for (var i = length - 1; i > -1; i--) {
     var item = list[i];
-    historyStack.add(item);
+    historyStack.pop(item);
   }
 });
 
 var BACK = 'back';
 var FORWARD = 'forward';
 var REPLACE = 'replace';
-var NONE = 'none';
+var NONE = '';
 
 var historyStateEvent = new Events();
 window.addEventListener('hashchange', function () {
@@ -607,7 +607,7 @@ var Component = {
         }
       }
 
-      globalStack.add(key);
+      globalStack.pop(key);
       vnode.data.keepAlive = true;
     }
 
@@ -638,7 +638,7 @@ var Component = {
 var direction = NONE;
 historyStateEvent.on(BACK, function () {
   direction = BACK;
-  historyStack.reduce();
+  historyStack.shift();
   config.setHistoryStack(historyStack.getStore());
   var route = config.router.history.current;
 
@@ -650,7 +650,7 @@ historyStateEvent.on(BACK, function () {
     var baseKey = routerCacheHelper.resolveKeyFromRoute(route);
 
     if (globalMultiKeyMap[baseKey]) {
-      var _key = globalMultiKeyMap[baseKey].reduce();
+      var _key = globalMultiKeyMap[baseKey].shift();
 
       routerCacheHelper._remove(_key);
     }
@@ -674,9 +674,9 @@ var routerMiddle = function routerMiddle(Vue, config) {
 
   router.replace = function (location, onComplete, onAbort) {
     direction = REPLACE;
-    historyStack.reduce();
+    historyStack.shift();
     config.setHistoryStack(historyStack.getStore());
-    routerCacheHelper.reduce();
+    routerCacheHelper.shift();
     originReplace(location, onComplete, onAbort);
   };
 
@@ -705,7 +705,7 @@ var routerMiddle = function routerMiddle(Vue, config) {
       var href = window.location.href;
 
       if (direction !== BACK && historyStack.getHeader() !== href) {
-        historyStack.add(href);
+        historyStack.pop(href);
         config.setHistoryStack(historyStack.getStore());
       }
 
@@ -741,7 +741,8 @@ function install(Vue) {
 }
 
 var VuerouterCache = {
-  install: install
+  install: install,
+  routerCacheHelper: routerCacheHelper
 };
 
 export default VuerouterCache;

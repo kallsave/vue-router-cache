@@ -68,7 +68,7 @@ export default {
           this.cache[key] = vnode
         }
       }
-      globalStack.add(key)
+      globalStack.pop(key)
       vnode.data.keepAlive = true
     }
     if (config.isDebugger) {

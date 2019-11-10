@@ -6,25 +6,25 @@ export class Stack {
   init() {
     this.list = []
   }
-  _add(item) {
+  _pop(item) {
     this.list.unshift(item)
     if (this.list.length > this.max) {
       return this.list.pop()
     }
     return null
   }
-  add() {
+  pop() {
     const removeList = []
     for (let i = 0; i < arguments.length; i++) {
       const item = arguments[i]
-      const removeItem = this._add(item)
+      const removeItem = this._pop(item)
       if (removeItem) {
         removeList.push(removeItem)
       }
     }
     return removeList
   }
-  reduce() {
+  shift() {
     if (this.list.length) {
       return this.list.shift()
     }
@@ -90,9 +90,9 @@ export class Stack {
     return this.list.splice(0)
   }
   replace(item) {
-    const removeItem = this.reduce()
+    const removeItem = this.shift()
     if (removeItem) {
-      this._add(item)
+      this._pop(item)
       return removeItem
     }
     return null
@@ -127,7 +127,7 @@ export class Stack {
 }
 
 export class MapStack extends Stack {
-  _add(item) {
+  _pop(item) {
     const index = this.list.indexOf(item)
     if (index !== -1) {
       this.list.splice(index, 1)

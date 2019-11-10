@@ -14,6 +14,6 @@ defineReactive(config, 'getHistoryStack', config.max, (newVal) => {
   const length = list.length
   for (let i = length - 1; i > -1; i--) {
     const item = list[i]
-    historyStack.add(item)
+    historyStack.pop(item)
   }
 })

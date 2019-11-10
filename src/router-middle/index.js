@@ -15,7 +15,7 @@ let direction = NONE
 
 historyStateEvent.on(BACK, () => {
   direction = BACK
-  historyStack.reduce()
+  historyStack.shift()
   config.setHistoryStack(historyStack.getStore())
   const route = config.router.history.current
   if (config.isSingleMode) {
@@ -24,7 +24,7 @@ historyStateEvent.on(BACK, () => {
   } else {
     const baseKey = routerCacheHelper.resolveKeyFromRoute(route)
     if (globalMultiKeyMap[baseKey]) {
-      const key = globalMultiKeyMap[baseKey].reduce()
+      const key = globalMultiKeyMap[baseKey].shift()
       routerCacheHelper._remove(key)
     }
   }
@@ -49,9 +49,9 @@ const routerMiddle = (Vue, config) => {
 
   router.replace = (location, onComplete, onAbort) => {
     direction = REPLACE
-    historyStack.reduce()
+    historyStack.shift()
     config.setHistoryStack(historyStack.getStore())
-    routerCacheHelper.reduce()
+    routerCacheHelper.shift()
     originReplace(location, onComplete, onAbort)
   }
 
@@ -79,7 +79,7 @@ const routerMiddle = (Vue, config) => {
     Vue.nextTick(() => {
       const href = window.location.href
       if (direction !== BACK && historyStack.getHeader() !== href) {
-        historyStack.add(href)
+        historyStack.pop(href)
         config.setHistoryStack(historyStack.getStore())
       }
       direction = FORWARD

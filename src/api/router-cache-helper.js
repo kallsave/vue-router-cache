@@ -26,8 +26,8 @@ const routerCacheHelper = {
       this.removeGlobalCacheFromItem(removeItem)
     }
   },
-  reduce() {
-    const removeItem = globalStack.reduce()
+  shift() {
+    const removeItem = globalStack.shift()
     if (removeItem) {
       this.removeGlobalCacheFromItem(removeItem)
     }
