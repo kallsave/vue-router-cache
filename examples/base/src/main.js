@@ -1,19 +1,21 @@
 import './rem.js'
 import '@/common/less/index.less'
+import { isSingleMode } from '@/config.js'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-
+import VueRouterCache from 'vue-router-cache'
+import ViUi from '@/plugins/vi-ui/index'
 import Page from '@/components/page/index.js'
 
-import VueRouterCache from 'vue-router-cache'
-import config from './config.js'
-
+Vue.use(ViUi)
 Vue.use(Page)
+console.log(isSingleMode)
+
 Vue.use(VueRouterCache, {
   router: router,
   max: 10,
-  isSingleMode: config.isSingleMode,
+  isSingleMode: isSingleMode,
   isDebugger: true,
   directionKey: 'direction',
   getHistoryStack() {

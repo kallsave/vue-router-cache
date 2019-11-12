@@ -27,7 +27,11 @@ export default {
   },
   methods: {
     getNumberList() {
-      this.numberList = getNumberList()
+      getNumberList().then((res) => {
+        if (res.code === 1) {
+          this.numberList = res.data
+        }
+      })
     },
     clickHandler(item) {
       this.$router.push(`/main/number-detail/${item.id}`)

@@ -19,9 +19,7 @@ export default {
     this.addEventListenerResive()
   },
   activated() {
-    if (this.scrollTop) {
-      this.scrollTo(0, this.scrollTop)
-    }
+    this.scrollTo(0, this.scrollTop)
   },
   deactivated() {
     this.scrollTop = this.$refs.page.scrollTop

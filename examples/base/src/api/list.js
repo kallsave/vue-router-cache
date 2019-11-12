@@ -1,4 +1,36 @@
 import { deepClone } from '@/common/helpers/utils.js'
+import tpLocalStorage from '@/store/cache/local-storage/index.js'
+
+class ResModel {
+  constructor(data, message) {
+    if (data) {
+      this.data = data
+    }
+    if (message) {
+      this.message = message
+    }
+  }
+}
+
+class SuccessModel extends ResModel {
+  constructor(data, message) {
+    super(data, message)
+    this.code = 1
+    if (!message) {
+      this.message = 'success'
+    }
+  }
+}
+
+class ErrorModel extends ResModel {
+  constructor(data, message) {
+    super(data, message)
+    this.code = 0
+    if (!message) {
+      this.message = 'error'
+    }
+  }
+}
 
 const list = [
   {
@@ -471,93 +503,157 @@ const list = [
   },
 ]
 
+if (!tpLocalStorage.get('list')) {
+  tpLocalStorage.set('list', list)
+}
+
 export function getNumberList() {
-  return deepClone([], list)
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      const data = tpLocalStorage.get('list')
+      resolve(new SuccessModel(data))
+    }, 20)
+  })
 }
 
 export function getNumberDetail(id) {
-  for (let i = 0; i < list.length; i++) {
-    let item = list[i]
-    /* eslint eqeqeq: 'off' */
-    if (item.id == id) {
-      return deepClone({}, item)
-    }
-  }
-  return {}
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      const list = tpLocalStorage.get('list')
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        /* eslint eqeqeq: 'off' */
+        if (item.id == id) {
+          const data = item
+          resolve(new SuccessModel(data))
+          return
+        }
+      }
+      resolve(new ErrorModel())
+    }, 20)
+  })
 }
 
 export function updateNumberDetail(id, text) {
-  for (let i = 0; i < list.length; i++) {
-    let item = list[i]
-    /* eslint eqeqeq: 'off' */
-    if (item.id == id) {
-      item.text = text
-      return true
-    }
-  }
-  return false
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      const list = tpLocalStorage.get('list')
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        /* eslint eqeqeq: 'off' */
+        if (item.id == id) {
+          item.text = text
+          tpLocalStorage.set('list', list)
+          const data = item
+          resolve(new SuccessModel(data))
+          return
+        }
+      }
+      resolve(new ErrorModel())
+    }, 20)
+  })
 }
 
-export function getLetterList(id, mode = false) {
-  for (let i = 0; i < list.length; i++) {
-    let item = list[i]
-    /* eslint eqeqeq: 'off' */
-    if (item.id == id) {
-      if (mode) {
-        return item.children
-      } else {
-        return deepClone([], item.children)
+export function getLetterList(id) {
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      const list = tpLocalStorage.get('list')
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        /* eslint eqeqeq: 'off' */
+        if (item.id == id) {
+          const data = item.children
+          resolve(new SuccessModel(data))
+          return
+        }
       }
-    }
-  }
-  return []
+      resolve(new ErrorModel())
+    }, 20)
+  })
 }
 
 export function getLetterDetail(numberId, letterId) {
-  let letterList = getLetterList(numberId)
-  if (letterList) {
-    for (let i = 0; i < letterList.length; i++) {
-      let item = letterList[i]
-      /* eslint eqeqeq: 'off' */
-      if (item.id == letterId) {
-        return deepClone({}, item)
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      const list = tpLocalStorage.get('list')
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        /* eslint eqeqeq: 'off' */
+        if (item.id == numberId) {
+          const letterList = item.children
+          for (let i = 0; i < letterList.length; i++) {
+            let letterItem = letterList[i]
+            /* eslint eqeqeq: 'off' */
+            if (letterItem.id == letterId) {
+              const data = letterItem
+              resolve(new SuccessModel(data))
+              return
+            }
+          }
+        }
       }
-    }
-  }
-  return {}
+      resolve(new ErrorModel())
+    }, 20)
+  })
 }
 
 export function updateLetterDetail(numberId, letterId, text) {
-  let letterList = getLetterList(numberId, true)
-  if (letterList) {
-    for (let i = 0; i < letterList.length; i++) {
-      let item = letterList[i]
-      /* eslint eqeqeq: 'off' */
-      if (item.id == letterId) {
-        item.text = text
-        return true
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      const list = tpLocalStorage.get('list')
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        /* eslint eqeqeq: 'off' */
+        if (item.id == numberId) {
+          const letterList = item.children
+          for (let i = 0; i < letterList.length; i++) {
+            let letterItem = letterList[i]
+            /* eslint eqeqeq: 'off' */
+            if (letterItem.id == letterId) {
+              letterItem.text = text
+              tpLocalStorage.set('list', list)
+              const data = item
+              resolve(new SuccessModel(data))
+              return
+            }
+          }
+        }
       }
-    }
-  }
-  return false
+      resolve(new ErrorModel())
+    }, 20)
+  })
 }
 
 export function deleteLetterDetail(numberId, letterId) {
-  let letterList = getLetterList(numberId, true)
-  if (letterList) {
-    let index
-    for (let i = 0; i < letterList.length; i++) {
-      let item = letterList[i]
-      /* eslint eqeqeq: 'off' */
-      if (item.id == letterId) {
-        index = i
-        break
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      const list = tpLocalStorage.get('list')
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        /* eslint eqeqeq: 'off' */
+        if (item.id == numberId) {
+          const letterList = item.children
+          if (letterList) {
+            let index
+            for (let i = 0; i < letterList.length; i++) {
+              let letterItem = letterList[i]
+              /* eslint eqeqeq: 'off' */
+              if (letterItem.id == letterId) {
+                index = i
+                break
+              }
+            }
+            if (index) {
+              const removeItem = letterList.splice(index, 1)
+              tpLocalStorage.set('list', list)
+              const data = removeItem
+              resolve(new SuccessModel(data))
+              return
+            }
+          }
+        }
       }
-    }
-    if (index) {
-      letterList.splice(index, 1)
-      return true
-    }
-  }
-  return false
+      resolve(new ErrorModel())
+    }, 20)
+  })
 }

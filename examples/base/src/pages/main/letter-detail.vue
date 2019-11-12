@@ -7,12 +7,13 @@
           <div class="text">text: {{letterDetail.text}}</div>
         </div>
         <input class="input" v-model="text" placeholder="输入你想修改的text值" />
-        <div class="change-btn" @click="updateLetterDetail">修改当前列表元素的text为输入框的值</div>
-        <div class="change-btn" @click="deleteLetterDetail">删除并返回</div>
+        <btn style="background: #ff1133;" @click.native="updateLetterDetail">修改当前列表元素的text为输入框的值</btn>
+        <btn v-if="isSingleMode" style="background: #ff1133;" @click.native="deleteLetterDetail">删除并返回</btn>
       </div>
       <div class="sticky-footer">
-        <div class="btn" @click="back">返回</div>
-        <div class="btn" @click="removeCacheBack">销毁列表页的缓存并返回</div>
+        <btn v-if="isSingleMode" @click.native="back">返回</btn>
+        <btn v-if="isSingleMode" @click.native="removeCacheBack">销毁上个列表页的缓存并返回</btn>
+        <btn v-if="!isSingleMode" @click.native="pageTurnLetterList">push到新的列表页</btn>
       </div>
     </div>
   </page>
@@ -20,12 +21,18 @@
 
 <script>
 import { getLetterDetail, updateLetterDetail, deleteLetterDetail } from '@/api/list.js'
+import Btn from './components/btn.vue'
+import { isSingleMode } from '@/config.js'
 
 export default {
+  components: {
+    Btn,
+  },
   data() {
     return {
       text: '',
-      letterDetail: {}
+      letterDetail: {},
+      isSingleMode: isSingleMode,
     }
   },
   computed: {
@@ -41,24 +48,24 @@ export default {
   },
   methods: {
     getLetterDetail() {
-      this.letterDetail = getLetterDetail(this.numberId, this.letterId)
-      console.log(this.letterDetail)
+      getLetterDetail(this.numberId, this.letterId).then((res) => {
+        if (res.code === 1) {
+          this.letterDetail = res.data
+        }
+      })
     },
     updateLetterDetail() {
-      if (!this.text) {
-        console.log('请填写内容！')
-        return
-      }
-      let isSuccess = updateLetterDetail(this.numberId, this.letterId, this.text)
-      if (isSuccess) {
-        this.getLetterDetail()
-      }
+      updateLetterDetail(this.numberId, this.letterId, this.text).then((res) => {
+        if (res.code === 1) {
+          this.getLetterDetail()
+        }
+      })
     },
     deleteLetterDetail() {
       let isSuccess = deleteLetterDetail(this.numberId, this.letterId)
       if (isSuccess) {
-        // this.$routerKeepHelper.removeUntil({name: 'mainEnter'})
-        this.$routerKeepHelper.removeExclude({name: 'mainEnter'})
+        // this.$routerCache.removeUntil({name: 'mainEnter'})
+        this.$routerCache.removeExclude({name: 'mainEnter'})
       }
       this.$router.back()
     },
@@ -66,7 +73,7 @@ export default {
       this.$router.back()
     },
     removeCacheBack() {
-      this.$routerKeepHelper.remove({name: 'mainLetterList'})
+      this.$routerCache.remove({name: 'mainLetterList'})
       this.$router.back()
     },
     pageTurnLetterList() {
@@ -104,16 +111,6 @@ export default {
           color: #fff;
         }
       }
-      .change-btn {
-        font-size: 16 / @rem;
-        color: #fff;
-        border-radius: 5 / @rem;
-        background: #ff1133;
-        margin-bottom: 10 / @rem;
-        line-height: 30 / @rem;
-        text-align: center;
-        padding: 10 / @rem;
-      }
       .input {
         box-sizing: border-box;
         display: block;
@@ -124,7 +121,7 @@ export default {
         border: 1 / @rem solid #ccc;
         border-radius: 6 / @rem;
         margin-bottom: 20 / @rem;
-        padding-left: 22 / @rem;
+        padding-left: 10 / @rem;
         &::-webkit-input-placeholder {
           color: #999;
         }
@@ -141,16 +138,6 @@ export default {
     }
     .sticky-footer {
       transform: translate(0, -100%);
-      .btn {
-        font-size: 16 / @rem;
-        color: #fff;
-        border-radius: 5 / @rem;
-        background: #41b883;
-        margin-bottom: 10 / @rem;
-        line-height: 30 / @rem;
-        text-align: center;
-        padding: 10 / @rem;
-      }
     }
   }
 }

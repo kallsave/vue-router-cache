@@ -33,7 +33,11 @@ export default {
   },
   methods: {
     getLetterList() {
-      this.letterList = getLetterList(this.numberId)
+      getLetterList(this.numberId).then((res) => {
+        if (res.code === 1) {
+          this.letterList = res.data
+        }
+      })
     },
     clickHandler(item) {
       this.$router.push(`/main/letter-detail/${this.numberId}/${item.id}`)

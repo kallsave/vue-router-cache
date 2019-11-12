@@ -3,6 +3,8 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
+const PostCompilePlugin = require('webpack-post-compile-plugin')
+const TransformModulesPlugin = require('webpack-transform-modules-plugin')
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -37,7 +39,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
-      'vue-router-cache': resolve('src/plugins/vue-router-cache.esm.js')
+      'vue-router-cache': resolve('src/plugins/vue-router-cache.esm.js'),
     }
   },
   module: {
@@ -80,6 +82,8 @@ module.exports = {
     ]
   },
   plugins: [
+    new PostCompilePlugin(),
+    new TransformModulesPlugin()
   ],
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue

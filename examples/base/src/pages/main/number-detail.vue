@@ -8,20 +8,15 @@
           <div class="text" v-if="numberDetail.children">子项长度: {{numberDetail.children.length}}</div>
         </div>
         <input class="input" type="tel" v-model="text" placeholder="输入你想输入的值" />
-        <div class="change-btn" @click="updateNumberDetail">修改当前列表元素的text为输入框的值</div>
+        <btn style="background: #ff1133;" @click.native="updateNumberDetail">修改当前列表元素的text为输入框的值</btn>
       </div>
       <div class="sticky-footer">
-        <div class="btn" @click="back">返回上一页(back)</div>
-        <div class="btn" @click="forward">前进一页(forward)</div>
-        <div class="btn" @click="backPage">导航到输入框的值的页数(go)</div>
-        <template v-if="isSingleMode">
-          <div class="btn" @click="pageTurnNumberList">push(自动更新)到列表页</div>
-        </template>
-        <template v-else>
-          <div class="btn" @click="pageTurnNumberList">push到新的列表页</div>
-        </template>
-        <div class="btn" @click="replaceNumberList">replace到上一个的列表页</div>
-        <div class="btn" @click="pageTurnLetterList">push到子项列表页</div>
+        <btn @click.native="back">返回上一页(back)</btn>
+        <btn @click.native="forward">前进一页(forward)</btn>
+        <btn @click.native="go">导航到输入框的值的页数(go)</btn>
+        <btn @click.native="pageTurnNumberList">自动更新并跳转到上一个列表页(push)</btn>
+        <btn @click.native="replaceNumberList">自动更新并替换到上一个的列表页(replace)</btn>
+        <btn @click.native="pageTurnLetterList">跳转到子项列表页(push)</btn>
       </div>
     </div>
   </page>
@@ -29,14 +24,18 @@
 
 <script>
 import { getNumberDetail, updateNumberDetail } from '@/api/list.js'
-import config from '@/config'
+import { isSingleMode } from '@/config.js'
+import Btn from './components/btn.vue'
 
 export default {
+  components: {
+    Btn,
+  },
   data() {
     return {
       text: '',
       numberDetail: {},
-      isSingleMode: config.isSingleMode
+      isSingleMode: isSingleMode
     }
   },
   computed: {
@@ -49,24 +48,28 @@ export default {
   },
   methods: {
     getNumberDetail() {
-      this.numberDetail = getNumberDetail(this.numberId)
+      getNumberDetail(this.numberId).then((res) => {
+        if (res.code === 1) {
+          this.numberDetail = res.data
+        }
+      })
     },
     updateNumberDetail() {
-      if (!this.text) {
-        console.log('请填写内容！')
-        return
-      }
-      const isSuccess = updateNumberDetail(this.numberId, this.text)
-      if (isSuccess) {
-        console.log('修改成功')
-        this.getNumberDetail()
-      }
+      updateNumberDetail(this.numberId, this.text).then((res) => {
+        if (res.code === 1) {
+          this.getNumberDetail()
+        } else {
+          console.log(res.message)
+        }
+      })
     },
     back() {
-      this.$routerKeepHelper.remove({name: 'mainNumberList'})
+      if (isSingleMode) {
+        this.$routerCache.remove({name: 'mainNumberList'})
+      }
       this.$router.back()
     },
-    backPage() {
+    go() {
       let number = this.text | 0
       this.$router.go(number)
     },
@@ -87,14 +90,9 @@ export default {
       })
     },
     replaceNumberList() {
-      if (this.isSingleMode) {
-        this.$routerKeepHelper.remove({
-          name: 'mainNumberList',
-        })
-        this.$router.replace({
-          name: 'mainNumberList',
-        })
-      }
+      this.$router.replace({
+        name: 'mainNumberList'
+      })
     }
   },
 }
@@ -123,16 +121,6 @@ export default {
           color: #fff;
         }
       }
-      .change-btn {
-        font-size: 16 / @rem;
-        color: #fff;
-        border-radius: 5 / @rem;
-        background: #ff1133;
-        margin-bottom: 10 / @rem;
-        line-height: 30 / @rem;
-        text-align: center;
-        padding: 10 / @rem;
-      }
       .input {
         box-sizing: border-box;
         display: block;
@@ -143,7 +131,7 @@ export default {
         border: 1 / @rem solid #ccc;
         border-radius: 6 / @rem;
         margin-bottom: 20 / @rem;
-        padding-left: 22 / @rem;
+        padding-left: 10 / @rem;
         &::-webkit-input-placeholder {
           color: #999;
         }
@@ -159,17 +147,8 @@ export default {
       }
     }
     .sticky-footer {
-      transform: translate(0, -100%);
-      .btn {
-        font-size: 16 / @rem;
-        color: #fff;
-        border-radius: 5 / @rem;
-        background: #41b883;
-        margin-bottom: 10 / @rem;
-        line-height: 30 / @rem;
-        text-align: center;
-        padding: 10 / @rem;
-      }
+      margin-top: -200 / @rem;
+      padding-bottom: 20 / @rem;
     }
   }
 }

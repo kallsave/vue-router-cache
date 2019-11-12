@@ -1,7 +1,7 @@
 import { globalCache, globalStack } from '../store/index'
 import config from '../config/index'
 
-const routerCacheHelper = {
+const routerCache = {
   resolveKeyFromRoute(route) {
     return route.name ? route.name : route.path
   },
@@ -49,8 +49,6 @@ const routerCacheHelper = {
     const removeList = globalStack.removeUntil(key)
     if (removeList.length) {
       this.removeGlobalCacheFromList(removeList)
-    } else {
-      this.removeAll()
     }
   },
   removeUntil(location) {
@@ -102,4 +100,4 @@ const routerCacheHelper = {
   },
 }
 
-export default routerCacheHelper
+export default routerCache

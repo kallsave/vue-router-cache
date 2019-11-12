@@ -7,7 +7,7 @@ import {
   NONE
 } from '../history/history-direction-name'
 import { defineReactive } from '../util/lang'
-import routerCacheHelper from '../api/router-cache-helper'
+import routerCache from '../api/router-cache'
 import config from '../config/index'
 import { globalMultiKeyMap } from '../store/index'
 
@@ -19,13 +19,13 @@ historyStateEvent.on(BACK, () => {
   config.setHistoryStack(historyStack.getStore())
   const route = config.router.history.current
   if (config.isSingleMode) {
-    const key = routerCacheHelper.resolveKeyFromRoute(route)
-    routerCacheHelper._remove(key)
+    const key = routerCache.resolveKeyFromRoute(route)
+    routerCache._remove(key)
   } else {
-    const baseKey = routerCacheHelper.resolveKeyFromRoute(route)
+    const baseKey = routerCache.resolveKeyFromRoute(route)
     if (globalMultiKeyMap[baseKey]) {
       const key = globalMultiKeyMap[baseKey].shift()
-      routerCacheHelper._remove(key)
+      routerCache._remove(key)
     }
   }
 })
@@ -43,7 +43,9 @@ const routerMiddle = (Vue, config) => {
   const originGo = router.go.bind(router)
 
   router.push = (location, onComplete, onAbort) => {
-    routerCacheHelper.removeBackInclue(location)
+    if (config.isSingleMode) {
+      routerCache.removeBackInclue(location)
+    }
     originPush(location, onComplete, onAbort)
   }
 
@@ -51,7 +53,10 @@ const routerMiddle = (Vue, config) => {
     direction = REPLACE
     historyStack.shift()
     config.setHistoryStack(historyStack.getStore())
-    routerCacheHelper.shift()
+    routerCache.shift()
+    if (config.isSingleMode) {
+      routerCache.removeBackInclue(location)
+    }
     originReplace(location, onComplete, onAbort)
   }
 
@@ -60,9 +65,9 @@ const routerMiddle = (Vue, config) => {
       direction = FORWARD
     } else if (n < -1) {
       direction = BACK
-      historyStack.removeBack(-n)
+      historyStack.removeBackByIndex(-n)
       config.setHistoryStack(historyStack.getStore())
-      routerCacheHelper.removeBack(-n)
+      routerCache.removeBackByIndex(-n)
     }
     originGo(n)
   }

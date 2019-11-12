@@ -20,7 +20,7 @@
     "dev:base": "cross-env TARGET=esm EXAMPLE=base node scripts/dev.js",
     "dev:action": "cross-env TARGET=esm EXAMPLE=action node scripts/build.js",
     "build": "cross-env node scripts/build.js",
-    "test": "echo test"
+    "test": "jest"
   },
   "author": "kallsave <415034609@qq.com>",
   "license": "MIT",

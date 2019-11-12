@@ -2,7 +2,7 @@ import { MapStack } from '../util/stack'
 import historyStateEvent from '../history/history-state-event'
 import { BACK } from '../history/history-direction-name'
 import { globalCache, globalStack, globalMultiKeyMap } from '../store/index'
-import routerCacheHelper from '../api/router-cache-helper'
+import routerCache from '../api/router-cache'
 import config from '../config/index'
 
 function isDef(v) {
@@ -41,15 +41,15 @@ export default {
     if (vnode) {
       let key
       if (config.isSingleMode) {
-        key = routerCacheHelper.resolveKeyFromRoute(this.$route)
+        key = routerCache.resolveKeyFromRoute(this.$route)
       } else {
-        const baseKey = routerCacheHelper.resolveKeyFromRoute(this.$route)
+        const baseKey = routerCache.resolveKeyFromRoute(this.$route)
         if (!globalMultiKeyMap[baseKey]) {
           globalMultiKeyMap[baseKey] = new MapStack()
         }
-        if (this.$route.params[config.actionKey] !== BACK) {
+        if (this.$route.params[config.directionKey] !== BACK) {
           key = `${baseKey}_${globalMultiKeyMap[baseKey].getSize()}`
-          globalMultiKeyMap[baseKey].add(key)
+          globalMultiKeyMap[baseKey].pop(key)
         } else {
           key = globalMultiKeyMap[baseKey].getByIndex(0)
         }
@@ -64,7 +64,7 @@ export default {
           this.cache[key] = vnode
         } else {
           const lastKey = globalStack.getFooter()
-          routerCacheHelper._remove(lastKey)
+          routerCache._remove(lastKey)
           this.cache[key] = vnode
         }
       }
@@ -78,7 +78,7 @@ export default {
   },
   beforeDestroy() {
     for (const key in this.cache) {
-      routerCacheHelper._remove(key)
+      routerCache._remove(key)
     }
     let index
     for (let i = 0; i < globalCache.length; i++) {

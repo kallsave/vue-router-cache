@@ -183,7 +183,7 @@ function () {
         return this.list.splice(0, index);
       }
 
-      return [];
+      return this.list.splice(0);
     }
   }, {
     key: "removeExclude",
@@ -205,11 +205,11 @@ function () {
   }, {
     key: "removeBackByIndex",
     value: function removeBackByIndex(index) {
-      if (index > this.list.length - 1) {
-        return this.list.splice(0);
+      if (index <= this.list.length - 1) {
+        return this.list.splice(0, index);
       }
 
-      return this.list.splice(0, index);
+      return this.list.splice(0);
     }
   }, {
     key: "removeBackInclue",
@@ -220,7 +220,7 @@ function () {
         return this.list.splice(0, index + 1);
       }
 
-      return [];
+      return this.list.splice(0);
     }
   }, {
     key: "removeAll",
@@ -354,7 +354,7 @@ defineReactive(config, 'max', config.max, function (newVal) {
   globalStack.updateSize(newVal);
 });
 
-var routerCacheHelper = {
+var routerCache = {
   resolveKeyFromRoute: function resolveKeyFromRoute(route) {
     return route.name ? route.name : route.path;
   },
@@ -407,8 +407,6 @@ var routerCacheHelper = {
 
     if (removeList.length) {
       this.removeGlobalCacheFromList(removeList);
-    } else {
-      this.removeAll();
     }
   },
   removeUntil: function removeUntil(location) {
@@ -573,17 +571,17 @@ var Component = {
       var key;
 
       if (config.isSingleMode) {
-        key = routerCacheHelper.resolveKeyFromRoute(this.$route);
+        key = routerCache.resolveKeyFromRoute(this.$route);
       } else {
-        var baseKey = routerCacheHelper.resolveKeyFromRoute(this.$route);
+        var baseKey = routerCache.resolveKeyFromRoute(this.$route);
 
         if (!globalMultiKeyMap[baseKey]) {
           globalMultiKeyMap[baseKey] = new MapStack();
         }
 
-        if (this.$route.params[config.actionKey] !== BACK) {
+        if (this.$route.params[config.directionKey] !== BACK) {
           key = "".concat(baseKey, "_").concat(globalMultiKeyMap[baseKey].getSize());
-          globalMultiKeyMap[baseKey].add(key);
+          globalMultiKeyMap[baseKey].pop(key);
         } else {
           key = globalMultiKeyMap[baseKey].getByIndex(0);
         }
@@ -601,7 +599,7 @@ var Component = {
         } else {
           var lastKey = globalStack.getFooter();
 
-          routerCacheHelper._remove(lastKey);
+          routerCache._remove(lastKey);
 
           this.cache[key] = vnode;
         }
@@ -619,7 +617,7 @@ var Component = {
   },
   beforeDestroy: function beforeDestroy() {
     for (var key in this.cache) {
-      routerCacheHelper._remove(key);
+      routerCache._remove(key);
     }
 
     var index;
@@ -643,16 +641,16 @@ historyStateEvent.on(BACK, function () {
   var route = config.router.history.current;
 
   if (config.isSingleMode) {
-    var key = routerCacheHelper.resolveKeyFromRoute(route);
+    var key = routerCache.resolveKeyFromRoute(route);
 
-    routerCacheHelper._remove(key);
+    routerCache._remove(key);
   } else {
-    var baseKey = routerCacheHelper.resolveKeyFromRoute(route);
+    var baseKey = routerCache.resolveKeyFromRoute(route);
 
     if (globalMultiKeyMap[baseKey]) {
       var _key = globalMultiKeyMap[baseKey].shift();
 
-      routerCacheHelper._remove(_key);
+      routerCache._remove(_key);
     }
   }
 });
@@ -668,7 +666,10 @@ var routerMiddle = function routerMiddle(Vue, config) {
   var originGo = router.go.bind(router);
 
   router.push = function (location, onComplete, onAbort) {
-    routerCacheHelper.removeBackInclue(location);
+    if (config.isSingleMode) {
+      routerCache.removeBackInclue(location);
+    }
+
     originPush(location, onComplete, onAbort);
   };
 
@@ -676,7 +677,12 @@ var routerMiddle = function routerMiddle(Vue, config) {
     direction = REPLACE;
     historyStack.shift();
     config.setHistoryStack(historyStack.getStore());
-    routerCacheHelper.shift();
+    routerCache.shift();
+
+    if (config.isSingleMode) {
+      routerCache.removeBackInclue(location);
+    }
+
     originReplace(location, onComplete, onAbort);
   };
 
@@ -685,9 +691,9 @@ var routerMiddle = function routerMiddle(Vue, config) {
       direction = FORWARD;
     } else if (n < -1) {
       direction = BACK;
-      historyStack.removeBack(-n);
+      historyStack.removeBackByIndex(-n);
       config.setHistoryStack(historyStack.getStore());
-      routerCacheHelper.removeBack(-n);
+      routerCache.removeBackByIndex(-n);
     }
 
     originGo(n);
@@ -735,14 +741,15 @@ function install(Vue) {
 
   isInstalled = true;
   Object.assign(config, options);
-  Vue.prototype.$routerCacheHelper = routerCacheHelper;
+  Vue.prototype.$routerCache = routerCache;
   Vue.component(Component.name, Component);
   routerMiddle(Vue, config);
 }
 
 var VuerouterCache = {
   install: install,
-  routerCacheHelper: routerCacheHelper
+  routerCache: routerCache,
+  version: '0.0.1'
 };
 
 export default VuerouterCache;

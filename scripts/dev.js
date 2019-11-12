@@ -28,7 +28,7 @@ async function buildEntry() {
   }
   await (() => {
     return new Promise((resolve) => {
-      const cmd = `cd examples/${EXAMPLE} && npm run dev`
+      const cmd = `cd examples/${EXAMPLE} & npm run dev`
       const childProcess = exec(cmd, function (err, stdout, stderr) {
         if (err) {
           console.log('err:', err)

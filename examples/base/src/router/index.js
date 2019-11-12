@@ -9,9 +9,18 @@ const routes = [
     redirect: '/main/enter',
   },
   {
+    path: '/main',
+    redirect: '/main/enter',
+  },
+  {
     path: '/main/enter',
     name: 'mainEnter',
     component: () => import('@/pages/main/enter.vue')
+  },
+  {
+    path: '/main/config',
+    name: 'mainConfig',
+    component: () => import('@/pages/main/config.vue')
   },
   {
     path: '/main/number-list',

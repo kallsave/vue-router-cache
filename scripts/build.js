@@ -53,29 +53,28 @@ async function buildEntry() {
         rollup.rollup({
           input: config.input,
           plugins: config.plugins
+        }).then((bundle) => bundle.generate(output))
+          .then(({ output: [{ code }] }) => {
+            if(isMin) {
+              const minified = (banner ? banner + '\n' : '') + terser.minify(code, {
+                toplevel: true,
+                output: {
+                  ascii_only: true
+                },
+                compress: {
+                  pure_funcs: ['makeMap']
+                }
+              }).code
+              resolve()
+              return write(file, minified, true)
+            } else {
+              resolve()
+              return write(file, code)
+            }
+          })
+        }).catch((err) => {
+          console.error(err)
         })
-        .then((bundle) => bundle.generate(output))
-        .then(({ output: [{ code }] }) => {
-          if(isMin) {
-            const minified = (banner ? banner + '\n' : '') + terser.minify(code, {
-              toplevel: true,
-              output: {
-                ascii_only: true
-              },
-              compress: {
-                pure_funcs: ['makeMap']
-              }
-            }).code
-            resolve()
-            return write(file, minified, true)
-          } else {
-            resolve()
-            return write(file, code)
-          }
-        })
-      }).catch((err) => {
-        console.error(err)
-      })
     })()
   }
 }

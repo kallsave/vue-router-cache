@@ -1,5 +1,5 @@
 import config from './config/index'
-import routerCacheHelper from './api/router-cache-helper'
+import routerCache from './api/router-cache'
 import Component from './components/router-cache'
 import routerMiddle from './router-middle/index'
 import { checkInt } from './util/lang'
@@ -20,14 +20,15 @@ function install(Vue, options = {}) {
   }
   isInstalled = true
   Object.assign(config, options)
-  Vue.prototype.$routerCacheHelper = routerCacheHelper
+  Vue.prototype.$routerCache = routerCache
   Vue.component(Component.name, Component)
   routerMiddle(Vue, config)
 }
 
 const VuerouterCache = {
   install,
-  routerCacheHelper,
+  routerCache,
+  version: '0.0.1'
 }
 
 export default VuerouterCache
