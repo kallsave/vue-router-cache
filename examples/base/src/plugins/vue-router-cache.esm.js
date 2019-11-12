@@ -463,6 +463,10 @@ var routerCache = {
       cache: globalCache,
       stack: globalStack.getStore()
     };
+  },
+  has: function has(location) {
+    var key = this.resolveKeyFromLocation(location);
+    return globalStack.has(key);
   }
 };
 
@@ -666,7 +670,7 @@ var routerMiddle = function routerMiddle(Vue, config) {
   var originGo = router.go.bind(router);
 
   router.push = function (location, onComplete, onAbort) {
-    if (config.isSingleMode) {
+    if (config.isSingleMode && routerCache.has(location)) {
       routerCache.removeBackInclue(location);
     }
 
@@ -679,7 +683,7 @@ var routerMiddle = function routerMiddle(Vue, config) {
     config.setHistoryStack(historyStack.getStore());
     routerCache.shift();
 
-    if (config.isSingleMode) {
+    if (config.isSingleMode && routerCache.has(location)) {
       routerCache.removeBackInclue(location);
     }
 

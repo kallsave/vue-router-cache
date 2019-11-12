@@ -18,10 +18,17 @@
             所以路由和缓存实例(key)是一对多的关系。
           </div>
           <div class="group">
-            单例模式系统的性能高,有手动清除缓存的api,如果A要回跳C页面需要C页面刷新,需求调用api清除C页面缓存然后back到C页面
+            单例模式系统的性能高,
+            有灵活的手动清除缓存的api,
+            如果A要回跳C页面需要C页面刷新,
+            可以调用api清除C页面缓存然后back到C页面(推荐)。
+            也可以直接push到C页面(但是这样浏览器会比执行back多存历史记录)
           </div>
           <div class="group">
-            多例模式系统性能存在浪费,但是使用方便,如果A要回跳C页面需要C页面刷新,需要push到C页面,
+            多例模式系统性能存在浪费,
+            多例模式可以说是简单模式,
+            如果A要回跳C页面需要C页面刷新,只能push到C页面,
+            多例模式能做的事情单例模式都能实现。
           </div>
         </div>
       </div>
@@ -80,7 +87,7 @@ export default {
         font-size: 24 / @rem;
         color: #41b883;
         text-align: right;
-        margin-bottom: 30 / @rem;
+        margin-bottom: 20 / @rem;
         line-height: 30 / @rem;
         .mode-placeholder {
           font-size: 16 / @rem;
@@ -92,7 +99,7 @@ export default {
         color: #41b883;
         line-height: 20 / @rem;
         .group {
-          margin-bottom: 20 / @rem;
+          margin-bottom: 15 / @rem;
         }
       }
     }

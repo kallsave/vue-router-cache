@@ -98,6 +98,10 @@ const routerCache = {
       stack: globalStack.getStore()
     }
   },
+  has(location) {
+    const key = this.resolveKeyFromLocation(location)
+    return globalStack.has(key)
+  }
 }
 
 export default routerCache
