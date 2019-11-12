@@ -1,21 +1,28 @@
 <template>
   <page>
-    <div :class="$style['letter-detail']">
-      <div class="wrapper">
-        <div class="context" :style="{'background': letterDetail.background}">
-          <div class="text">id: {{letterDetail.id}}</div>
-          <div class="text">text: {{letterDetail.text}}</div>
+    <vi-scroll
+      ref="scroll"
+      style="color: #999"
+      :options="scrollOptions"
+      :scrollEvents="scrollEvents"
+      @pulling-down="pullingDownHandler">
+      <div :class="$style['letter-detail']">
+        <div class="wrapper">
+          <div class="context" :style="{'background': letterDetail.background}">
+            <div class="text">id: {{letterDetail.id}}</div>
+            <div class="text">text: {{letterDetail.text}}</div>
+          </div>
+          <input class="input" v-model="text" placeholder="输入你想修改的text值" />
+          <btn style="background: #ff1133;" @click.native="updateLetterDetail">修改当前列表元素的text为输入框的值</btn>
+          <btn v-if="isSingleMode" style="background: #ff1133;" @click.native="deleteLetterDetail">删除并返回</btn>
         </div>
-        <input class="input" v-model="text" placeholder="输入你想修改的text值" />
-        <btn style="background: #ff1133;" @click.native="updateLetterDetail">修改当前列表元素的text为输入框的值</btn>
-        <btn v-if="isSingleMode" style="background: #ff1133;" @click.native="deleteLetterDetail">删除并返回</btn>
+        <div class="sticky-footer">
+          <btn v-if="isSingleMode" @click.native="back">返回</btn>
+          <btn v-if="isSingleMode" @click.native="removeCacheBack">销毁上个列表页的缓存并返回</btn>
+          <btn v-if="!isSingleMode" @click.native="pageTurnLetterList">push到新的列表页</btn>
+        </div>
       </div>
-      <div class="sticky-footer">
-        <btn v-if="isSingleMode" @click.native="back">返回</btn>
-        <btn v-if="isSingleMode" @click.native="removeCacheBack">销毁上个列表页的缓存并返回</btn>
-        <btn v-if="!isSingleMode" @click.native="pageTurnLetterList">push到新的列表页</btn>
-      </div>
-    </div>
+    </vi-scroll>
   </page>
 </template>
 
@@ -33,6 +40,20 @@ export default {
       text: '',
       letterDetail: {},
       isSingleMode: isSingleMode,
+      scrollEvents: ['scroll'],
+      scrollOptions: {
+        probeType: 3,
+        click: true,
+        pullDownRefresh: {
+          // 阀值
+          threshold: 80,
+          // 滞留的位置
+          stop: 60,
+          txt: '更新成功',
+          stopTime: 1500
+        },
+        directionLockThreshold: 0,
+      },
     }
   },
   computed: {
@@ -44,13 +65,17 @@ export default {
     }
   },
   mounted() {
-    this.getLetterDetail()
+    this.$refs.scroll.autoPullDownRefresh()
   },
   methods: {
+    pullingDownHandler() {
+      this.getLetterDetail()
+    },
     getLetterDetail() {
       getLetterDetail(this.numberId, this.letterId).then((res) => {
         if (res.code === 1) {
           this.letterDetail = res.data
+          this.$refs.scroll.deblocking()
         }
       })
     },
@@ -64,7 +89,6 @@ export default {
     deleteLetterDetail() {
       let isSuccess = deleteLetterDetail(this.numberId, this.letterId)
       if (isSuccess) {
-        // this.$routerCache.removeUntil({name: 'mainEnter'})
         this.$routerCache.removeExclude({name: 'mainEnter'})
       }
       this.$router.back()
@@ -93,8 +117,8 @@ export default {
 
 .letter-detail {
   box-sizing: border-box;
-  padding: 30 / @rem 10 / @rem;
   height: 100%;
+  padding: 10 / @rem;
   :global {
     .wrapper {
       height: 100%;
@@ -122,22 +146,10 @@ export default {
         border-radius: 6 / @rem;
         margin-bottom: 20 / @rem;
         padding-left: 10 / @rem;
-        &::-webkit-input-placeholder {
-          color: #999;
-        }
-        &:-moz-placeholder{
-          color: #999;
-        }
-        &::-moz-placeholder{
-          color: #999;
-        }
-        &:-ms-input-placeholder{
-          color: #999;
-        }
       }
     }
     .sticky-footer {
-      transform: translate(0, -100%);
+      padding-bottom: 20 / @rem;
     }
   }
 }

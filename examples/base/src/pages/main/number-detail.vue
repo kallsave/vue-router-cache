@@ -1,24 +1,31 @@
 <template>
   <page>
-    <div :class="$style['number-detail']">
-      <div class="wrapper">
-        <div class="context" :style="{'background': numberDetail.background}">
-          <div class="text">id: {{numberDetail.id}}</div>
-          <div class="text">text: {{numberDetail.text}}</div>
-          <div class="text" v-if="numberDetail.children">子项长度: {{numberDetail.children.length}}</div>
+    <vi-scroll
+      ref="scroll"
+      style="color: #999"
+      :options="scrollOptions"
+      :scrollEvents="scrollEvents"
+      @pulling-down="pullingDownHandler">
+      <div :class="$style['number-detail']">
+        <div class="wrapper">
+          <div class="context" :style="{'background': numberDetail.background}">
+            <div class="text">id: {{numberDetail.id}}</div>
+            <div class="text">text: {{numberDetail.text}}</div>
+            <div class="text" v-if="numberDetail.children">子项长度: {{numberDetail.children.length}}</div>
+          </div>
+          <input class="input" type="tel" v-model="text" placeholder="输入你想输入的值" />
+          <btn style="background: #ff1133;" @click.native="updateNumberDetail">修改当前列表元素的text为输入框的值</btn>
         </div>
-        <input class="input" type="tel" v-model="text" placeholder="输入你想输入的值" />
-        <btn style="background: #ff1133;" @click.native="updateNumberDetail">修改当前列表元素的text为输入框的值</btn>
+        <div class="sticky-footer">
+          <btn @click.native="back">返回上一页(back)</btn>
+          <btn @click.native="forward">前进一页(forward)</btn>
+          <btn @click.native="go">导航到输入框的值的页数(go)</btn>
+          <btn @click.native="pageTurnNumberList">自动更新并跳转到上一个列表页(push)</btn>
+          <btn @click.native="replaceNumberList">自动更新并替换到上一个的列表页(replace)</btn>
+          <btn @click.native="pageTurnLetterList">跳转到子项列表页(push)</btn>
+        </div>
       </div>
-      <div class="sticky-footer">
-        <btn @click.native="back">返回上一页(back)</btn>
-        <btn @click.native="forward">前进一页(forward)</btn>
-        <btn @click.native="go">导航到输入框的值的页数(go)</btn>
-        <btn @click.native="pageTurnNumberList">自动更新并跳转到上一个列表页(push)</btn>
-        <btn @click.native="replaceNumberList">自动更新并替换到上一个的列表页(replace)</btn>
-        <btn @click.native="pageTurnLetterList">跳转到子项列表页(push)</btn>
-      </div>
-    </div>
+    </vi-scroll>
   </page>
 </template>
 
@@ -26,16 +33,32 @@
 import { getNumberDetail, updateNumberDetail } from '@/api/list.js'
 import { isSingleMode } from '@/config.js'
 import Btn from './components/btn.vue'
+import Confirm from '../../plugins/vi-ui/components/vi-confirm'
 
 export default {
   components: {
     Btn,
+    Confirm
   },
   data() {
     return {
       text: '',
       numberDetail: {},
-      isSingleMode: isSingleMode
+      isSingleMode: isSingleMode,
+      scrollEvents: ['scroll'],
+      scrollOptions: {
+        probeType: 3,
+        click: true,
+        pullDownRefresh: {
+          // 阀值
+          threshold: 80,
+          // 滞留的位置
+          stop: 60,
+          txt: '更新成功',
+          stopTime: 1500
+        },
+        directionLockThreshold: 0,
+      },
     }
   },
   computed: {
@@ -44,13 +67,17 @@ export default {
     }
   },
   mounted() {
-    this.getNumberDetail()
+    this.$refs.scroll.autoPullDownRefresh()
   },
   methods: {
+    pullingDownHandler() {
+      this.getNumberDetail()
+    },
     getNumberDetail() {
       getNumberDetail(this.numberId).then((res) => {
         if (res.code === 1) {
           this.numberDetail = res.data
+          this.$refs.scroll.deblocking()
         }
       })
     },
@@ -58,16 +85,28 @@ export default {
       updateNumberDetail(this.numberId, this.text).then((res) => {
         if (res.code === 1) {
           this.getNumberDetail()
-        } else {
-          console.log(res.message)
         }
       })
     },
     back() {
       if (isSingleMode) {
-        this.$routerCache.remove({name: 'mainNumberList'})
+        if (!this.confirm) {
+          this.confirm = this.$createViConfirm({
+            title: '要手动删除上个页面缓存吗',
+            text: `执行this.$routerCache.remove({name: 'mainNumberList'})`,
+            confirmText: '确定',
+            cancelText: '不需要',
+            onConfirm: () => {
+              this.$routerCache.remove({name: 'mainNumberList'})
+              this.$router.back()
+            },
+            onCancel: () => {
+              this.$router.back()
+            }
+          })
+        }
+        this.confirm.show()
       }
-      this.$router.back()
     },
     go() {
       let number = this.text | 0
@@ -103,8 +142,8 @@ export default {
 
 .number-detail {
   box-sizing: border-box;
-  padding: 30 / @rem 10 / @rem;
   height: 100%;
+  padding: 10 / @rem;
   :global {
     .wrapper {
       height: 100%;
@@ -132,22 +171,9 @@ export default {
         border-radius: 6 / @rem;
         margin-bottom: 20 / @rem;
         padding-left: 10 / @rem;
-        &::-webkit-input-placeholder {
-          color: #999;
-        }
-        &:-moz-placeholder{
-          color: #999;
-        }
-        &::-moz-placeholder{
-          color: #999;
-        }
-        &:-ms-input-placeholder{
-          color: #999;
-        }
       }
     }
     .sticky-footer {
-      margin-top: -200 / @rem;
       padding-bottom: 20 / @rem;
     }
   }

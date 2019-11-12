@@ -2,7 +2,7 @@
  * @Author: kallsave
  * @Date: 2018-10-15 11:07:37
  * @Last Modified by: kallsave
- * @Last Modified time: 2019-05-21 15:48:31
+ * @Last Modified time: 2019-11-12 16:55:12
  */
 
 /**
@@ -60,7 +60,7 @@ export function styleTogglePx(style, mode = true) {
     }
   }
 
-  return mulitDeepClone(style, map)
+  return multiDeepClone(style, map)
 }
 
 export function stylePadPx(style) {
@@ -153,7 +153,7 @@ function deepAssign(to, from) {
  * @param {Object} rest
  * @returns
  */
-export function mulitDeepClone(target, ...rest) {
+export function multiDeepClone(target, ...rest) {
   for (let i = 0; i < rest.length; i++) {
     let source = deepClone(rest[i])
     deepAssign(target, source)

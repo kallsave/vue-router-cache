@@ -78,7 +78,7 @@ export default {
 .config {
   box-sizing: border-box;
   height: 100%;
-  padding: 30 / @rem 10 / @rem;
+  padding: 10 / @rem;
   :global {
     .wrapper {
       box-sizing: border-box;

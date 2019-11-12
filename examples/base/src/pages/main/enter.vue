@@ -51,7 +51,6 @@ export default {
   box-sizing: border-box;
   height: 100%;
   padding-top: 80 / @rem;
-  background: #f4f4f4;
   :global {
     .package {
       text-align: center;

@@ -1,12 +1,20 @@
 <template>
   <page>
-    <div :class="$style['letter-list']">
-      <color-list
-        ref="list"
-        :data="letterList"
-        @item-click="clickHandler">
-      </color-list>
-    </div>
+    <vi-scroll
+      ref="scroll"
+      style="color: #999"
+      :data="letterList"
+      :options="scrollOptions"
+      :scrollEvents="scrollEvents"
+      @pulling-down="pullingDownHandler">
+      <div :class="$style['letter-list']">
+        <color-list
+          ref="list"
+          :data="letterList"
+          @item-click="clickHandler">
+        </color-list>
+      </div>
+    </vi-scroll>
   </page>
 </template>
 
@@ -21,6 +29,20 @@ export default {
   data() {
     return {
       letterList: [],
+      scrollEvents: ['scroll'],
+      scrollOptions: {
+        probeType: 3,
+        click: true,
+        pullDownRefresh: {
+          // 阀值
+          threshold: 80,
+          // 滞留的位置
+          stop: 60,
+          txt: '更新成功',
+          stopTime: 1500
+        },
+        directionLockThreshold: 0,
+      },
     }
   },
   computed: {
@@ -29,9 +51,12 @@ export default {
     }
   },
   mounted() {
-    this.getLetterList()
+    this.$refs.scroll.autoPullDownRefresh()
   },
   methods: {
+    pullingDownHandler() {
+      this.getLetterList()
+    },
     getLetterList() {
       getLetterList(this.numberId).then((res) => {
         if (res.code === 1) {
@@ -52,7 +77,7 @@ export default {
 .letter-list {
   box-sizing: border-box;
   height: 100%;
-  padding: 30 / @rem 10 / @rem;
+  padding: 10 / @rem;
 }
 
 </style>

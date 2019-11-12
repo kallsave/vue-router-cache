@@ -21,7 +21,7 @@ export function checkClass(o) {
   return Object.prototype.toString.call(o).slice(8, -1)
 }
 
-function _deepClone(o) {
+function deepClone(o) {
   let ret
   let instance = checkClass(o)
   if (instance === 'Array') {
@@ -34,24 +34,26 @@ function _deepClone(o) {
 
   for (let key in o) {
     let copy = o[key]
-    ret[key] = _deepClone(copy)
+    ret[key] = deepClone(copy)
   }
 
   return ret
 }
 
 /**
+ *
+ * 给target合并key(深度)
  * @export
  * @param {Object} to
  * @param {Object} from
  * @returns
  */
-export function _deepAssign(to, from) {
+function deepAssign(to, from) {
   for (let key in from) {
     if (!to[key] || typeof to[key] !== 'object') {
       to[key] = from[key]
     } else {
-      _deepAssign(to[key], from[key])
+      deepAssign(to[key], from[key])
     }
   }
 }
@@ -64,10 +66,10 @@ export function _deepAssign(to, from) {
  * @param {Object} rest
  * @returns
  */
-export function deepClone(target, ...rest) {
+export function multiDeepClone(target, ...rest) {
   for (let i = 0; i < rest.length; i++) {
-    let source = _deepClone(rest[i])
-    _deepAssign(target, source)
+    let source = deepClone(rest[i])
+    deepAssign(target, source)
   }
   return target
 }

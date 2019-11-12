@@ -10,7 +10,6 @@ import Page from '@/components/page/index.js'
 
 Vue.use(ViUi)
 Vue.use(Page)
-console.log(isSingleMode)
 
 Vue.use(VueRouterCache, {
   router: router,
@@ -29,11 +28,30 @@ Vue.use(VueRouterCache, {
 })
 
 Vue.config.productionTip = false
+Vue.prototype.$global = {}
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  beforeMount() {
+    // this.createGlobalConfirmApi()
+  },
+  methods: {
+    createGlobalConfirmApi() {
+      // DEV: fixed create-api bug
+      this.$global.confirm = this.$createViConfirm({})
+
+      const originShow = this.$global.confirm.show
+
+      this.$global.confirm.show = function (props) {
+        if (props) {
+          this.$updateProps(props)
+        }
+        originShow()
+      }
+    }
+  }
 })

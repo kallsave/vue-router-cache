@@ -50,7 +50,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: #f4f4f4;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
   &::-webkit-scrollbar {

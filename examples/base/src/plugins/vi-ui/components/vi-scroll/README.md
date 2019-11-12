@@ -1,0 +1,5 @@
+1.状态pulldownState初始值为normal
+2.没有达到下拉阀值threshold,状态仍为normal,pullDownNormalTop为0
+3.达到下拉阀值,pullDownNormalTop递增下拉的距离,状态仍为normal,
+松手后卡死状态,状态为locking
+4.有新数据,状态为finish,stopTime秒后状态变成normal
