@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <vi-page>
     <vi-scroll
       ref="scroll"
       style="color: #999"
@@ -26,48 +26,34 @@
         </div>
       </div>
     </vi-scroll>
-  </page>
+  </vi-page>
 </template>
 
 <script>
 import { getNumberDetail, updateNumberDetail } from '@/api/list.js'
 import { isSingleMode } from '@/config.js'
 import Btn from './components/btn.vue'
-import Confirm from '../../plugins/vi-ui/components/vi-confirm'
+import scrollMixins from './mixins/scroll.js'
 
 export default {
   components: {
     Btn,
-    Confirm
   },
+  mixins: [
+    scrollMixins,
+  ],
   data() {
     return {
       text: '',
       numberDetail: {},
       isSingleMode: isSingleMode,
       scrollEvents: ['scroll'],
-      scrollOptions: {
-        probeType: 3,
-        click: true,
-        pullDownRefresh: {
-          // 阀值
-          threshold: 80,
-          // 滞留的位置
-          stop: 60,
-          txt: '更新成功',
-          stopTime: 1500
-        },
-        directionLockThreshold: 0,
-      },
     }
   },
   computed: {
     numberId() {
       return this.$route.params.numberId
     }
-  },
-  mounted() {
-    this.$refs.scroll.autoPullDownRefresh()
   },
   methods: {
     pullingDownHandler() {

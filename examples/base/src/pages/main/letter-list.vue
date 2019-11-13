@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <vi-page>
     <vi-scroll
       ref="scroll"
       style="color: #999"
@@ -15,43 +15,30 @@
         </color-list>
       </div>
     </vi-scroll>
-  </page>
+  </vi-page>
 </template>
 
 <script>
 import ColorList from './components/color-list.vue'
 import { getLetterList } from '@/api/list.js'
+import scrollMixins from './mixins/scroll.js'
 
 export default {
   components: {
     ColorList,
   },
+  mixins: [
+    scrollMixins
+  ],
   data() {
     return {
       letterList: [],
-      scrollEvents: ['scroll'],
-      scrollOptions: {
-        probeType: 3,
-        click: true,
-        pullDownRefresh: {
-          // 阀值
-          threshold: 80,
-          // 滞留的位置
-          stop: 60,
-          txt: '更新成功',
-          stopTime: 1500
-        },
-        directionLockThreshold: 0,
-      },
     }
   },
   computed: {
     numberId() {
       return this.$route.params.numberId
     }
-  },
-  mounted() {
-    this.$refs.scroll.autoPullDownRefresh()
   },
   methods: {
     pullingDownHandler() {

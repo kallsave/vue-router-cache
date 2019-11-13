@@ -1,4 +1,5 @@
 import Style from './common/stylus/index.styl'
+import ViPage from './components/vi-page/index.js'
 import ViPopup from './components/vi-popup/index.js'
 import ViSwitch from './components/vi-switch/index.js'
 import ViLoading from './components/vi-loading/index.js'
@@ -7,6 +8,7 @@ import ViCollapse from './components/vi-collapse/index.js'
 import ViConfirm from './components/vi-confirm/index.js'
 
 const components = [
+  ViPage,
   ViPopup,
   ViSwitch,
   ViLoading,

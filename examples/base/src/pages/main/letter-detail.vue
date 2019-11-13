@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <vi-page>
     <vi-scroll
       ref="scroll"
       style="color: #999"
@@ -23,37 +23,27 @@
         </div>
       </div>
     </vi-scroll>
-  </page>
+  </vi-page>
 </template>
 
 <script>
 import { getLetterDetail, updateLetterDetail, deleteLetterDetail } from '@/api/list.js'
 import Btn from './components/btn.vue'
 import { isSingleMode } from '@/config.js'
+import scrollMixins from './mixins/scroll.js'
 
 export default {
   components: {
     Btn,
   },
+  mixins: [
+    scrollMixins,
+  ],
   data() {
     return {
       text: '',
       letterDetail: {},
       isSingleMode: isSingleMode,
-      scrollEvents: ['scroll'],
-      scrollOptions: {
-        probeType: 3,
-        click: true,
-        pullDownRefresh: {
-          // 阀值
-          threshold: 80,
-          // 滞留的位置
-          stop: 60,
-          txt: '更新成功',
-          stopTime: 1500
-        },
-        directionLockThreshold: 0,
-      },
     }
   },
   computed: {
@@ -63,9 +53,6 @@ export default {
     letterId() {
       return this.$route.params.letterId
     }
-  },
-  mounted() {
-    this.$refs.scroll.autoPullDownRefresh()
   },
   methods: {
     pullingDownHandler() {

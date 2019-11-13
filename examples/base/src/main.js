@@ -6,14 +6,12 @@ import App from './App'
 import router from './router'
 import VueRouterCache from 'vue-router-cache'
 import ViUi from '@/plugins/vi-ui/index'
-import Page from '@/components/page/index.js'
 
 Vue.use(ViUi)
-Vue.use(Page)
 
 Vue.use(VueRouterCache, {
   router: router,
-  max: 10,
+  max: 2,
   isSingleMode: isSingleMode,
   isDebugger: true,
   directionKey: 'direction',

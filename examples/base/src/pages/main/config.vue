@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <vi-page>
     <div :class="$style['config']">
       <div class="wrapper">
          <div class="mode">
@@ -36,7 +36,7 @@
         <btn @click.native="pageTurnNumberList">{{mode}}尝试</btn>
       </div>
     </div>
-  </page>
+  </vi-page>
 </template>
 
 <script>

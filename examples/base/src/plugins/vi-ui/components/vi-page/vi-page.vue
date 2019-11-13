@@ -1,11 +1,11 @@
 <template>
-  <div ref="page" :class="$style['page']">
+  <div ref="page" class="vi-page">
     <slot></slot>
   </div>
 </template>
 
 <script>
-const COMPONENT_NAME = 'page'
+const COMPONENT_NAME = 'vi-page'
 
 export default {
   name: COMPONENT_NAME,
@@ -44,17 +44,15 @@ export default {
 }
 </script>
 
-<style lang="less" module>
-.page {
-  box-sizing: border-box;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #f4f4f4;
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
+<style lang="stylus">
+.vi-page
+  box-sizing: border-box
+  position: absolute
+  width: 100%
+  height: 100%
+  background: #f4f4f4
+  overflow: scroll
+  -webkit-overflow-scrolling: touch
+  &::-webkit-scrollbar
+    display: none
 </style>

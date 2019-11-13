@@ -1,6 +1,16 @@
 language: node_js
 node_js:
-  - "6"
+  - "10.13.0"
+branches:
+  only:
+    - master
+    - test
+install:
+  - npm install
 script:
-  - npm run build
   - npm run test
+  - npm run build
+  - cd examples/base
+  - npm install
+  - npm run svgtofont
+  - npm run build

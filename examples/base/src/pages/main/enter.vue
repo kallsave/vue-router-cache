@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <vi-page>
     <div :class="$style['enter']">
       <div class="package">
         <div class="package-icon common-icon-location"></div>
@@ -18,7 +18,7 @@
       <div class="version">{{`current vue version ${VueVersion}`}}</div>
       <div class="version">{{`current vue-router version ${VueRouterVersion}`}}</div>
     </div>
-  </page>
+  </vi-page>
 </template>
 
 <script>
