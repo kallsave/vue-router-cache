@@ -11,7 +11,7 @@ Vue.use(ViUi)
 
 Vue.use(VueRouterCache, {
   router: router,
-  max: 2,
+  max: 10,
   isSingleMode: isSingleMode,
   isDebugger: true,
   directionKey: 'direction',

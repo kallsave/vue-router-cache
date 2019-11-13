@@ -10,7 +10,7 @@
           <span class="link-icon common-icon-location"></span>
           <span class="link-text">Live Examples</span>
         </a>
-        <a class="link-github">
+        <a href="https://github.com/kallsave/vue-router-cache" class="link-github">
           <span class="link-icon common-icon-github"></span>
           <span class="link-text">Github</span>
         </a>

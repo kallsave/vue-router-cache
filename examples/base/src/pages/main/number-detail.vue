@@ -84,6 +84,12 @@ export default {
             cancelText: '不需要',
             onConfirm: () => {
               this.$routerCache.remove({name: 'mainNumberList'})
+              // or
+              // this.$routerCache.remove('/main/number-list')
+              // or
+              // this.$routerCache.remove({
+              //   path: '/main/number-list'
+              // })
               this.$router.back()
             },
             onCancel: () => {
