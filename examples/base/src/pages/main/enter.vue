@@ -23,7 +23,7 @@
 
 <script>
 import VuerouterCache from 'vue-router-cache'
-import Vue from 'Vue'
+import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 export default {
