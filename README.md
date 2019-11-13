@@ -8,10 +8,10 @@ Features
 
 vue-router-cache做了几件事
 
-1.提供浏览器路由方向(forward、back、replace)
-2.在知道路由是forward、back、replace的基础上,浏览器进入新页面缓存新页面,浏览器触发后退(back)时自动删除离开页面缓存,从而实现前进刷新后退缓存
-3.封装了管理缓存的api方法,这些方法的参数和vue-router的push方法的参数一致,这样做保证了代码的可读性
-4.对累积的页面缓存可能导致的内存泄漏做了保护,提供max参数,当页面缓存达到max,会自动把最后方的页面缓存删除
+- 提供浏览器路由方向(forward、back、replace)
+- 在知道路由是forward、back、replace的基础上,浏览器进入新页面缓存新页面,浏览器触发后退(back)时自动删除离开页面缓存,从而实现前进刷新后退缓存
+- 封装了管理缓存的api方法,这些方法的参数和vue-router的push方法的参数一致,这样做保证了代码的可读性
+- 对累积的页面缓存可能导致的内存泄漏做了保护,提供max参数,当页面缓存达到max,会自动把最后方的页面缓存删除
 
 Installation
 ------------
@@ -28,20 +28,20 @@ Vue.use(VueRouterCache, {
   router: router,
   // 缓存的最大数量,如果超过这个数量,会自动删除最后方的缓存
   max: 10,
-  // 开启单例模式(推荐单例模式)
+  // 开启单例模式,推荐单例模式
   isSingleMode: true,
-  // 开启debugger,(可以看到当前缓存页面的key)
+  // 开启debugger,可以看到当前缓存页面的key
   isDebugger: true,
   // 可以自定义的路由方向的key,挂载在$route.params.direction上
   directionKey: 'direction',
   // 判断浏览器路由方向时,如果需要刷新后仍能有效判断,需要做本地储存
-  // 自定义这个本地储存,推荐sessionStorage
+  // 开发者用getHistoryStack和setHistoryStack实现本地储存,推荐首选sessionStorage
   getHistoryStack() {
     const str = window.sessionStorage.getItem('historyStack')
     return JSON.parse(str)
   },
   // 判断浏览器路由方向时,如果需要刷新后仍能有效判断,需要做本地储存
-  // 自定义这个本地储存,推荐sessionStorage
+  // 开发者用getHistoryStack和setHistoryStack实现本地储存,推荐首选sessionStorage
   setHistoryStack(history) {
     const str = JSON.stringify(history)
     window.sessionStorage.setItem('historyStack', str)
@@ -49,13 +49,14 @@ Vue.use(VueRouterCache, {
 })
 
 ```
-Api in routerCache examples in single mode
-routerCache下的api方法
+routerCache下的api方法使用例子
 -----------
 ```javascript
-// in vue
+// routerCache api in vue
 export default {
   methods: {
+    // 从详情页修改了数据需要回退到列表页时手动删除列表页的缓存
+    // 从而让列表页刷新的例子
     back() {
       // remove的参数是location,和this.$router.push的参数一样
       this.$routerCache.remove({name: 'mainNumberList'})
@@ -72,10 +73,10 @@ export default {
 ```
 
 ```javascript
-// in js
+// routerCache api in js
 import { routerCache } from 'vue-router-cache'
 
-this.$routerCache.remove({name: 'mainNumberList'})
+routerCache.remove({name: 'mainNumberList'})
 ```
 
 |method name|arg|description|can use in when isSingleMode is false
