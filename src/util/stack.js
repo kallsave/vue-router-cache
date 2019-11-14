@@ -54,9 +54,22 @@ export class Stack {
     }
     return null
   }
-  removeUntil(item) {
+  removeBackUntil(item) {
     const index = this.list.indexOf(item)
     if (index !== -1) {
+      return this.list.splice(0, index)
+    }
+    return this.list.splice(0)
+  }
+  removeBackInclue(item) {
+    const index = this.list.indexOf(item)
+    if (index !== -1) {
+      return this.list.splice(0, index + 1)
+    }
+    return this.list.splice(0)
+  }
+  removeBackByIndex(index) {
+    if (index <= this.list.length - 1) {
       return this.list.splice(0, index)
     }
     return this.list.splice(0)
@@ -72,19 +85,6 @@ export class Stack {
       }
     }
     return removeList
-  }
-  removeBackByIndex(index) {
-    if (index <= this.list.length - 1) {
-      return this.list.splice(0, index)
-    }
-    return this.list.splice(0)
-  }
-  removeBackInclue(item) {
-    const index = this.list.indexOf(item)
-    if (index !== -1) {
-      return this.list.splice(0, index + 1)
-    }
-    return this.list.splice(0)
   }
   removeAll() {
     return this.list.splice(0)

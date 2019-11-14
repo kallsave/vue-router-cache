@@ -45,15 +45,31 @@ const routerCache = {
       this._remove(key)
     }
   },
-  _removeUntil(key) {
-    const removeList = globalStack.removeUntil(key)
+  _removeBackUntil(key) {
+    const removeList = globalStack.removeBackUntil(key)
     if (removeList.length) {
       this.removeGlobalCacheFromList(removeList)
     }
   },
-  removeUntil(location) {
+  removeBackUntil(location) {
     const key = this.resolveKeyFromLocation(location)
-    this._removeUntil(key)
+    this._removeBackUntil(key)
+  },
+  _removeBackInclue(key) {
+    const removeList = globalStack.removeBackInclue(key)
+    if (removeList.length) {
+      this.removeGlobalCacheFromList(removeList)
+    }
+  },
+  removeBackInclue(location) {
+    const key = this.resolveKeyFromLocation(location)
+    this._removeBackInclue(key)
+  },
+  removeBackByIndex(index) {
+    const removeList = globalStack.removeBackByIndex(index)
+    if (removeList.length) {
+      this.removeGlobalCacheFromList(removeList)
+    }
   },
   _removeExclude() {
     const removeList = globalStack.removeExclude(...arguments)
@@ -69,22 +85,6 @@ const routerCache = {
       excludeList.push(key)
     }
     this._removeExclude(...excludeList)
-  },
-  removeBackByIndex(index) {
-    const removeList = globalStack.removeBackByIndex(index)
-    if (removeList.length) {
-      this.removeGlobalCacheFromList(removeList)
-    }
-  },
-  _removeBackInclue(key) {
-    const removeList = globalStack.removeBackInclue(key)
-    if (removeList.length) {
-      this.removeGlobalCacheFromList(removeList)
-    }
-  },
-  removeBackInclue(location) {
-    const key = this.resolveKeyFromLocation(location)
-    this._removeBackInclue(key)
   },
   removeAll() {
     const removeList = globalStack.removeAll()
