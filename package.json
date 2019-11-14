@@ -10,10 +10,9 @@
     "vue-router",
     "cache and manage vue-router-dom",
     "vue-router plugin",
-    "keep-alive",
+    "better keep-alive",
     "vue-router-cache",
-    "history-direction",
-    "vue-router-cache"
+    "history-direction"
   ],
   "scripts": {
     "dev": "cross-env TARGET=esm EXAMPLE=base node scripts/dev.js",
@@ -43,5 +42,20 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "terser": "^4.3.9",
     "zlib": "^1.0.5"
-  }
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "dependencies": {
+    "fs-extra": "^8.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kallsave/vue-router-cache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kallsave/vue-router-cache/issues"
+  },
+  "homepage": "https://github.com/kallsave/vue-router-cache#readme"
 }
