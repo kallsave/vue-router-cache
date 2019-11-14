@@ -753,7 +753,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.0.1'
+  version: '0.0.2'
 };
 
 export default VuerouterCache;

@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.0.1
+ * vue-router-cache.js v0.0.2
  * (c) 2019-2019 kallsave
  * Released under the MIT License.
  */
@@ -753,7 +753,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.0.1'
+  version: '0.0.2'
 };
 
 export default VuerouterCache;
