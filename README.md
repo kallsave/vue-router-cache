@@ -95,8 +95,8 @@ options/配置说明
 |isSingleMode|Boolean|是否是单例模式|true|否
 |isDebugger|Boolean|开始debugger模式,可以看到系统存在的页面缓存和使用中的页面缓存|false|否
 |directionKey|String|挂载在$route.params[directionKey]上的key名|'direction'|否
-|getHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,需要做本地储存,用getHistoryStack和setHistoryStack自定义实现本地储存,推荐首选sessionStorage|noop|否
-|setHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,需要做本地储存,用getHistoryStack和setHistoryStack自定义实现本地储存,推荐首选sessionStorage|noop|否
+|getHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否
+|setHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否
 
 
 methods Api description/方法说明
