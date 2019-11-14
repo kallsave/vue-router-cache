@@ -107,8 +107,8 @@
         this.list = [];
       }
     }, {
-      key: "_add",
-      value: function _add(item) {
+      key: "_pop",
+      value: function _pop(item) {
         this.list.unshift(item);
 
         if (this.list.length > this.max) {
@@ -118,14 +118,14 @@
         return null;
       }
     }, {
-      key: "add",
-      value: function add() {
+      key: "pop",
+      value: function pop() {
         var removeList = [];
 
         for (var i = 0; i < arguments.length; i++) {
           var item = arguments[i];
 
-          var removeItem = this._add(item);
+          var removeItem = this._pop(item);
 
           if (removeItem) {
             removeList.push(removeItem);
@@ -135,8 +135,8 @@
         return removeList;
       }
     }, {
-      key: "reduce",
-      value: function reduce() {
+      key: "shift",
+      value: function shift() {
         if (this.list.length) {
           return this.list.shift();
         }
@@ -181,15 +181,15 @@
         return null;
       }
     }, {
-      key: "removeUntil",
-      value: function removeUntil(item) {
+      key: "removeBackUntil",
+      value: function removeBackUntil(item) {
         var index = this.list.indexOf(item);
 
         if (index !== -1) {
           return this.list.splice(0, index);
         }
 
-        return [];
+        return this.list.splice(0);
       }
     }, {
       key: "removeExclude",
@@ -211,11 +211,11 @@
     }, {
       key: "removeBackByIndex",
       value: function removeBackByIndex(index) {
-        if (index > this.list.length - 1) {
-          return this.list.splice(0);
+        if (index <= this.list.length - 1) {
+          return this.list.splice(0, index);
         }
 
-        return this.list.splice(0, index);
+        return this.list.splice(0);
       }
     }, {
       key: "removeBackInclue",
@@ -226,7 +226,7 @@
           return this.list.splice(0, index + 1);
         }
 
-        return [];
+        return this.list.splice(0);
       }
     }, {
       key: "removeAll",
@@ -236,10 +236,10 @@
     }, {
       key: "replace",
       value: function replace(item) {
-        var removeItem = this.reduce();
+        var removeItem = this.shift();
 
         if (removeItem) {
-          this._add(item);
+          this._pop(item);
 
           return removeItem;
         }
@@ -307,8 +307,8 @@
     }
 
     _createClass(MapStack, [{
-      key: "_add",
-      value: function _add(item) {
+      key: "_pop",
+      value: function _pop(item) {
         var index = this.list.indexOf(item);
 
         if (index !== -1) {
@@ -360,7 +360,7 @@
     globalStack.updateSize(newVal);
   });
 
-  var routerCacheHelper = {
+  var routerCache = {
     resolveKeyFromRoute: function resolveKeyFromRoute(route) {
       return route.name ? route.name : route.path;
     },
@@ -386,8 +386,8 @@
         this.removeGlobalCacheFromItem(removeItem);
       }
     },
-    reduce: function reduce() {
-      var removeItem = globalStack.reduce();
+    shift: function shift() {
+      var removeItem = globalStack.shift();
 
       if (removeItem) {
         this.removeGlobalCacheFromItem(removeItem);
@@ -408,19 +408,17 @@
         this._remove(key);
       }
     },
-    _removeUntil: function _removeUntil(key) {
-      var removeList = globalStack.removeUntil(key);
+    _removeBackUntil: function _removeBackUntil(key) {
+      var removeList = globalStack.removeBackUntil(key);
 
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
-      } else {
-        this.removeAll();
       }
     },
-    removeUntil: function removeUntil(location) {
+    removeBackUntil: function removeBackUntil(location) {
       var key = this.resolveKeyFromLocation(location);
 
-      this._removeUntil(key);
+      this._removeBackUntil(key);
     },
     _removeExclude: function _removeExclude() {
       var removeList = globalStack.removeExclude.apply(globalStack, arguments);
@@ -471,6 +469,10 @@
         cache: globalCache,
         stack: globalStack.getStore()
       };
+    },
+    has: function has(location) {
+      var key = this.resolveKeyFromLocation(location);
+      return globalStack.has(key);
     }
   };
 
@@ -523,14 +525,14 @@
 
     for (var i = length - 1; i > -1; i--) {
       var item = list[i];
-      historyStack.add(item);
+      historyStack.pop(item);
     }
   });
 
   var BACK = 'back';
   var FORWARD = 'forward';
   var REPLACE = 'replace';
-  var NONE = 'none';
+  var NONE = '';
 
   var historyStateEvent = new Events();
   window.addEventListener('hashchange', function () {
@@ -579,17 +581,17 @@
         var key;
 
         if (config.isSingleMode) {
-          key = routerCacheHelper.resolveKeyFromRoute(this.$route);
+          key = routerCache.resolveKeyFromRoute(this.$route);
         } else {
-          var baseKey = routerCacheHelper.resolveKeyFromRoute(this.$route);
+          var baseKey = routerCache.resolveKeyFromRoute(this.$route);
 
           if (!globalMultiKeyMap[baseKey]) {
             globalMultiKeyMap[baseKey] = new MapStack();
           }
 
-          if (this.$route.params[config.actionKey] !== BACK) {
+          if (this.$route.params[config.directionKey] !== BACK) {
             key = "".concat(baseKey, "_").concat(globalMultiKeyMap[baseKey].getSize());
-            globalMultiKeyMap[baseKey].add(key);
+            globalMultiKeyMap[baseKey].pop(key);
           } else {
             key = globalMultiKeyMap[baseKey].getByIndex(0);
           }
@@ -607,13 +609,13 @@
           } else {
             var lastKey = globalStack.getFooter();
 
-            routerCacheHelper._remove(lastKey);
+            routerCache._remove(lastKey);
 
             this.cache[key] = vnode;
           }
         }
 
-        globalStack.add(key);
+        globalStack.pop(key);
         vnode.data.keepAlive = true;
       }
 
@@ -625,7 +627,7 @@
     },
     beforeDestroy: function beforeDestroy() {
       for (var key in this.cache) {
-        routerCacheHelper._remove(key);
+        routerCache._remove(key);
       }
 
       var index;
@@ -644,21 +646,21 @@
   var direction = NONE;
   historyStateEvent.on(BACK, function () {
     direction = BACK;
-    historyStack.reduce();
+    historyStack.shift();
     config.setHistoryStack(historyStack.getStore());
     var route = config.router.history.current;
 
     if (config.isSingleMode) {
-      var key = routerCacheHelper.resolveKeyFromRoute(route);
+      var key = routerCache.resolveKeyFromRoute(route);
 
-      routerCacheHelper._remove(key);
+      routerCache._remove(key);
     } else {
-      var baseKey = routerCacheHelper.resolveKeyFromRoute(route);
+      var baseKey = routerCache.resolveKeyFromRoute(route);
 
       if (globalMultiKeyMap[baseKey]) {
-        var _key = globalMultiKeyMap[baseKey].reduce();
+        var _key = globalMultiKeyMap[baseKey].shift();
 
-        routerCacheHelper._remove(_key);
+        routerCache._remove(_key);
       }
     }
   });
@@ -674,15 +676,23 @@
     var originGo = router.go.bind(router);
 
     router.push = function (location, onComplete, onAbort) {
-      routerCacheHelper.removeBackInclue(location);
+      if (config.isSingleMode && routerCache.has(location)) {
+        routerCache.removeBackInclue(location);
+      }
+
       originPush(location, onComplete, onAbort);
     };
 
     router.replace = function (location, onComplete, onAbort) {
       direction = REPLACE;
-      historyStack.reduce();
+      historyStack.shift();
       config.setHistoryStack(historyStack.getStore());
-      routerCacheHelper.reduce();
+      routerCache.shift();
+
+      if (config.isSingleMode && routerCache.has(location)) {
+        routerCache.removeBackInclue(location);
+      }
+
       originReplace(location, onComplete, onAbort);
     };
 
@@ -691,9 +701,9 @@
         direction = FORWARD;
       } else if (n < -1) {
         direction = BACK;
-        historyStack.removeBack(-n);
+        historyStack.removeBackByIndex(-n);
         config.setHistoryStack(historyStack.getStore());
-        routerCacheHelper.removeBack(-n);
+        routerCache.removeBackByIndex(-n);
       }
 
       originGo(n);
@@ -711,7 +721,7 @@
         var href = window.location.href;
 
         if (direction !== BACK && historyStack.getHeader() !== href) {
-          historyStack.add(href);
+          historyStack.pop(href);
           config.setHistoryStack(historyStack.getStore());
         }
 
@@ -741,13 +751,15 @@
 
     isInstalled = true;
     Object.assign(config, options);
-    Vue.prototype.$routerCacheHelper = routerCacheHelper;
+    Vue.prototype.$routerCache = routerCache;
     Vue.component(Component.name, Component);
     routerMiddle(Vue, config);
   }
 
   var VuerouterCache = {
-    install: install
+    install: install,
+    routerCache: routerCache,
+    version: '0.0.1'
   };
 
   return VuerouterCache;

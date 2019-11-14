@@ -74,11 +74,12 @@ export default {
       })
     },
     deleteLetterDetail() {
-      let isSuccess = deleteLetterDetail(this.numberId, this.letterId)
-      if (isSuccess) {
-        this.$routerCache.removeExclude({name: 'mainEnter'})
-      }
-      this.$router.back()
+      deleteLetterDetail(this.numberId, this.letterId).then((res) => {
+        if (res.code === 1) {
+          this.$routerCache.removeBackUntil({name: 'mainEnter'})
+          this.$router.back()
+        }
+      })
     },
     back() {
       this.$router.back()

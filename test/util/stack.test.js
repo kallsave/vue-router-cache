@@ -58,16 +58,16 @@ describe('test Stack removeByIndex', () => {
   })
 })
 
-describe('test Stack removeUntil', () => {
+describe('test Stack removeBackUntil', () => {
   const stack = new Stack()
   stack.pop(1, 2, 3, 4, 5)
-  it('stack exec removeUntil', () => {
-    const removeList = stack.removeUntil(2)
+  it('stack exec removeBackUntil', () => {
+    const removeList = stack.removeBackUntil(2)
     expect(removeList).toEqual([5, 4, 3])
     expect(stack.getStore()).toEqual([2, 1])
   })
   it('stack not found index', () => {
-    const removeList = stack.removeUntil(0)
+    const removeList = stack.removeBackUntil(0)
     expect(removeList).toEqual([2, 1])
     expect(stack.getStore()).toEqual([])
   })

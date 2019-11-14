@@ -181,11 +181,31 @@
         return null;
       }
     }, {
-      key: "removeUntil",
-      value: function removeUntil(item) {
+      key: "removeBackUntil",
+      value: function removeBackUntil(item) {
         var index = this.list.indexOf(item);
 
         if (index !== -1) {
+          return this.list.splice(0, index);
+        }
+
+        return this.list.splice(0);
+      }
+    }, {
+      key: "removeBackInclue",
+      value: function removeBackInclue(item) {
+        var index = this.list.indexOf(item);
+
+        if (index !== -1) {
+          return this.list.splice(0, index + 1);
+        }
+
+        return this.list.splice(0);
+      }
+    }, {
+      key: "removeBackByIndex",
+      value: function removeBackByIndex(index) {
+        if (index <= this.list.length - 1) {
           return this.list.splice(0, index);
         }
 
@@ -207,26 +227,6 @@
         }
 
         return removeList;
-      }
-    }, {
-      key: "removeBackByIndex",
-      value: function removeBackByIndex(index) {
-        if (index <= this.list.length - 1) {
-          return this.list.splice(0, index);
-        }
-
-        return this.list.splice(0);
-      }
-    }, {
-      key: "removeBackInclue",
-      value: function removeBackInclue(item) {
-        var index = this.list.indexOf(item);
-
-        if (index !== -1) {
-          return this.list.splice(0, index + 1);
-        }
-
-        return this.list.splice(0);
       }
     }, {
       key: "removeAll",
@@ -408,17 +408,36 @@
         this._remove(key);
       }
     },
-    _removeUntil: function _removeUntil(key) {
-      var removeList = globalStack.removeUntil(key);
+    _removeBackUntil: function _removeBackUntil(key) {
+      var removeList = globalStack.removeBackUntil(key);
 
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
       }
     },
-    removeUntil: function removeUntil(location) {
+    removeBackUntil: function removeBackUntil(location) {
       var key = this.resolveKeyFromLocation(location);
 
-      this._removeUntil(key);
+      this._removeBackUntil(key);
+    },
+    _removeBackInclue: function _removeBackInclue(key) {
+      var removeList = globalStack.removeBackInclue(key);
+
+      if (removeList.length) {
+        this.removeGlobalCacheFromList(removeList);
+      }
+    },
+    removeBackInclue: function removeBackInclue(location) {
+      var key = this.resolveKeyFromLocation(location);
+
+      this._removeBackInclue(key);
+    },
+    removeBackByIndex: function removeBackByIndex(index) {
+      var removeList = globalStack.removeBackByIndex(index);
+
+      if (removeList.length) {
+        this.removeGlobalCacheFromList(removeList);
+      }
     },
     _removeExclude: function _removeExclude() {
       var removeList = globalStack.removeExclude.apply(globalStack, arguments);
@@ -437,25 +456,6 @@
       }
 
       this._removeExclude.apply(this, excludeList);
-    },
-    removeBackByIndex: function removeBackByIndex(index) {
-      var removeList = globalStack.removeBackByIndex(index);
-
-      if (removeList.length) {
-        this.removeGlobalCacheFromList(removeList);
-      }
-    },
-    _removeBackInclue: function _removeBackInclue(key) {
-      var removeList = globalStack.removeBackInclue(key);
-
-      if (removeList.length) {
-        this.removeGlobalCacheFromList(removeList);
-      }
-    },
-    removeBackInclue: function removeBackInclue(location) {
-      var key = this.resolveKeyFromLocation(location);
-
-      this._removeBackInclue(key);
     },
     removeAll: function removeAll() {
       var removeList = globalStack.removeAll();

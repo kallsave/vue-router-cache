@@ -79,13 +79,13 @@ export default {
         if (!this.confirm) {
           this.confirm = this.$createViConfirm({
             title: '要手动删除上个页面缓存吗',
-            text: `执行this.$routerCache.remove({name: 'mainNumberList'})`,
+            text: `执行this.$routerCache.remove('/main/number-list')`,
             confirmText: '确定',
             cancelText: '不需要',
             onConfirm: () => {
-              this.$routerCache.remove({name: 'mainNumberList'})
+              this.$routerCache.remove('/main/number-list')
               // or
-              // this.$routerCache.remove('/main/number-list')
+              // this.$routerCache.remove({name: 'mainNumberList'})
               // or
               // this.$routerCache.remove({
               //   path: '/main/number-list'

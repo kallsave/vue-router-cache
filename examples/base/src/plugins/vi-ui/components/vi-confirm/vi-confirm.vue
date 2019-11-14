@@ -2,9 +2,11 @@
 <template>
   <vi-popup
     v-show="isVisible"
-    transition-name="confirm-fade"
+    transition-name="vi-popup-confirm"
     :is-show-mask="isShowMask"
-    :z-index="zIndex">
+    :z-index="zIndex"
+    :transitionDuration="transitionDuration"
+    @mask-click="hide">
     <div class="vi-confirm">
       <div class="vi-confirm-title">{{title}}</div>
       <div class="vi-confirm-text">{{text}}</div>
@@ -61,24 +63,19 @@ export default {
   },
   data() {
     return {
-      isVisible: false
+      transitionDuration: {
+        enter: 400,
+        leave: 400
+      }
     }
   },
-  mounted() {
-  },
   methods: {
-    show() {
-      this.isVisible = true
-    },
-    hide() {
-      this.isVisible = false
-    },
     cancel() {
       this.hide()
       this.$emit(EVENT_CANCEL)
     },
     confirm() {
-      // this.hide()
+      this.hide()
       this.$emit(EVENT_CONFIRM)
     }
   }
@@ -90,8 +87,6 @@ export default {
   width: 300px
   border-radius: 10px
   background: #fff
-  &.confirm-fade-enter-active
-    animation: confirm-fade-in 0.3s
   .vi-confirm-title
     padding: 20px 0
     line-height: 22px
@@ -118,14 +113,36 @@ export default {
     .vi-confirm-btn-confirm
       color: #f90
 
+.vi-popup-confirm-enter-active
+  animation-name: vi-popup-confirm-enter
+  animation-duration: 400ms
+  animation-direction: normal
+  animation-fill-mode: forwards
+  .vi-confirm
+    animation-name: vi-confirm-zoom
+    animation-duration: 400ms
+    animation-direction: normal
+    animation-fill-mode: forwards
 
-@keyframes confirm-fade-in
-    0%
-      opacity: 0
-    100%
-      opacity: 1
+.vi-popup-confirm-leave-active
+  animation-name: vi-popup-confirm-leave
+  animation-duration: 400ms
+  animation-direction: normal
+  animation-fill-mode: forwards
 
-@keyframes confirm-zoom
+@keyframes vi-popup-confirm-enter
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+@keyframes vi-popup-confirm-leave
+  0%
+    opacity: 1
+  100%
+    opacity: 0
+
+@keyframes vi-confirm-zoom
   0%
     transform: scale(0)
   50%
