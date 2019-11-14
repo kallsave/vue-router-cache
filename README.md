@@ -87,31 +87,31 @@ routerCache.remove({name: 'mainNumberList'})
 ```
 
 options/配置说明
-|arg name|type|description|default|ness
-|:--:|:--:|:----------|:--:|:--:
-|参数名称|参数类型|描述|默认值|必需
-|router|router|vue-router的实例||是
-|max|Number Int|缓存的最大数量,如果超过这个数量,会自动删除最后方的缓存|Infinity|否
-|isSingleMode|Boolean|是否是单例模式|true|否
-|isDebugger|Boolean|开始debugger模式,可以看到系统存在的页面缓存和使用中的页面缓存|false|否
-|directionKey|String|挂载在$route.params[directionKey]上的key名|'direction'|否
-|getHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否
-|setHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否
+|arg name|type|description|default|necessary|
+|:--:|:--:|:----------|:--:|:--:|
+|参数名称|参数类型|描述|默认值|必需|
+|router|router|vue-router的实例||是|
+|max|Number Int|缓存的最大数量,如果超过这个数量,会自动删除最后方的缓存|Infinity|否|
+|isSingleMode|Boolean|是否是单例模式|true|否|
+|isDebugger|Boolean|开始debugger模式,可以看到系统存在的页面缓存和使用中的页面缓存|false|否|
+|directionKey|String|挂载在$route.params[directionKey]上的key名|'direction'|否|
+|getHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否|
+|setHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否|
 
 
 methods Api description/方法说明
 -----------
-|method name|arg|description|can use in when isSingleMode is false
+|method name|arg|description|can use in when isSingleMode is false|
 |:--:|:--:|:----------|:--:|
-|方法名称|参数|描述|多例模式下是否可以使用
-|remove|location|删除参数页面的缓存|否
-|removeBackUntil|location|删除当前页面直到参数页面的缓存(不包括参数页面)|否
-|removeBackInclue|location|删除当前页面一直到参数页面的缓存(包括参数页面)|否
-|removeBackByIndex|number|删除从当前页面开始第n个页面的缓存|可以用但是没必要
-|removeExclude|location|删除除了参数页面以外的所有页面的缓存|否
-|removeAll||删除所有页面的缓存|是
-|getStore||查看系统中的页面缓存|是
-|has|location|查看系统中的页面缓存是否有参数页面|否
+|方法名称|参数|描述|多例模式下是否可以使用|
+|remove|location|删除参数页面的缓存|否|
+|removeBackUntil|location|删除当前页面直到参数页面的缓存(不包括参数页面)|否|
+|removeBackInclue|location|删除当前页面一直到参数页面的缓存(包括参数页面)|否|
+|removeBackByIndex|number|删除从当前页面开始第n个页面的缓存|可以用但是没必要|
+|removeExclude|location|删除除了参数页面以外的所有页面的缓存|否|
+|removeAll||删除所有页面的缓存|是|
+|getStore||查看系统中的页面缓存|是|
+|has|location|查看系统中的页面缓存是否有参数页面|否|
 
 single mode or multi mode/单例模式和多例模式对比
 -----------
