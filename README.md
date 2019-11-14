@@ -39,11 +39,41 @@ Vue.use(VueRouterCache, {
     window.sessionStorage.setItem('historyStack', str)
   }
 })
+```
 
 route direction/判断浏览器路由方向
 -----------
-
+```javascript
+// 判断浏览器路由方向对相应的方向做过渡动画
+watch: {
+    $route: {
+      handler(to, from) {
+        if (!isMobile) {
+          this.transitionName = ''
+          this.mode = ''
+          this.transitionDuration = {
+            enter: 0,
+            leave: 0
+          }
+        } else {
+          this.transitionDuration = TRANSITION_DURATION
+          if (to.params.direction === 'back') {
+            this.transitionName = 'move-left'
+            this.mode = ''
+          } else if (to.params.direction === 'forward') {
+            this.transitionName = 'move-right'
+            this.mode = ''
+          } else {
+            // replace
+            this.transitionName = ''
+            this.mode = ''
+          }
+        }
+      },
+    }
+  }
 ```
+
 routerCache api exmaples/routerCache下的api方法使用例子
 -----------
 ```javascript
@@ -87,6 +117,7 @@ routerCache.remove({name: 'mainNumberList'})
 ```
 
 options/配置说明
+-----------
 |arg name|type|description|default|necessary|
 |:--:|:--:|:----------|:--:|:--:|
 |参数名称|参数类型|描述|默认值|必需|
