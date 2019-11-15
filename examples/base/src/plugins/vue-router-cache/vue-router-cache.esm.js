@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.0.2
+ * vue-router-cache.js v0.0.3
  * (c) 2019-2019 kallsave
  * Released under the MIT License.
  */
