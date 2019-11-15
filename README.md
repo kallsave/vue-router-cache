@@ -17,7 +17,7 @@ vue-router-cache做了几件小事情
 Online Demo/在线案例
 ------------
 - [Base demo](https://kallsave.github.io/vue-router-cache/examples/base/dist/#/main/enter)
-- [Demo address](https://kallsave.github.io/vue-router-cache/examples/base)
+- [Demo address](https://github.com/kallsave/vue-router-cache/tree/master/examples/base)
 
 Installation
 ------------
