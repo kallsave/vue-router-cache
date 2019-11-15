@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.0.2
+ * vue-router-cache.js v0.0.3
  * (c) 2019-2019 kallsave
  * Released under the MIT License.
  */
@@ -708,7 +708,7 @@ var routerMiddle = function routerMiddle(Vue, config) {
     window.setTimeout(function () {
       to.params[directionKey] = direction;
       next();
-    }, 0);
+    }, 16);
   });
   defineReactive(router.history, 'current', router.history.current, function () {
     Vue.nextTick(function () {
@@ -753,7 +753,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.0.2'
+  version: '0.0.3'
 };
 
 export default VuerouterCache;

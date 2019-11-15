@@ -17,6 +17,28 @@ window.addEventListener('resize', () => {
   isMobile = checkIsMobile() || checkIsMobileSize()
 }, false)
 
+export function getUrlParams(currentUrl = window.location.href) {
+  let result = {}
+  if (currentUrl.indexOf('?') === -1) {
+    return result
+  }
+  let paramsUrl = currentUrl.replace(/.*\?/g, '')
+  if (paramsUrl.length === 0) {
+    return result
+  }
+  let arr = paramsUrl.match(/[^&]+?=[^&]*/g)
+  if (arr) {
+    for (let i = 0; i < arr.length; i++) {
+      let key = decodeURIComponent(arr[i].replace(/(.+?)=(.*)/, '$1'))
+      let value = decodeURIComponent(arr[i].replace(/(.+?)=(.*)/, '$2'))
+      result[key] = value
+    }
+  } else {
+    return result
+  }
+  return result
+}
+
 export function checkClass(o) {
   return Object.prototype.toString.call(o).slice(8, -1)
 }

@@ -77,7 +77,7 @@ const routerMiddle = (Vue, config) => {
     window.setTimeout(() => {
       to.params[directionKey] = direction
       next()
-    }, 0)
+    }, 16)
   })
 
   defineReactive(router.history, 'current', router.history.current, () => {

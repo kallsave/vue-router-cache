@@ -1,11 +1,16 @@
+import { showVConsole } from '@/common/helpers/vconsole.js'
 import './rem.js'
 import '@/common/less/index.less'
-import { isSingleMode } from '@/config.js'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueRouterCache from 'vue-router-cache'
 import ViUi from '@/plugins/vi-ui/index'
+import { isSingleMode } from '@/config.js'
+import { getUrlParams } from '@/common/helpers/utils.js'
+
+// ios的输入框失焦,webview无法回弹的hack
+import recoverWebviewMixin from '@/common/mixins/recover-webview.js'
 
 Vue.use(ViUi)
 
@@ -34,19 +39,32 @@ new Vue({
   router,
   components: { App },
   template: '<App/>',
+  mixins: [
+    recoverWebviewMixin
+  ],
   beforeMount() {
-    // this.createGlobalConfirmApi()
+    this.createGlobalConfirmApi()
+    this.showVConsole()
   },
   methods: {
+    showVConsole() {
+      const urlParams = getUrlParams()
+      if (urlParams.hasOwnProperty('vconsole')) {
+        showVConsole()
+      }
+    },
     createGlobalConfirmApi() {
-      // DEV: fixed create-api bug
-      this.$global.confirm = this.$createViConfirm({})
+      // DEV: vue-create-api $update
+      const defaultOptions = {}
+      this.$global.confirm = this.$createViConfirm(defaultOptions)
 
       const originShow = this.$global.confirm.show
 
-      this.$global.confirm.show = function (props) {
-        if (props) {
-          this.$updateProps(props)
+      this.$global.confirm.show = (options) => {
+        if (options) {
+          this.$createViConfirm({
+            ...options
+          })
         }
         originShow()
       }

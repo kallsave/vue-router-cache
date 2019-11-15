@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.0.2
+ * vue-router-cache.js v0.0.3
  * (c) 2019-2019 kallsave
  * Released under the MIT License.
  */
@@ -714,7 +714,7 @@
       window.setTimeout(function () {
         to.params[directionKey] = direction;
         next();
-      }, 0);
+      }, 16);
     });
     defineReactive(router.history, 'current', router.history.current, function () {
       Vue.nextTick(function () {
@@ -759,7 +759,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '0.0.2'
+    version: '0.0.3'
   };
 
   return VuerouterCache;

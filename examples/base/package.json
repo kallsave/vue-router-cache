@@ -23,6 +23,7 @@
   "dependencies": {
     "better-scroll": "^1.15.2",
     "store": "^2.0.12",
+    "vconsole": "^3.3.4",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.1.2"

@@ -88,17 +88,22 @@ export default {
   border-radius: 10px
   background: #fff
   .vi-confirm-title
-    padding: 20px 0
+    padding: 20px 10px
     line-height: 22px
     text-align: center
     font-size: 16px
     color: #666
+    word-wrap: break-word
+    word-break: break-all
   .vi-confirm-text
+    padding: 0 15px
     line-height: 22px
     text-align: center
     font-size: 14px
     color: #999
     margin-bottom: 20px
+    word-wrap: break-word
+    word-break: break-all
   .vi-confirm-btn-group
     display: flex
     align-items: center

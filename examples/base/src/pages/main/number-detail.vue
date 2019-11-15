@@ -76,28 +76,25 @@ export default {
     },
     back() {
       if (isSingleMode) {
-        if (!this.confirm) {
-          this.confirm = this.$createViConfirm({
-            title: '要手动删除上个页面缓存吗',
-            text: `执行this.$routerCache.remove('/main/number-list')`,
-            confirmText: '确定',
-            cancelText: '不需要',
-            onConfirm: () => {
-              this.$routerCache.remove('/main/number-list')
-              // or
-              // this.$routerCache.remove({name: 'mainNumberList'})
-              // or
-              // this.$routerCache.remove({
-              //   path: '/main/number-list'
-              // })
-              this.$router.back()
-            },
-            onCancel: () => {
-              this.$router.back()
-            }
-          })
-        }
-        this.confirm.show()
+        this.$global.confirm.show({
+          title: '要手动删除上个页面缓存吗',
+          text: `执行this.$routerCache.remove('/main/number-list')`,
+          confirmText: '确定',
+          cancelText: '不需要',
+          onConfirm: () => {
+            this.$routerCache.remove('/main/number-list')
+            // or
+            // this.$routerCache.remove({name: 'mainNumberList'})
+            // or
+            // this.$routerCache.remove({
+            //   path: '/main/number-list'
+            // })
+            this.$router.back()
+          },
+          onCancel: () => {
+            this.$router.back()
+          }
+        })
       }
     },
     go() {
