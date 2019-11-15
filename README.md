@@ -14,6 +14,11 @@ vue-router-cache做了几件小事情
 - 对累积的页面缓存可能导致的内存泄漏做了保护机制,提供max参数,当页面缓存达到max,会自动把最后方的页面缓存删除
 - 支持嵌套路由
 
+Online Demo/在线案例
+------------
+- [Base demo](https://kallsave.github.io/vue-router-cache/examples/base/dist/#/main/enter)
+- [Demo address](https://kallsave.github.io/vue-router-cache/examples/base)
+
 Installation
 ------------
 npm install vue-router-cache --save
@@ -41,37 +46,53 @@ Vue.use(VueRouterCache, {
 })
 ```
 
+```javascript
+<template>
+  <div :class="$style['app']">
+    <transition
+      :name="transitionName"
+      :mode="mode"
+      :duration="transitionDuration">
+      <router-cache>
+        <router-view class="router-view"></router-view>
+      </router-cache>
+    </transition>
+  </div>
+</template>
+```
+
 route direction/判断浏览器路由方向
 -----------
 ```javascript
+
 // 判断浏览器路由方向对相应的方向做过渡动画
 watch: {
-    $route: {
-      handler(to, from) {
-        if (!isMobile) {
+  $route: {
+    handler(to, from) {
+      if (!isMobile) {
+        this.transitionName = ''
+        this.mode = ''
+        this.transitionDuration = {
+          enter: 0,
+          leave: 0
+        }
+      } else {
+        this.transitionDuration = TRANSITION_DURATION
+        if (to.params.direction === 'back') {
+          this.transitionName = 'move-left'
+          this.mode = ''
+        } else if (to.params.direction === 'forward') {
+          this.transitionName = 'move-right'
+          this.mode = ''
+        } else {
+          // replace
           this.transitionName = ''
           this.mode = ''
-          this.transitionDuration = {
-            enter: 0,
-            leave: 0
-          }
-        } else {
-          this.transitionDuration = TRANSITION_DURATION
-          if (to.params.direction === 'back') {
-            this.transitionName = 'move-left'
-            this.mode = ''
-          } else if (to.params.direction === 'forward') {
-            this.transitionName = 'move-right'
-            this.mode = ''
-          } else {
-            // replace
-            this.transitionName = ''
-            this.mode = ''
-          }
         }
-      },
-    }
+      }
+    },
   }
+}
 ```
 
 routerCache api exmaples/routerCache下的api方法使用例子
@@ -164,10 +185,6 @@ devServer: {
   },
 
 ```
-
-Demos (案例)
-------------
-[base demo](https://kallsave.github.io/vue-router-cache/examples/base/dist/#/main/enter)
 
 More instruction (更多介绍)
 ------------

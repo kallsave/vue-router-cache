@@ -1,7 +1,6 @@
-build/
-demo/
-dist/
-docs/
-node_modules/
-examples/
-test/
+/build
+/node_modules
+/examples
+/test
+/scripts
+
