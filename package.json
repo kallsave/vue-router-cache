@@ -10,7 +10,7 @@
     "vue-router",
     "cache and manage vue-router-dom",
     "vue-router plugin",
-    "better keep-alive",
+    "vue keep-alive",
     "vue-router-cache",
     "history-direction"
   ],
@@ -46,9 +46,6 @@
   "directories": {
     "example": "examples",
     "test": "test"
-  },
-  "dependencies": {
-    "fs-extra": "^8.1.0"
   },
   "repository": {
     "type": "git",

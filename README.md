@@ -61,7 +61,7 @@ Vue.use(VueRouterCache, {
 </template>
 ```
 
-route direction/判断浏览器路由方向
+route direction/浏览器路由方向
 -----------
 ```javascript
 
@@ -95,10 +95,10 @@ watch: {
 }
 ```
 
-routerCache api exmaples/routerCache下的api方法使用例子
+remove cache API exmaples/清除页面缓存方法使用例子
 -----------
 ```javascript
-// routerCache api in vue
+// API in vue
 
 // 从详情页修改了数据需要回退到列表页时手动删除列表页的缓存让列表页刷新的例子
 
@@ -131,7 +131,7 @@ export default {
 ```
 
 ```javascript
-// routerCache api in js
+// API in js
 import { routerCache } from 'vue-router-cache'
 
 routerCache.remove({name: 'mainNumberList'})
@@ -151,7 +151,7 @@ options/配置说明
 |setHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否|
 
 
-methods Api description/方法说明
+API description/方法说明
 -----------
 |method name|arg|description|can use in when isSingleMode is false|
 |:--:|:--:|:----------|:--:|
