@@ -1,6 +1,6 @@
 {
   "name": "vue-router-cache",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "a cache and manage vue-router with single case or multiple cases mode plugin",
   "main": "dist/vue-router-cache.js",
   "umd:main": "dist/vue-router-cache.umd.js",
