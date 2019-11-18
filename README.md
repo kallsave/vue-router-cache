@@ -114,17 +114,17 @@ export default {
       // this.$routerCache.remove({
       //   path: '/main/number-list'
       // })
-      this.$roter.back()
+      this.$router.back()
     },
     // 用push的方式,但是浏览器会比使用back的方式多出额外的历史记录
     push() {
       // 直接使用push
-      this.$roter.push({name: 'mainNumberList'})
+      this.$router.push({name: 'mainNumberList'})
     },
     // 用replace的方式
     replace() {
       // 直接使用replace
-      this.$roter.replace({name: 'mainNumberList'})
+      this.$router.replace({name: 'mainNumberList'})
     }
   }
 }
@@ -174,17 +174,19 @@ single mode or multi mode/单例模式和多例模式对比
 
 This plugins in webpack hot reload/这个插件和webpack热更新
 -----------
-webpack热更新会分析改动代码来决定哪个模块热更新还是重刷,如果这个插件需要兼容webpack热更新还需要写额外的loader,这太复杂了~,所以关闭然后只使用webpack重刷好了
+在开发环境使用这个插件保存代码会出现白屏,这是因为webpack热更新会分析改动代码来决定哪个模块热更新还是重刷,
+这需要写webpack的相关loader,一个简单的做法是关闭webpack热更新只使用webpack重刷就正常使用啦
 ```javascript
 // in webpack.dev.conf.js
 
 devServer: {
-    ...
-    hot: false,
-    ...
-  },
+  ...
+  hot: false,
+  ...
+},
 
 ```
 
 More instruction (更多介绍)
 ------------
+[原理解析](https://juejin.im/post/5dccdb4a51882510ce752164)
