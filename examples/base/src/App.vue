@@ -62,9 +62,6 @@ export default {
 @easeOut: cubic-bezier(0.445, 0.05, 0.55, 0.95);
 @easeIn: cubic-bezier(0.07, 0.59, 0.26, 0.97);
 
-@easeOut: cubic-bezier(0.445, 0.05, 0.55, 0.95);
-@easeIn: cubic-bezier(0.07, 0.59, 0.26, 0.97);
-
 .app {
   position: relative;
   width: 3.75rem;

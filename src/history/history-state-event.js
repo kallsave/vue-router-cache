@@ -7,8 +7,6 @@ const historyStateEvent = new Events()
 window.addEventListener('hashchange', () => {
   if (historyStack.getByIndex(1) === window.location.href) {
     historyStateEvent.emit(BACK)
-  } else {
-    historyStateEvent.emit(FORWARD)
   }
 })
 

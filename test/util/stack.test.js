@@ -1,13 +1,13 @@
 import { Stack, MapStack } from '../../src/util/stack'
 
-describe('test Stack pop', () => {
+describe('test Stack unshift', () => {
   const stack = new Stack(4)
-  stack.pop(1, 2, 3, 1)
-  it('stack exec pop', () => {
+  stack.unshift(1, 2, 3, 1)
+  it('stack exec unshift', () => {
     expect(stack.getStore()).toEqual([1, 3, 2, 1])
   })
-  it('stack is full and exec pop', () => {
-    const removeList = stack.pop(4)
+  it('stack is full and exec unshift', () => {
+    const removeList = stack.unshift(4)
     expect(removeList).toEqual([1])
     expect(stack.getStore()).toEqual([4, 1, 3, 2])
   })
@@ -15,7 +15,7 @@ describe('test Stack pop', () => {
 
 describe('test Stack shift', () => {
   const stack = new Stack()
-  stack.pop(1)
+  stack.unshift(1)
   it('stack exec shift', () => {
     const removeItem = stack.shift()
     expect(removeItem).toBe(1)
@@ -30,7 +30,7 @@ describe('test Stack shift', () => {
 
 describe('test Stack remove', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3, 4)
+  stack.unshift(1, 2, 3, 4)
   it('stack exec remove', () => {
     const removeList = stack.remove(2, 4)
     expect(removeList).toEqual([2, 4])
@@ -45,7 +45,7 @@ describe('test Stack remove', () => {
 
 describe('test Stack removeByIndex', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3, 4, 5)
+  stack.unshift(1, 2, 3, 4, 5)
   it('stack exec removeByIndex', () => {
     const removeItem = stack.removeByIndex(2)
     expect(removeItem).toBe(3)
@@ -60,7 +60,7 @@ describe('test Stack removeByIndex', () => {
 
 describe('test Stack removeBackUntil', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3, 4, 5)
+  stack.unshift(1, 2, 3, 4, 5)
   it('stack exec removeBackUntil', () => {
     const removeList = stack.removeBackUntil(2)
     expect(removeList).toEqual([5, 4, 3])
@@ -75,7 +75,7 @@ describe('test Stack removeBackUntil', () => {
 
 describe('test Stack removeExclude', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3, 4, 5)
+  stack.unshift(1, 2, 3, 4, 5)
   it('stack exec removeExclude', () => {
     const removeList = stack.removeExclude(1, 5)
     expect(removeList).toEqual([4, 3, 2])
@@ -90,7 +90,7 @@ describe('test Stack removeExclude', () => {
 
 describe('test Stack removeBackByIndex', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3, 4, 5)
+  stack.unshift(1, 2, 3, 4, 5)
   it('stack exec removeBackByIndex', () => {
     const removeList = stack.removeBackByIndex(3)
     expect(removeList).toEqual([5, 4, 3])
@@ -105,7 +105,7 @@ describe('test Stack removeBackByIndex', () => {
 
 describe('test Stack removeBackInclue', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3, 4, 5)
+  stack.unshift(1, 2, 3, 4, 5)
   it('stack exec removeBackInclue', () => {
     const removeList = stack.removeBackInclue(3)
     expect(removeList).toEqual([5, 4, 3])
@@ -120,7 +120,7 @@ describe('test Stack removeBackInclue', () => {
 
 describe('test Stack removeAll', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3)
+  stack.unshift(1, 2, 3)
   it('stack exec removeAll', () => {
     const removeList = stack.removeAll()
     expect(removeList).toEqual([3, 2, 1])
@@ -130,7 +130,7 @@ describe('test Stack removeAll', () => {
 
 describe('test Stack replace', () => {
   const stack = new Stack()
-  stack.pop(1, 2, 3)
+  stack.unshift(1, 2, 3)
   it('stack exec replace', () => {
     const removeItem = stack.replace(4)
     expect(removeItem).toEqual(3)
@@ -138,10 +138,10 @@ describe('test Stack replace', () => {
   })
 })
 
-describe('test MapStack pop', () => {
-  it('mapStack exec pop', () => {
+describe('test MapStack unshift', () => {
+  it('mapStack exec unshift', () => {
     const mapStack = new MapStack()
-    const removeList = mapStack.pop(1, 2, 3, 1, 4)
+    const removeList = mapStack.unshift(1, 2, 3, 1, 4)
     expect(mapStack.getStore()).toEqual([4, 1, 3, 2])
   })
 })

@@ -30,10 +30,6 @@ historyStateEvent.on(BACK, () => {
   }
 })
 
-historyStateEvent.on(FORWARD, () => {
-  direction = FORWARD
-})
-
 const routerMiddle = (Vue, config) => {
   const router = config.router
   const directionKey = config.directionKey
@@ -74,6 +70,7 @@ const routerMiddle = (Vue, config) => {
 
   router.beforeEach((to, from, next) => {
     // let hashchange I/0 event trigger callback before next
+    // dev: use Promise instance of setTimeout
     window.setTimeout(() => {
       to.params[directionKey] = direction
       next()
@@ -84,7 +81,7 @@ const routerMiddle = (Vue, config) => {
     Vue.nextTick(() => {
       const href = window.location.href
       if (direction !== BACK && historyStack.getHeader() !== href) {
-        historyStack.pop(href)
+        historyStack.unshift(href)
         config.setHistoryStack(historyStack.getStore())
       }
       direction = FORWARD

@@ -49,7 +49,7 @@ export default {
         }
         if (this.$route.params[config.directionKey] !== BACK) {
           key = `${baseKey}_${globalMultiKeyMap[baseKey].getSize()}`
-          globalMultiKeyMap[baseKey].pop(key)
+          globalMultiKeyMap[baseKey].unshift(key)
         } else {
           key = globalMultiKeyMap[baseKey].getByIndex(0)
         }
@@ -68,7 +68,7 @@ export default {
           this.cache[key] = vnode
         }
       }
-      globalStack.pop(key)
+      globalStack.unshift(key)
       vnode.data.keepAlive = true
     }
     if (config.isDebugger) {
