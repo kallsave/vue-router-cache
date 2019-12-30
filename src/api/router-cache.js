@@ -17,6 +17,7 @@ const routerCache = {
       if (cache[removeItem]) {
         this._destroyGuard(cache, removeItem) && cache[removeItem].componentInstance.$destroy()
         cache[removeItem] = null
+        delete cache[removeItem]
       }
     }
   },
