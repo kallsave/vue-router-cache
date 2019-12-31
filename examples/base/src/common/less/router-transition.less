@@ -1,0 +1,68 @@
+@easeOut: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+@easeIn: cubic-bezier(0.07, 0.59, 0.26, 0.97);
+
+.router-view {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  &.move-right-enter {
+    position: fixed;
+    z-index: 20;
+    height: 100%;
+    left: 100%;
+  }
+  &.move-right-enter-active {
+    position: fixed;
+    z-index: 20;
+    height: 100%;
+    transition: left 350ms @easeIn;
+  }
+  &.move-right-enter-to {
+    position: fixed;
+    z-index: 20;
+    height: 100%;
+  }
+  &.move-right-leave {
+    z-index: 10;
+  }
+  &.move-right-leave-active {
+    z-index: 10;
+    transition: left 330ms @easeOut;
+  }
+  &.move-right-leave-to {
+    z-index: 10;
+    left: -30%;
+  }
+  &.move-left-enter {
+    z-index: 10;
+    left: -30%;
+  }
+  &.move-left-enter-active {
+    z-index: 10;
+    transition: left 350ms @easeIn;
+  }
+  &.move-left-enter-to {
+    z-index: 10;
+  }
+  &.move-left-leave {
+    position: fixed;
+    z-index: 20;
+    height: 100%;
+    left: 0%;
+  }
+  &.move-left-leave-active {
+    position: fixed;
+    z-index: 20;
+    height: 100%;
+    left: 100%;
+    transition: left 330ms @easeOut;
+  }
+  &.move-left-leave-to {
+    position: fixed;
+    z-index: 20;
+    height: 100%;
+    left: 100%;
+  }
+}

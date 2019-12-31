@@ -47,7 +47,6 @@ export default {
       text: '',
       numberDetail: {},
       isSingleMode: isSingleMode,
-      scrollEvents: ['scroll'],
     }
   },
   computed: {
@@ -55,14 +54,17 @@ export default {
       return this.$route.params.numberId
     }
   },
+  mounted() {
+    console.log(8888)
+  },
   methods: {
     pullingDownHandler() {
       this.getNumberDetail()
     },
     getNumberDetail() {
       getNumberDetail(this.numberId).then((res) => {
-        if (res.code === 1) {
-          this.numberDetail = res.data
+        if (res.data && res.data.code === 1) {
+          this.numberDetail = res.data.data
           this.$refs.scroll.deblocking()
         }
       })
@@ -98,7 +100,7 @@ export default {
       }
     },
     go() {
-      let number = this.text | 0
+      const number = this.text | 0
       this.$router.go(number)
     },
     forward() {

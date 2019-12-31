@@ -2,11 +2,12 @@ import tpLocalStorage from '@/store/cache/local-storage/index.js'
 
 class ResModel {
   constructor(data, message) {
-    if (data) {
-      this.data = data
+    this.data = {}
+    if (data !== undefined) {
+      this.data.data = data
     }
     if (message) {
-      this.message = message
+      this.data.message = message
     }
   }
 }
@@ -14,7 +15,7 @@ class ResModel {
 class SuccessModel extends ResModel {
   constructor(data, message) {
     super(data, message)
-    this.code = 1
+    this.data.code = 1
     if (!message) {
       this.message = 'success'
     }
@@ -24,7 +25,7 @@ class SuccessModel extends ResModel {
 class ErrorModel extends ResModel {
   constructor(data, message) {
     super(data, message)
-    this.code = 0
+    this.data.code = 0
     if (!message) {
       this.message = 'error'
     }
@@ -506,21 +507,33 @@ if (!tpLocalStorage.get('list')) {
   tpLocalStorage.set('list', list)
 }
 
-export function getNumberList() {
+function createApi() {
   return new Promise((resolve) => {
     window.setTimeout(() => {
+      resolve()
+    }, 20)
+  })
+}
+
+function createId(list) {
+  return list.length + ''
+}
+
+export function getNumberList() {
+  return new Promise((resolve) => {
+    createApi().then(() => {
       const data = tpLocalStorage.get('list')
       resolve(new SuccessModel(data))
-    }, 20)
+    })
   })
 }
 
 export function getNumberDetail(id) {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
-        let item = list[i]
+        const item = list[i]
         /* eslint eqeqeq: 'off' */
         if (item.id == id) {
           const data = item
@@ -529,16 +542,16 @@ export function getNumberDetail(id) {
         }
       }
       resolve(new ErrorModel())
-    }, 20)
+    })
   })
 }
 
 export function updateNumberDetail(id, text) {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
-        let item = list[i]
+        const item = list[i]
         /* eslint eqeqeq: 'off' */
         if (item.id == id) {
           item.text = text
@@ -549,16 +562,16 @@ export function updateNumberDetail(id, text) {
         }
       }
       resolve(new ErrorModel())
-    }, 20)
+    })
   })
 }
 
 export function getLetterList(id) {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
-        let item = list[i]
+        const item = list[i]
         /* eslint eqeqeq: 'off' */
         if (item.id == id) {
           const data = item.children
@@ -567,21 +580,21 @@ export function getLetterList(id) {
         }
       }
       resolve(new ErrorModel())
-    }, 20)
+    })
   })
 }
 
 export function getLetterDetail(numberId, letterId) {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
-        let item = list[i]
+        const item = list[i]
         /* eslint eqeqeq: 'off' */
         if (item.id == numberId) {
           const letterList = item.children
           for (let i = 0; i < letterList.length; i++) {
-            let letterItem = letterList[i]
+            const letterItem = letterList[i]
             /* eslint eqeqeq: 'off' */
             if (letterItem.id == letterId) {
               const data = letterItem
@@ -592,13 +605,13 @@ export function getLetterDetail(numberId, letterId) {
         }
       }
       resolve(new ErrorModel())
-    }, 20)
+    })
   })
 }
 
 export function updateLetterDetail(numberId, letterId, text) {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
         let item = list[i]
@@ -619,13 +632,13 @@ export function updateLetterDetail(numberId, letterId, text) {
         }
       }
       resolve(new ErrorModel())
-    }, 20)
+    })
   })
 }
 
 export function deleteLetterDetail(numberId, letterId) {
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
         let item = list[i]
@@ -653,6 +666,6 @@ export function deleteLetterDetail(numberId, letterId) {
         }
       }
       resolve(new ErrorModel())
-    }, 20)
+    })
   })
 }

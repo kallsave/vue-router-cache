@@ -4,8 +4,6 @@ import config from '../config/index'
 
 const historyStack = new Stack()
 
-export default historyStack
-
 defineReactive(config, 'getHistoryStack', config.max, (newVal) => {
   const list = newVal()
   if (!list) {
@@ -17,3 +15,5 @@ defineReactive(config, 'getHistoryStack', config.max, (newVal) => {
     historyStack.unshift(item)
   }
 })
+
+export default historyStack

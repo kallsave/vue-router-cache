@@ -14,7 +14,7 @@ vue-router-cache做了几件小事情
 - 对累积的页面缓存可能导致的内存泄漏做了保护机制,提供max参数,当页面缓存达到max,会自动把最后方的页面缓存删除
 - 支持嵌套路由
 
-Online Demo/在线案例
+在线案例
 ------------
 - [Base demo](https://kallsave.github.io/vue-router-cache/examples/base/dist/#/main/enter)
 - [Demo address](https://github.com/kallsave/vue-router-cache/tree/master/examples/base)
@@ -23,7 +23,7 @@ Installation
 ------------
 npm install vue-router-cache --save
 
-Options for init/初始化的配置
+初始化的配置
 -----------
 ```javascript
 import router from './router'
@@ -61,7 +61,7 @@ Vue.use(VueRouterCache, {
 </template>
 ```
 
-route direction/浏览器路由方向
+浏览器路由方向
 -----------
 ```javascript
 
@@ -95,7 +95,7 @@ watch: {
 }
 ```
 
-remove cache API exmaples/清除页面缓存方法使用例子
+清除页面缓存方法使用例子
 -----------
 ```javascript
 // API in vue
@@ -137,7 +137,7 @@ import { routerCache } from 'vue-router-cache'
 routerCache.remove({name: 'mainNumberList'})
 ```
 
-options/配置说明
+配置说明
 -----------
 |arg name|type|description|default|necessary|
 |:--:|:--:|:----------|:--:|:--:|
@@ -151,7 +151,7 @@ options/配置说明
 |setHistoryStack|Function|判断浏览器路由方向时,如果需要刷新后仍能有效判断,用于做本地储存|noop|否|
 
 
-API description/方法说明
+方法说明
 -----------
 |method name|arg|description|can use in when isSingleMode is false|
 |:--:|:--:|:----------|:--:|
@@ -165,7 +165,7 @@ API description/方法说明
 |getStore||查看系统中的页面缓存|是|
 |has|location|查看系统中的页面缓存是否有参数页面|否|
 
-single mode or multi mode/单例模式和多例模式对比
+单例模式和多例模式对比
 -----------
 - 单例模式是指系统中一个路由对应的组件(缓存实例)只存在一个,比如A=>B=>C=>A,系统中只会存在3个缓存实例,所以路由和缓存实例(key)是一一对应的。
 - 多例模式是指系统中一个路由对应的组件(缓存实例)可以存在多个,比如A=>B=>C=>A,系统中会存在4个缓存实例,所以路由和缓存实例(key)是一对多的关系。
@@ -186,7 +186,6 @@ devServer: {
 },
 
 ```
-
-More instruction (更多介绍)
+更多介绍
 ------------
 [原理解析](https://juejin.im/post/5dccdb4a51882510ce752164)

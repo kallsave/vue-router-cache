@@ -18,23 +18,20 @@ window.addEventListener('resize', () => {
 }, false)
 
 export function getUrlParams(currentUrl = window.location.href) {
-  let result = {}
+  const result = {}
   if (currentUrl.indexOf('?') === -1) {
     return result
   }
-  let paramsUrl = currentUrl.replace(/.*\?/g, '')
-  if (paramsUrl.length === 0) {
-    return result
-  }
-  let arr = paramsUrl.match(/[^&]+?=[^&]*/g)
+  const paramsUrl = currentUrl.replace(/.*\?/g, '')
+  const arr = paramsUrl.match(/[^&]+?=[^&]*/g)
   if (arr) {
     for (let i = 0; i < arr.length; i++) {
-      let key = decodeURIComponent(arr[i].replace(/(.+?)=(.*)/, '$1'))
-      let value = decodeURIComponent(arr[i].replace(/(.+?)=(.*)/, '$2'))
+      const reg = new RegExp(`(.+?)=(.*)`)
+      reg.exec(arr[i])
+      const key = decodeURIComponent(RegExp.$1)
+      const value = decodeURIComponent(RegExp.$2)
       result[key] = value
     }
-  } else {
-    return result
   }
   return result
 }
@@ -94,4 +91,11 @@ export function multiDeepClone(target, ...rest) {
     deepAssign(target, source)
   }
   return target
+}
+
+export function camelize(str) {
+  str = String(str)
+  return str.replace(/-(\w)/g, function (m, c) {
+    return c ? c.toUpperCase() : ''
+  })
 }

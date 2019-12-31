@@ -46,8 +46,8 @@ export default {
     },
     getLetterList() {
       getLetterList(this.numberId).then((res) => {
-        if (res.code === 1) {
-          this.letterList = res.data
+        if (res.data && res.data.code === 1) {
+          this.letterList = res.data.data
         }
       })
     },

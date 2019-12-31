@@ -60,8 +60,8 @@ export default {
     },
     getLetterDetail() {
       getLetterDetail(this.numberId, this.letterId).then((res) => {
-        if (res.code === 1) {
-          this.letterDetail = res.data
+        if (res.data && res.data.code === 1) {
+          this.letterDetail = res.data.data
           this.$refs.scroll.deblocking()
         }
       })

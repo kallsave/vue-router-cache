@@ -1,0 +1,83 @@
+// 给弹窗用的过渡动画
+
+@keyframes popup-enter {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes popup-leave {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes popup-bounce-content-enter {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes popup-bounce-content-leave {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes popup-shrink-content-enter {
+  0% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.popup-enter-active {
+  animation-name: popup-enter;
+  animation-duration: 400ms;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+  .popup-bounce-content {
+    animation-name: popup-bounce-content-enter;
+    animation-duration: 400ms;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+  }
+  .popup-shrink-content {
+    animation-name: popup-shrink-content-enter;
+    animation-duration: 400ms;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+  }
+}
+
+.popup-leave-active {
+  animation-name: popup-leave;
+  animation-duration: 400ms;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+  .popup-bounce-content {
+    animation-name: popup-bounce-content-leave;
+    animation-duration: 400ms;
+    animation-direction: normal;
+    animation-fill-mode: forwards;
+  }
+}

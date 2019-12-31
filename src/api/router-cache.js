@@ -1,6 +1,14 @@
 import { globalCache, globalStack } from '../store/index'
 import config from '../config/index'
 
+function getVnodeKey(vnode) {
+  const componentOptions = vnode.componentOptions
+  const key = vnode.key
+    ? vnode.key
+    : componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
+  return key
+}
+
 const routerCache = {
   resolveKeyFromRoute(route) {
     return route.name ? route.name : route.path
@@ -21,13 +29,11 @@ const routerCache = {
       }
     }
   },
+  destroyGuard(removeVnode, cache) {
+    const removeVnodeKey = getVnodeKey(removeVnode)
+  },
   _destroyGuard(cache, removeKey) {
     const removeVnode = cache[removeKey]
-    const getVnodeKey = vnode => {
-      const componentOptions = vnode.componentOptions
-      const key = vnode.key == null ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '') : vnode.key
-      return key
-    }
     const removeVnodeKey = getVnodeKey(removeVnode)
     for (const key in cache) {
       if (getVnodeKey(cache[key]) === removeVnodeKey && key !== removeKey) {

@@ -24,6 +24,15 @@ function getFirstComponentChild(children) {
   }
 }
 
+function getParent(vm) {
+  if (vm.$parent && vm.$parent !== vm.$root) {
+    const parent = vm.$parent
+    if (vm.$parent._vnode && vm.$parent._vnode.componentOptions) {
+    }
+    getParent(parent)
+  }
+}
+
 const COMPONENT_NAME = 'router-cache'
 
 export default {

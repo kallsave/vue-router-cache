@@ -22,16 +22,16 @@
 </template>
 
 <script>
-import VuerouterCache from 'vue-router-cache'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VueRouterCache from 'vue-router-cache'
 
 export default {
   data() {
     return {
       VueVersion: Vue.version,
       VueRouterVersion: VueRouter.version,
-      version: VuerouterCache.version,
+      version: VueRouterCache.version,
     }
   },
   methods: {

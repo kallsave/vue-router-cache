@@ -1,3 +1,8 @@
+import {
+  hasData,
+  getData
+} from '@/common/helpers/dom.js'
+
 export default {
   mounted() {
     this.addEventListenerFocus()
@@ -5,27 +10,27 @@ export default {
   },
   methods: {
     addEventListenerFocus() {
-      this.$el.addEventListener('focus', this.cachedTop, true)
+      this.$el.addEventListener('focus', this.cacheScrollTop, true)
     },
     addEventListenerBlur() {
-      this.$el.addEventListener('blur', this.recoverTop, true)
+      this.$el.addEventListener('blur', this.recoverScrollTop, true)
     },
     removeEventListenerFocus() {
-      this.$el.removeEventListener('focus', this.cachedTop, true)
+      this.$el.removeEventListener('focus', this.cacheScrollTop, true)
     },
     removeEventListenerBlur() {
-      this.$el.removeEventListener('blur', this.recoverTop, true)
+      this.$el.removeEventListener('blur', this.recoverScrollTop, true)
     },
-    cachedTop() {
-      let top = document.documentElement.scrollTop || document.body.scrollTop
-      this.top = top
+    cacheScrollTop() {
+      this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
     },
-    recoverTop(event) {
+    recoverScrollTop(event) {
+      const target = event.target
       const tagNameList = ['INPUT', 'TEXTAREA']
-      if (tagNameList.indexOf(event.target.tagName) !== -1) {
+      const isNoRollback = hasData(target, 'no-rollback')
+      if (tagNameList.indexOf(target.tagName) !== -1 && !isNoRollback) {
         window.scrollTo({
-          top: this.top,
-          behavior: 'smooth'
+          top: this.scrollTop,
         })
       }
     },

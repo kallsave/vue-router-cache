@@ -1,9 +1,12 @@
 import VConsole from 'vconsole'
-const env = process.env.NODE_ENV
 
-window.vConsole = new VConsole()
+const platform = window.navigator.platform
 
-let vConsoleFirst = false
+let vConsole
+
+if (!/^(Win|Mac)/i.test(platform)) {
+  vConsole = new VConsole()
+}
 
 function observeProperty(obj, key, fn) {
   var val = obj[key]
@@ -25,22 +28,18 @@ function observeProperty(obj, key, fn) {
   })
 }
 
-if (window.vConsole) {
-  observeProperty(window.vConsole, 'isInited', function () {
-    if (vConsoleFirst) {
-      return
-    }
-    vConsoleFirst = true
-    window.vConsole.$dom.style.display = 'none'
+if (vConsole) {
+  observeProperty(vConsole, 'isInited', function () {
+    vConsole.$dom.style.display = 'none'
   })
 }
 
 export function showVConsole() {
-  window.setTimeout(() => {
-    if (window.vConsole) {
-      window.vConsole.$dom.style.display = 'block'
-    } else {
-      console.log('%cdevelopment close vconsole', 'color:orange')
-    }
-  }, 500)
+  if (vConsole) {
+    window.setTimeout(() => {
+      vConsole.$dom.style.display = 'block'
+    }, 1000)
+  } else {
+    console.log(`%c${platform} platfrom close vconsole`, 'color:orange')
+  }
 }

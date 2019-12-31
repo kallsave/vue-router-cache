@@ -40,13 +40,18 @@ export default {
     },
     getNumberList() {
       getNumberList().then((res) => {
-        if (res.code === 1) {
-          this.numberList = res.data
+        if (res.data && res.data.code === 1) {
+          this.numberList = res.data.data
         }
       })
     },
     clickHandler(item) {
-      this.$router.push(`/main/number-detail/${item.id}`)
+      this.$router.push({
+        name: 'mainNumberDetail',
+        params: {
+          numberId: item.id
+        }
+      })
     },
   },
 }

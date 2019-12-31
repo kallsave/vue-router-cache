@@ -17,7 +17,6 @@
   "scripts": {
     "dev": "cross-env TARGET=esm EXAMPLE=base node scripts/dev.js",
     "dev:base": "cross-env TARGET=esm EXAMPLE=base node scripts/dev.js",
-    "dev:action": "cross-env TARGET=esm EXAMPLE=action node scripts/build.js",
     "build": "cross-env node scripts/build.js",
     "test": "jest"
   },
@@ -26,7 +25,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
-    "cross-env": "^6.0.3",
+    "cross-env": "^5.2.1",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^10.0.0",
