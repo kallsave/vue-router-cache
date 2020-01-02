@@ -4,8 +4,6 @@ import Component from './components/router-cache'
 import routerMiddle from './router-middle/index'
 import { checkInt } from './util/lang'
 
-let isInstalled = false
-
 function install(Vue, options = {}) {
   if (!options.router) {
     console.error('parameter %crouter', 'color: orange', 'is required')
@@ -15,10 +13,10 @@ function install(Vue, options = {}) {
     console.error('parameter %cmax', 'color: orange', 'must be an integer')
     return
   }
-  if (isInstalled) {
+  if (install.installed) {
     return
   }
-  isInstalled = true
+  install.installed = true
   Object.assign(config, options)
   Vue.prototype.$routerCache = routerCache
   Vue.component(Component.name, Component)
@@ -28,7 +26,7 @@ function install(Vue, options = {}) {
 const VuerouterCache = {
   install,
   routerCache,
-  version: '0.1.1'
+  version: '0.1.2'
 }
 
 export default VuerouterCache

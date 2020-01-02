@@ -1,6 +1,6 @@
 /*!
- * vue-router-cache.js v0.1.1
- * (c) 2019-2019 kallsave
+ * vue-router-cache.js v0.1.2
+ * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
 var noop = function noop() {};
@@ -354,12 +354,6 @@ defineReactive(config, 'max', config.max, function (newVal) {
   globalStack.updateSize(newVal);
 });
 
-function getVnodeKey(vnode) {
-  var componentOptions = vnode.componentOptions;
-  var key = vnode.key ? vnode.key : componentOptions.Ctor.cid + (componentOptions.tag ? "::".concat(componentOptions.tag) : '');
-  return key;
-}
-
 var routerCache = {
   resolveKeyFromRoute: function resolveKeyFromRoute(route) {
     return route.name ? route.name : route.path;
@@ -375,35 +369,11 @@ var routerCache = {
       var cache = globalCacheItem.cache;
 
       if (cache[removeItem]) {
-        this.destroyGuard(cache[removeItem], cache) && cache[removeItem].componentInstance.$destroy();
+        cache[removeItem].componentInstance.$destroy();
         cache[removeItem] = null;
         delete cache[removeItem];
       }
     }
-  },
-  destroyGuard: function destroyGuard(removeVnode, cache) {
-    var removeVnodeKey = getVnodeKey(removeVnode);
-    console.log(removeVnodeKey);
-    console.log(cache);
-  },
-  _destroyGuard: function _destroyGuard(cache, removeKey) {
-    console.log(cache);
-    var removeVnode = cache[removeKey];
-    var removeVnodeKey = getVnodeKey(removeVnode);
-
-    for (var key in cache) {
-      console.log('-----------');
-      console.log(getVnodeKey(cache[key]), removeVnodeKey);
-      console.log(key, removeKey);
-
-      if (getVnodeKey(cache[key]) === removeVnodeKey && key !== removeKey) {
-        // console.log('不删除')
-        // console.log(console.log(removeVnode))
-        return false;
-      }
-    }
-
-    return true;
   },
   removeGlobalCacheFromList: function removeGlobalCacheFromList(removeList) {
     for (var i = 0; i < removeList.length; i++) {
@@ -599,14 +569,35 @@ var Component = {
   render: function render(h) {
     var slot = this.$slots["default"];
     var vnode = getFirstComponentChild(slot);
+    var parent = this.$parent;
+    var route = parent.$route;
+    var depth = 0;
 
-    if (vnode) {
+    while (parent && parent._routerRoot !== parent) {
+      var vnodeData = parent.$vnode && parent.$vnode.data;
+
+      if (vnodeData) {
+        if (vnodeData.routerView) {
+          depth++;
+        }
+      }
+
+      parent = parent.$parent;
+    }
+
+    var matched = route.matched[depth];
+
+    if (matched) {
+      var components = matched.components;
+    }
+
+    if (vnode && matched) {
       var key;
 
       if (config.isSingleMode) {
-        key = routerCache.resolveKeyFromRoute(this.$route);
+        key = routerCache.resolveKeyFromRoute(matched);
       } else {
-        var baseKey = routerCache.resolveKeyFromRoute(this.$route);
+        var baseKey = routerCache.resolveKeyFromRoute(matched);
 
         if (!globalMultiKeyMap[baseKey]) {
           globalMultiKeyMap[baseKey] = new MapStack();
@@ -646,12 +637,9 @@ var Component = {
       console.log("all cache key: %c".concat(JSON.stringify(globalStack.getStore())), 'color: orange');
     }
 
-    console.log(globalCache);
     return vnode || slot && slot[0];
   },
   beforeDestroy: function beforeDestroy() {
-    console.log('beforeDestroy');
-
     for (var key in this.cache) {
       routerCache._remove(key);
     }
@@ -678,7 +666,6 @@ historyStateEvent.on(BACK, function () {
 
   if (config.isSingleMode) {
     var key = routerCache.resolveKeyFromRoute(route);
-    console.log('*******************');
 
     routerCache._remove(key);
   } else {
@@ -755,8 +742,6 @@ var routerMiddle = function routerMiddle(Vue, config) {
   });
 };
 
-var isInstalled = false;
-
 function install(Vue) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -770,11 +755,11 @@ function install(Vue) {
     return;
   }
 
-  if (isInstalled) {
+  if (install.installed) {
     return;
   }
 
-  isInstalled = true;
+  install.installed = true;
   Object.assign(config, options);
   Vue.prototype.$routerCache = routerCache;
   Vue.component(Component.name, Component);
@@ -784,7 +769,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.1.1'
+  version: '0.1.2'
 };
 
 export default VuerouterCache;

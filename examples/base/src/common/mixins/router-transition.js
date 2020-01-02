@@ -8,7 +8,6 @@ const TRANSITION_DURATION = {
 }
 
 export default {
-  name: 'App',
   data() {
     return {
       transitionName: '',

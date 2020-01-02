@@ -1,6 +1,6 @@
 /*!
- * vue-router-cache.js v0.1.1
- * (c) 2019-2019 kallsave
+ * vue-router-cache.js v0.1.2
+ * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -377,6 +377,7 @@
         if (cache[removeItem]) {
           cache[removeItem].componentInstance.$destroy();
           cache[removeItem] = null;
+          delete cache[removeItem];
         }
       }
     },
@@ -574,14 +575,35 @@
     render: function render(h) {
       var slot = this.$slots["default"];
       var vnode = getFirstComponentChild(slot);
+      var parent = this.$parent;
+      var route = parent.$route;
+      var depth = 0;
 
-      if (vnode) {
+      while (parent && parent._routerRoot !== parent) {
+        var vnodeData = parent.$vnode && parent.$vnode.data;
+
+        if (vnodeData) {
+          if (vnodeData.routerView) {
+            depth++;
+          }
+        }
+
+        parent = parent.$parent;
+      }
+
+      var matched = route.matched[depth];
+
+      if (matched) {
+        var components = matched.components;
+      }
+
+      if (vnode && matched) {
         var key;
 
         if (config.isSingleMode) {
-          key = routerCache.resolveKeyFromRoute(this.$route);
+          key = routerCache.resolveKeyFromRoute(matched);
         } else {
-          var baseKey = routerCache.resolveKeyFromRoute(this.$route);
+          var baseKey = routerCache.resolveKeyFromRoute(matched);
 
           if (!globalMultiKeyMap[baseKey]) {
             globalMultiKeyMap[baseKey] = new MapStack();
@@ -726,8 +748,6 @@
     });
   };
 
-  var isInstalled = false;
-
   function install(Vue) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -741,11 +761,11 @@
       return;
     }
 
-    if (isInstalled) {
+    if (install.installed) {
       return;
     }
 
-    isInstalled = true;
+    install.installed = true;
     Object.assign(config, options);
     Vue.prototype.$routerCache = routerCache;
     Vue.component(Component.name, Component);
@@ -755,7 +775,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '0.1.1'
+    version: '0.1.2'
   };
 
   return VuerouterCache;

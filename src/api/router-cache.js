@@ -23,24 +23,11 @@ const routerCache = {
       const globalCacheItem = globalCache[i]
       const cache = globalCacheItem.cache
       if (cache[removeItem]) {
-        this._destroyGuard(cache, removeItem) && cache[removeItem].componentInstance.$destroy()
+        cache[removeItem].componentInstance.$destroy()
         cache[removeItem] = null
         delete cache[removeItem]
       }
     }
-  },
-  destroyGuard(removeVnode, cache) {
-    const removeVnodeKey = getVnodeKey(removeVnode)
-  },
-  _destroyGuard(cache, removeKey) {
-    const removeVnode = cache[removeKey]
-    const removeVnodeKey = getVnodeKey(removeVnode)
-    for (const key in cache) {
-      if (getVnodeKey(cache[key]) === removeVnodeKey && key !== removeKey) {
-        return false
-      }
-    }
-    return true
   },
   removeGlobalCacheFromList(removeList) {
     for (let i = 0; i < removeList.length; i++) {

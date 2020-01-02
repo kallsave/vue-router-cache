@@ -24,15 +24,6 @@ function getFirstComponentChild(children) {
   }
 }
 
-function getParent(vm) {
-  if (vm.$parent && vm.$parent !== vm.$root) {
-    const parent = vm.$parent
-    if (vm.$parent._vnode && vm.$parent._vnode.componentOptions) {
-    }
-    getParent(parent)
-  }
-}
-
 const COMPONENT_NAME = 'router-cache'
 
 export default {
@@ -47,12 +38,29 @@ export default {
   render(h) {
     const slot = this.$slots.default
     const vnode = getFirstComponentChild(slot)
-    if (vnode) {
+
+    let parent = this.$parent
+    const route = parent.$route
+    let depth = 0
+    while (parent && parent._routerRoot !== parent) {
+      const vnodeData = parent.$vnode && parent.$vnode.data
+      if (vnodeData) {
+        if (vnodeData.routerView) {
+          depth++
+        }
+      }
+      parent = parent.$parent
+    }
+    const matched = route.matched[depth]
+    if (matched) {
+      const components = matched.components
+    }
+    if (vnode && matched) {
       let key
       if (config.isSingleMode) {
-        key = routerCache.resolveKeyFromRoute(this.$route)
+        key = routerCache.resolveKeyFromRoute(matched)
       } else {
-        const baseKey = routerCache.resolveKeyFromRoute(this.$route)
+        const baseKey = routerCache.resolveKeyFromRoute(matched)
         if (!globalMultiKeyMap[baseKey]) {
           globalMultiKeyMap[baseKey] = new MapStack()
         }
