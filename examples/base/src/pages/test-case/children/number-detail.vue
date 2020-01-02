@@ -54,9 +54,6 @@ export default {
       return this.$route.params.numberId
     }
   },
-  mounted() {
-    console.log(8888)
-  },
   methods: {
     pullingDownHandler() {
       this.getNumberDetail()
@@ -80,16 +77,16 @@ export default {
       if (isSingleMode) {
         this.$global.confirm.show({
           title: '要手动删除上个页面缓存吗',
-          text: `执行this.$routerCache.remove('/main/number-list')`,
+          text: `执行this.$routerCache.remove('/testCase/number-list')`,
           confirmText: '确定',
           cancelText: '不需要',
           onConfirm: () => {
-            this.$routerCache.remove('/main/number-list')
+            this.$routerCache.remove('/testCase/number-list')
             // or
-            // this.$routerCache.remove({name: 'mainNumberList'})
+            // this.$routerCache.remove({name: 'testCaseNumberList'})
             // or
             // this.$routerCache.remove({
-            //   path: '/main/number-list'
+            //   path: '/testCase/number-list'
             // })
             this.$router.back()
           },
@@ -108,7 +105,7 @@ export default {
     },
     pageTurnLetterList() {
       this.$router.push({
-        name: 'mainLetterList',
+        name: 'testCaseLetterList',
         params: {
           numberId: this.numberId
         }
@@ -116,12 +113,12 @@ export default {
     },
     pageTurnNumberList() {
       this.$router.push({
-        name: 'mainNumberList',
+        name: 'testCaseNumberList',
       })
     },
     replaceNumberList() {
       this.$router.replace({
-        name: 'mainNumberList'
+        name: 'testCaseNumberList'
       })
     }
   },

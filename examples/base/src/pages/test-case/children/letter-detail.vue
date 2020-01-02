@@ -76,7 +76,7 @@ export default {
     deleteLetterDetail() {
       deleteLetterDetail(this.numberId, this.letterId).then((res) => {
         if (res.code === 1) {
-          this.$routerCache.removeBackUntil({name: 'mainEnter'})
+          this.$routerCache.removeBackUntil({name: 'testCaseEnter'})
           this.$router.back()
         }
       })
@@ -85,12 +85,12 @@ export default {
       this.$router.back()
     },
     removeCacheBack() {
-      this.$routerCache.remove({name: 'mainLetterList'})
+      this.$routerCache.remove({name: 'testCaseLetterList'})
       this.$router.back()
     },
     pageTurnLetterList() {
       this.$router.push({
-        name: 'mainLetterList',
+        name: 'testCaseLetterList',
         params: {
           id: this.id
         }

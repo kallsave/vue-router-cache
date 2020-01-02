@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.1.1
+ * vue-router-cache.js v0.1.2
  * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
@@ -376,6 +376,8 @@ var routerCache = {
     }
   },
   removeGlobalCacheFromList: function removeGlobalCacheFromList(removeList) {
+    console.log('removeList', removeList);
+
     for (var i = 0; i < removeList.length; i++) {
       var removeItem = removeList[i];
       this.removeGlobalCacheFromItem(removeItem);
@@ -561,17 +563,18 @@ var Component = {
   name: COMPONENT_NAME,
   "abstract": true,
   created: function created() {
+    console.log('create---------------');
     this.cache = Object.create(null);
     globalCache.push({
       cache: this.cache
     });
   },
-  render: function render(h) {
+  render: function render() {
     var slot = this.$slots["default"];
     var vnode = getFirstComponentChild(slot);
     var parent = this.$parent;
-    var route = parent.$route;
     var depth = 0;
+    var inactive = false;
 
     while (parent && parent._routerRoot !== parent) {
       var vnodeData = parent.$vnode && parent.$vnode.data;
@@ -580,16 +583,16 @@ var Component = {
         if (vnodeData.routerView) {
           depth++;
         }
+
+        if (parent._inactive) {
+          inactive = true;
+        }
       }
 
       parent = parent.$parent;
     }
 
-    var matched = route.matched[depth];
-
-    if (matched) {
-      var components = matched.components;
-    }
+    var matched = this.$route.matched[depth];
 
     if (vnode && matched) {
       var key;
@@ -612,20 +615,25 @@ var Component = {
       }
 
       if (this.cache[key]) {
-        vnode.componentInstance = this.cache[key].componentInstance;
+        console.log('inactive', inactive);
+        console.log(vnode);
 
-        if (config.isDebugger) {
-          console.log("using cache key: %c".concat(key), 'color: orange');
+        if (inactive || 1) {
+          vnode.componentInstance = this.cache[key].componentInstance;
+
+          if (config.isDebugger) {
+            console.log("using cache key: %c".concat(key), 'color: orange');
+          }
         }
       } else {
         if (!globalStack.checkFull()) {
-          this.cache[key] = vnode;
+          this.cacheVnode(key, vnode);
         } else {
           var lastKey = globalStack.getFooter();
 
           routerCache._remove(lastKey);
 
-          this.cache[key] = vnode;
+          this.cacheVnode(key, vnode);
         }
       }
 
@@ -637,7 +645,19 @@ var Component = {
       console.log("all cache key: %c".concat(JSON.stringify(globalStack.getStore())), 'color: orange');
     }
 
+    if (this.created) ;
+
+    console.log(globalCache);
     return vnode || slot && slot[0];
+  },
+  methods: {
+    cacheVnode: function cacheVnode(key, vnode) {
+      if (globalStack.has(key)) {
+        return;
+      }
+
+      this.cache[key] = vnode;
+    }
   },
   beforeDestroy: function beforeDestroy() {
     for (var key in this.cache) {

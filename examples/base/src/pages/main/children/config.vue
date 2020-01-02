@@ -58,10 +58,13 @@ export default {
       return this.isSingleMode ? '单例模式' : '多例模式'
     }
   },
+  mounted() {
+    console.log('mounted')
+  },
   methods: {
     pageTurnNumberList() {
       this.$router.push({
-        name: 'mainNumberList',
+        name: 'testCaseNumberList',
       })
     },
     change(value) {

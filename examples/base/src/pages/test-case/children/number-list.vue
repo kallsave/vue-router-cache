@@ -3,14 +3,13 @@
     <vi-scroll
       ref="scroll"
       style="color: #999"
-      :data="letterList"
+      :data="numberList"
       :options="scrollOptions"
       :scrollEvents="scrollEvents"
       @pulling-down="pullingDownHandler">
-      <div :class="$style['letter-list']">
+      <div :class="$style['number-list']">
         <color-list
-          ref="list"
-          :data="letterList"
+          :data="numberList"
           @item-click="clickHandler">
         </color-list>
       </div>
@@ -20,7 +19,7 @@
 
 <script>
 import ColorList from './components/color-list.vue'
-import { getLetterList } from '@/api/list.js'
+import { getNumberList } from '@/api/list.js'
 import scrollMixins from './mixins/scroll.js'
 
 export default {
@@ -28,31 +27,31 @@ export default {
     ColorList,
   },
   mixins: [
-    scrollMixins
+    scrollMixins,
   ],
   data() {
     return {
-      letterList: [],
-    }
-  },
-  computed: {
-    numberId() {
-      return this.$route.params.numberId
+      numberList: [],
     }
   },
   methods: {
     pullingDownHandler() {
-      this.getLetterList()
+      this.getNumberList()
     },
-    getLetterList() {
-      getLetterList(this.numberId).then((res) => {
+    getNumberList() {
+      getNumberList().then((res) => {
         if (res.data && res.data.code === 1) {
-          this.letterList = res.data.data
+          this.numberList = res.data.data
         }
       })
     },
     clickHandler(item) {
-      this.$router.push(`/main/letter-detail/${this.numberId}/${item.id}`)
+      this.$router.push({
+        name: 'testCaseNumberDetail',
+        params: {
+          numberId: item.id
+        }
+      })
     },
   },
 }
@@ -61,10 +60,9 @@ export default {
 <style lang="less" module>
 @rem: 100rem;
 
-.letter-list {
+.number-list {
   box-sizing: border-box;
   height: 100%;
   padding: 10 / @rem;
 }
-
 </style>

@@ -1,4 +1,11 @@
 export default {
+  activated() {
+    console.log('actttt')
+    this.$nextTick(() => {
+      console.log('act')
+      this.$refs.scroll.refresh()
+    })
+  },
   data() {
     return {
       scrollEvents: ['scroll'],

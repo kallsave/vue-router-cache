@@ -30,31 +30,34 @@ export default {
   name: COMPONENT_NAME,
   abstract: true,
   created() {
+    console.log('create---------------')
     this.cache = Object.create(null)
     globalCache.push({
       cache: this.cache,
     })
   },
-  render(h) {
+  render() {
     const slot = this.$slots.default
     const vnode = getFirstComponentChild(slot)
 
     let parent = this.$parent
-    const route = parent.$route
+
     let depth = 0
+    let inactive = false
     while (parent && parent._routerRoot !== parent) {
       const vnodeData = parent.$vnode && parent.$vnode.data
       if (vnodeData) {
         if (vnodeData.routerView) {
           depth++
         }
+        if (parent._inactive) {
+          inactive = true
+        }
       }
       parent = parent.$parent
     }
-    const matched = route.matched[depth]
-    if (matched) {
-      const components = matched.components
-    }
+    const matched = this.$route.matched[depth]
+
     if (vnode && matched) {
       let key
       if (config.isSingleMode) {
@@ -72,17 +75,21 @@ export default {
         }
       }
       if (this.cache[key]) {
-        vnode.componentInstance = this.cache[key].componentInstance
-        if (config.isDebugger) {
-          console.log(`using cache key: %c${key}`, 'color: orange')
+        console.log('inactive', inactive)
+        console.log(vnode)
+        if (inactive || 1) {
+          vnode.componentInstance = this.cache[key].componentInstance
+          if (config.isDebugger) {
+            console.log(`using cache key: %c${key}`, 'color: orange')
+          }
         }
       } else {
         if (!globalStack.checkFull()) {
-          this.cache[key] = vnode
+          this.cacheVnode(key, vnode)
         } else {
           const lastKey = globalStack.getFooter()
           routerCache._remove(lastKey)
-          this.cache[key] = vnode
+          this.cacheVnode(key, vnode)
         }
       }
       globalStack.unshift(key)
@@ -91,7 +98,19 @@ export default {
     if (config.isDebugger) {
       console.log(`all cache key: %c${JSON.stringify(globalStack.getStore())}`, 'color: orange')
     }
+    if (this.created) {
+
+    }
+    console.log(globalCache)
     return vnode || (slot && slot[0])
+  },
+  methods: {
+    cacheVnode(key, vnode) {
+      if (globalStack.has(key)) {
+        return
+      }
+      this.cache[key] = vnode
+    }
   },
   beforeDestroy() {
     for (const key in this.cache) {

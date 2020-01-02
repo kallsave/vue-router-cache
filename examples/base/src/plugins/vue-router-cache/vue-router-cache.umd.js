@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.1.1
+ * vue-router-cache.js v0.1.2
  * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
@@ -593,10 +593,6 @@
 
       var matched = route.matched[depth];
 
-      if (matched) {
-        var components = matched.components;
-      }
-
       if (vnode && matched) {
         var key;
 
@@ -775,7 +771,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '0.1.1'
+    version: '0.1.2'
   };
 
   return VuerouterCache;

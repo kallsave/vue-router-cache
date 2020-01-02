@@ -593,10 +593,6 @@
 
       var matched = route.matched[depth];
 
-      if (matched) {
-        var components = matched.components;
-      }
-
       if (vnode && matched) {
         var key;
 
