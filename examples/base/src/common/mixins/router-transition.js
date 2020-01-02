@@ -27,7 +27,6 @@ export default {
           }
         } else {
           this.transitionDuration = TRANSITION_DURATION
-          console.log(to.params.direction)
           if (to.params.direction === 'back') {
             this.transitionName = 'move-left'
             this.mode = ''

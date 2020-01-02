@@ -30,7 +30,6 @@ export default {
   name: COMPONENT_NAME,
   abstract: true,
   created() {
-    console.log('create---------------')
     this.cache = Object.create(null)
     globalCache.push({
       cache: this.cache,
@@ -74,14 +73,16 @@ export default {
           key = globalMultiKeyMap[baseKey].getByIndex(0)
         }
       }
+      // bug: 无法存在正确的对象里
       if (this.cache[key]) {
-        console.log('inactive', inactive)
-        console.log(vnode)
-        if (inactive || 1) {
+        if (!inactive) {
+          this.oldComponentInstance = this.cache[key].componentInstance
           vnode.componentInstance = this.cache[key].componentInstance
           if (config.isDebugger) {
             console.log(`using cache key: %c${key}`, 'color: orange')
           }
+        } else {
+          vnode.componentInstance = this.oldComponentInstance
         }
       } else {
         if (!globalStack.checkFull()) {
@@ -101,7 +102,6 @@ export default {
     if (this.created) {
 
     }
-    console.log(globalCache)
     return vnode || (slot && slot[0])
   },
   methods: {
