@@ -59,14 +59,6 @@ function deepClone(o) {
   return ret
 }
 
-/**
- *
- * 给target合并key(深度)
- * @export
- * @param {Object} to
- * @param {Object} from
- * @returns
- */
 function deepAssign(to, from) {
   for (let key in from) {
     if (!to[key] || typeof to[key] !== 'object') {
@@ -77,14 +69,6 @@ function deepAssign(to, from) {
   }
 }
 
-/**
- * 支持多参数的深度克隆
- * 后面的优先级最大
- * @export
- * @param {Object} target
- * @param {Object} rest
- * @returns
- */
 export function multiDeepClone(target, ...rest) {
   for (let i = 0; i < rest.length; i++) {
     let source = deepClone(rest[i])
@@ -98,4 +82,48 @@ export function camelize(str) {
   return str.replace(/-(\w)/g, function (m, c) {
     return c ? c.toUpperCase() : ''
   })
+}
+
+const DEFAULT_TIME_SLICE = 400
+
+export class Debounce {
+  constructor(timeSlice = DEFAULT_TIME_SLICE) {
+    this.timeSlice = timeSlice
+  }
+  run(func) {
+    if (typeof func === 'function') {
+      if (this.timer) {
+        window.clearTimeout(this.timer)
+      }
+      this.timer = window.setTimeout(func, this.timeSlice)
+    }
+  }
+  destroy() {
+    window.clearTimeout(this.timer)
+    this.timer = null
+    this.timeSlice = null
+  }
+}
+
+export class Throttle {
+  constructor(timeSlice = DEFAULT_TIME_SLICE) {
+    this.timeSlice = timeSlice
+  }
+  run(func, overload) {
+    const currentTime = new Date().getTime()
+    if (!this.lastTime || currentTime - this.lastTime > this.timeSlice) {
+      this.lastTime = currentTime
+      if (typeof func === 'function') {
+        func()
+      }
+    } else {
+      if (typeof overload === 'function') {
+        overload()
+      }
+    }
+  }
+  destroy() {
+    this.timeSlice = null
+    this.lastTime = null
+  }
 }

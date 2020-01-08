@@ -4,6 +4,7 @@ import '@/common/less/index.less'
 import Vue from 'vue'
 import App from './App'
 import router from './pages/router.js'
+import store from './store/index.js'
 import VueRouterCache from 'vue-router-cache'
 import ViUi from '@/plugins/vi-ui/index.js'
 import { isSingleMode } from '@/config.js'
@@ -18,7 +19,7 @@ Vue.use(VueRouterCache, {
   router: router,
   max: 10,
   isSingleMode: isSingleMode,
-  isDebugger: true,
+  isDebugger: false,
   directionKey: 'direction',
   getHistoryStack() {
     const str = window.sessionStorage.getItem('historyStack')
@@ -37,6 +38,7 @@ Vue.prototype.$global = {}
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>',
   mixins: [

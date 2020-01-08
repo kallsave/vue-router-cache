@@ -376,8 +376,6 @@ var routerCache = {
     }
   },
   removeGlobalCacheFromList: function removeGlobalCacheFromList(removeList) {
-    console.log('removeList', removeList);
-
     for (var i = 0; i < removeList.length; i++) {
       var removeItem = removeList[i];
       this.removeGlobalCacheFromItem(removeItem);
@@ -611,29 +609,33 @@ var Component = {
         } else {
           key = globalMultiKeyMap[baseKey].getByIndex(0);
         }
-      } // bug: 无法存在正确的对象里
-
+      }
 
       if (this.cache[key]) {
-        if (!inactive) {
-          this.oldComponentInstance = this.cache[key].componentInstance;
-          vnode.componentInstance = this.cache[key].componentInstance;
-
-          if (config.isDebugger) {
-            console.log("using cache key: %c".concat(key), 'color: orange');
-          }
-        } else {
+        if (inactive) {
           vnode.componentInstance = this.oldComponentInstance;
+        } else {
+          vnode.componentInstance = this.cache[key].componentInstance;
+        }
+
+        if (config.isDebugger) {
+          console.log("using cache key: %c".concat(key), 'color: orange');
         }
       } else {
         if (!globalStack.checkFull()) {
-          this.cacheVnode(key, vnode);
+          if (!inactive) {
+            this.cache[key] = vnode;
+            this.oldComponentInstance = vnode.componentInstance;
+          }
         } else {
           var lastKey = globalStack.getFooter();
 
           routerCache._remove(lastKey);
 
-          this.cacheVnode(key, vnode);
+          if (!inactive) {
+            this.cache[key] = vnode;
+            this.oldComponentInstance = vnode.componentInstance;
+          }
         }
       }
 
@@ -645,18 +647,7 @@ var Component = {
       console.log("all cache key: %c".concat(JSON.stringify(globalStack.getStore())), 'color: orange');
     }
 
-    if (this.created) ;
-
     return vnode || slot && slot[0];
-  },
-  methods: {
-    cacheVnode: function cacheVnode(key, vnode) {
-      if (globalStack.has(key)) {
-        return;
-      }
-
-      this.cache[key] = vnode;
-    }
   },
   beforeDestroy: function beforeDestroy() {
     for (var key in this.cache) {

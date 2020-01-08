@@ -30,7 +30,6 @@ const routerCache = {
     }
   },
   removeGlobalCacheFromList(removeList) {
-    console.log('removeList', removeList)
     for (let i = 0; i < removeList.length; i++) {
       const removeItem = removeList[i]
       this.removeGlobalCacheFromItem(removeItem)
