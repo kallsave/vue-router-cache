@@ -1,10 +1,10 @@
 <template>
   <transition
     :name="transitionName"
-    :mode="mode"
+    :mode="transitionMode"
     :duration="transitionDuration">
     <router-cache>
-      <router-view class="router-view"></router-view>
+      <router-view class="'router-view'"></router-view>
     </router-cache>
   </transition>
 </template>
@@ -19,6 +19,5 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less" module>
 </style>

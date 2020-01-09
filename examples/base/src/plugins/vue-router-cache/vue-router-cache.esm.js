@@ -341,8 +341,9 @@ function defineReactive(data, key, val, fn) {
         return;
       }
 
+      var oldVal = val;
       val = newVal;
-      typeof fn === 'function' && fn(newVal);
+      typeof fn === 'function' && fn(newVal, oldVal);
     }
   });
 }

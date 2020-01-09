@@ -55,6 +55,7 @@ export default {
       }
       parent = parent.$parent
     }
+
     const matched = this.$route.matched[depth]
 
     if (vnode && matched) {

@@ -1,7 +1,7 @@
 <template>
   <transition
     :name="transitionName"
-    :mode="mode"
+    :mode="transitionMode"
     :duration="transitionDuration">
     <router-cache>
       <router-view class="router-view"></router-view>

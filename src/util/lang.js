@@ -16,8 +16,9 @@ export function defineReactive(data, key, val, fn) {
       if (newVal === val) {
         return
       }
+      const oldVal = val
       val = newVal
-      typeof fn === 'function' && fn(newVal)
+      typeof fn === 'function' && fn(newVal, oldVal)
     }
   })
 }

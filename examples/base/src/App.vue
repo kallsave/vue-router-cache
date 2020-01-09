@@ -2,7 +2,7 @@
   <div :class="$style['app']">
     <transition
       :name="transitionName"
-      :mode="mode"
+      :mode="transitionMode"
       :duration="transitionDuration">
       <router-cache>
         <router-view class="router-view app"></router-view>
