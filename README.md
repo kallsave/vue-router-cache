@@ -3,23 +3,21 @@ vue-router-cache
 
 一个实现原生app前进刷新后退缓存并提供浏览器路由方向、灵活手动管理缓存api的vue-router插件
 
-Features
+特性
 ------------
-
-vue-router-cache做了几件小事情
 
 - 提供浏览器路由方向(forward、back、replace)
 - 在知道路由是forward、back、replace的基础上,浏览器进入新页面缓存新页面,浏览器触发后退(back)时自动删除离开页面缓存,从而实现前进刷新后退缓存
 - 提供管理缓存的api方法,这些方法的参数和vue-router的push方法的参数一致,这样做保证了代码的可读性
 - 对累积的页面缓存可能导致的内存泄漏做了保护机制,提供max参数,当页面缓存达到max,会自动把最后方的页面缓存删除
-- 支持嵌套路由(嵌套路由请在最里层的router-view包裹router-cache,外层的router-view不要包裹router-cache)
+- 支持嵌套路由 (嵌套路由请在最里层的router-view包裹router-cache,外层的router-view不要包裹router-cache)
 
 在线案例
 ------------
 - [Base demo](https://kallsave.github.io/vue-router-cache/examples/base/dist/#/main/enter)
 - [Demo address](https://github.com/kallsave/vue-router-cache/tree/master/examples/base)
 
-Installation
+安装
 ------------
 npm install vue-router-cache --save
 
@@ -98,7 +96,7 @@ watch: {
 清除页面缓存方法使用例子
 -----------
 ```javascript
-// API in vue
+// 在vue组件实例中清除缓存
 
 // 从详情页修改了数据需要回退到列表页时手动删除列表页的缓存让列表页刷新的例子
 
@@ -106,14 +104,17 @@ export default {
   methods: {
     // 用back的方式,推荐
     back() {
-      // remove的参数是location,和this.$router.push的参数一样
+      // remove的参数是location,和this.$router.push的参数是一样的
       this.$routerCache.remove({name: 'mainNumberList'})
+
       // or
       // this.$routerCache.remove('/main/number-list')
+
       // or
       // this.$routerCache.remove({
       //   path: '/main/number-list'
       // })
+      
       this.$router.back()
     },
     // 用push的方式,但是浏览器会比使用back的方式多出额外的历史记录
@@ -131,7 +132,7 @@ export default {
 ```
 
 ```javascript
-// API in js
+// 在js文件中清除缓存
 import { routerCache } from 'vue-router-cache'
 
 routerCache.remove({name: 'mainNumberList'})
@@ -172,7 +173,7 @@ routerCache.remove({name: 'mainNumberList'})
 - 多例模式系统性能存在浪费,多例模式可以说是简单模式,如果A要回跳C页面需要C页面刷新,只能push到C页面,多例模式能做的事情单例模式都能实现。
 - 单例模式系统的性能高,有灵活的手动清除缓存的api,如果A要回跳C页面需要C页面刷新,可以调用api清除C页面缓存然后back到C页面(推荐)。也可以直接push到C页面(但是这样浏览器会比执行back多存历史记录)
 
-This plugins in webpack hot reload/这个插件和webpack热更新
+这个插件开发是需要关闭webpack热更新
 -----------
 在开发环境使用这个插件保存代码会出现白屏,这是因为webpack热更新会分析改动代码来决定哪个模块热更新还是重刷,
 这需要写webpack的相关loader,一个简单的做法是关闭webpack热更新只使用webpack重刷就正常使用啦
