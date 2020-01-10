@@ -9,29 +9,19 @@ const TRANSITION_DURATION = {
 
 let currentRoute
 
-function getInnerMostRouterDepth(vm, depth) {
+function hasChildrenRouterView(vm, mostDepth, depth) {
   for (let i = 0; i < vm.$children.length; i++) {
     const item = vm.$children[i]
     const vnodeData = item.$vnode && item.$vnode.data
     if (vnodeData.routerView) {
-      return getInnerMostRouterDepth(item, vnodeData.routerViewDepth)
+      const routerViewDepth = vnodeData.routerViewDepth
+      depth = depth !== undefined ? depth : routerViewDepth
+      return hasChildrenRouterView(item, routerViewDepth, depth)
     } else {
-      return getInnerMostRouterDepth(item, depth)
+      return hasChildrenRouterView(item, mostDepth, depth)
     }
   }
-  return depth
-}
-
-function getRouterDepth(vm) {
-  for (let i = 0; i < vm.$children.length; i++) {
-    const item = vm.$children[i]
-    const vnodeData = item.$vnode && item.$vnode.data
-    if (vnodeData.routerView) {
-      return vnodeData.routerViewDepth
-    } else {
-      return getRouterDepth(item)
-    }
-  }
+  return mostDepth !== undefined && mostDepth !== depth
 }
 
 export default {
@@ -54,11 +44,6 @@ export default {
             leave: 0
           }
         } else {
-          // const innerRouterDepth = getInnerMostRouterDepth(this)
-          // const routerDepth = getRouterDepth(this)
-          // if (innerRouterDepth !== routerDepth) {
-          //   return
-          // }
           this.transitionDuration = TRANSITION_DURATION
           if (to.params.direction === 'back') {
             this.transitionName = 'move-left'

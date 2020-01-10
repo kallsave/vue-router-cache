@@ -68,7 +68,7 @@ export default {
     },
     updateNumberDetail() {
       updateNumberDetail(this.numberId, this.text).then((res) => {
-        if (res.code === 1) {
+        if (res.data && res.data.code === 1) {
           this.getNumberDetail()
         }
       })

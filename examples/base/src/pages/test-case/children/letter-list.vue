@@ -52,7 +52,13 @@ export default {
       })
     },
     clickHandler(item) {
-      this.$router.push(`/testCase/letter-detail/${this.numberId}/${item.id}`)
+      this.$router.push({
+        name: 'testCaseLetterDetail',
+        params: {
+          numberId: this.numberId,
+          letterId: item.id
+        }
+      })
     },
   },
 }

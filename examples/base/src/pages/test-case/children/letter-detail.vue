@@ -68,14 +68,14 @@ export default {
     },
     updateLetterDetail() {
       updateLetterDetail(this.numberId, this.letterId, this.text).then((res) => {
-        if (res.code === 1) {
+        if (res.data && res.data.code === 1) {
           this.getLetterDetail()
         }
       })
     },
     deleteLetterDetail() {
       deleteLetterDetail(this.numberId, this.letterId).then((res) => {
-        if (res.code === 1) {
+        if (res.data && res.data.code === 1) {
           this.$routerCache.removeBackUntil({name: 'testCaseEnter'})
           this.$router.back()
         }
@@ -90,10 +90,7 @@ export default {
     },
     pageTurnLetterList() {
       this.$router.push({
-        name: 'testCaseLetterList',
-        params: {
-          id: this.id
-        }
+        name: 'testCaseLetterList'
       })
     }
   },
