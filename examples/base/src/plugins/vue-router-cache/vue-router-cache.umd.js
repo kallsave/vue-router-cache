@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.1.2
+ * vue-router-cache.js v0.2.0
  * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
@@ -347,8 +347,9 @@
           return;
         }
 
+        var oldVal = val;
         val = newVal;
-        typeof fn === 'function' && fn(newVal);
+        typeof fn === 'function' && fn(newVal, oldVal);
       }
     });
   }
@@ -572,12 +573,12 @@
         cache: this.cache
       });
     },
-    render: function render(h) {
+    render: function render() {
       var slot = this.$slots["default"];
       var vnode = getFirstComponentChild(slot);
       var parent = this.$parent;
-      var route = parent.$route;
       var depth = 0;
+      var inactive = false;
 
       while (parent && parent._routerRoot !== parent) {
         var vnodeData = parent.$vnode && parent.$vnode.data;
@@ -586,12 +587,16 @@
           if (vnodeData.routerView) {
             depth++;
           }
+
+          if (parent._inactive) {
+            inactive = true;
+          }
         }
 
         parent = parent.$parent;
       }
 
-      var matched = route.matched[depth];
+      var matched = this.$route.matched[depth];
 
       if (vnode && matched) {
         var key;
@@ -614,20 +619,30 @@
         }
 
         if (this.cache[key]) {
-          vnode.componentInstance = this.cache[key].componentInstance;
+          if (inactive) {
+            vnode.componentInstance = this.oldComponentInstance;
+          } else {
+            vnode.componentInstance = this.cache[key].componentInstance;
+          }
 
           if (config.isDebugger) {
             console.log("using cache key: %c".concat(key), 'color: orange');
           }
         } else {
           if (!globalStack.checkFull()) {
-            this.cache[key] = vnode;
+            if (!inactive) {
+              this.cache[key] = vnode;
+              this.oldComponentInstance = vnode.componentInstance;
+            }
           } else {
             var lastKey = globalStack.getFooter();
 
             routerCache._remove(lastKey);
 
-            this.cache[key] = vnode;
+            if (!inactive) {
+              this.cache[key] = vnode;
+              this.oldComponentInstance = vnode.componentInstance;
+            }
           }
         }
 
@@ -771,7 +786,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '0.1.2'
+    version: '0.2.0'
   };
 
   return VuerouterCache;

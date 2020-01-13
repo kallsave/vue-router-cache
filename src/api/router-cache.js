@@ -1,14 +1,6 @@
 import { globalCache, globalStack } from '../store/index'
 import config from '../config/index'
 
-function getVnodeKey(vnode) {
-  const componentOptions = vnode.componentOptions
-  const key = vnode.key
-    ? vnode.key
-    : componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
-  return key
-}
-
 const routerCache = {
   resolveKeyFromRoute(route) {
     return route.name ? route.name : route.path

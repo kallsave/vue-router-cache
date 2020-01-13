@@ -46,13 +46,13 @@ Vue.use(VueRouterCache, {
 
 ```javascript
 <template>
-  <div :class="$style['app']">
+  <div class="app">
     <transition
       :name="transitionName"
       :mode="mode"
       :duration="transitionDuration">
       <router-cache>
-        <router-view class="router-view"></router-view>
+        <router-view></router-view>
       </router-cache>
     </transition>
   </div>
@@ -67,26 +67,17 @@ Vue.use(VueRouterCache, {
 watch: {
   $route: {
     handler(to, from) {
-      if (!isMobile) {
+      this.transitionDuration = TRANSITION_DURATION
+      if (to.params.direction === 'back') {
+        this.transitionName = 'move-left'
+        this.mode = ''
+      } else if (to.params.direction === 'forward') {
+        this.transitionName = 'move-right'
+        this.mode = ''
+      } else {
+        // replace
         this.transitionName = ''
         this.mode = ''
-        this.transitionDuration = {
-          enter: 0,
-          leave: 0
-        }
-      } else {
-        this.transitionDuration = TRANSITION_DURATION
-        if (to.params.direction === 'back') {
-          this.transitionName = 'move-left'
-          this.mode = ''
-        } else if (to.params.direction === 'forward') {
-          this.transitionName = 'move-right'
-          this.mode = ''
-        } else {
-          // replace
-          this.transitionName = ''
-          this.mode = ''
-        }
       }
     },
   }
