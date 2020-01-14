@@ -10,7 +10,7 @@ vue-router-cache
 - 在知道路由是forward、back、replace的基础上,浏览器进入新页面缓存新页面,浏览器触发后退(back)时自动删除离开页面缓存,从而实现前进刷新后退缓存
 - 提供管理缓存的api方法,这些方法的参数和vue-router的push方法的参数一致,这样做保证了代码的可读性
 - 对累积的页面缓存可能导致的内存泄漏做了保护机制,提供max参数,当页面缓存达到max,会自动把最后方的页面缓存删除
-- 支持嵌套路由 (嵌套路由请在最里层的router-view包裹router-cache,外层的router-view不要包裹router-cache)
+- 支持嵌套路由
 
 在线案例
 ------------

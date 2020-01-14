@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.3.0
+ * vue-router-cache.js v0.3.1
  * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
@@ -557,7 +557,7 @@ function getFirstComponentChild(children) {
   }
 }
 
-function hasParentTransition(vnode) {
+function hasParentRouterCache(vnode) {
   while (vnode = vnode.parent) {
     if (vnode.data.routerCache) {
       return true;
@@ -580,7 +580,7 @@ var Component = {
     var vnode = getFirstComponentChild(slot);
     var rawChild = vnode || slot && slot[0];
 
-    if (hasParentTransition(this.$vnode)) {
+    if (hasParentRouterCache(this.$vnode)) {
       return rawChild;
     }
 
@@ -795,7 +795,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.3.0'
+  version: '0.3.1'
 };
 
 export default VuerouterCache;

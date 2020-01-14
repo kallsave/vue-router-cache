@@ -24,7 +24,7 @@ function getFirstComponentChild(children) {
   }
 }
 
-function hasParentTransition(vnode) {
+function hasParentRouterCache(vnode) {
   while ((vnode = vnode.parent)) {
     if (vnode.data.routerCache) {
       return true
@@ -48,7 +48,8 @@ export default {
     const vnode = getFirstComponentChild(slot)
 
     const rawChild = vnode || (slot && slot[0])
-    if (hasParentTransition(this.$vnode)) {
+
+    if (hasParentRouterCache(this.$vnode)) {
       return rawChild
     }
 
