@@ -29,7 +29,8 @@ async function buildEntry() {
   }
   await (() => {
     return new Promise((resolve) => {
-      const cmd = `cd examples/${EXAMPLE} & npm run dev`
+      const parallel = /^win/.test(process.platform) ? '&' : '&&'
+      const cmd = `cd examples/${EXAMPLE} ${parallel} npm run dev`
       const childProcess = exec(cmd, function (err, stdout, stderr) {
         if (err) {
           console.log('err:', err)

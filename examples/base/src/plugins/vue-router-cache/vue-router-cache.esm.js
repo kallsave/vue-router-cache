@@ -557,6 +557,14 @@ function getFirstComponentChild(children) {
   }
 }
 
+function hasParentTransition(vnode) {
+  while (vnode = vnode.parent) {
+    if (vnode.data.routerCache) {
+      return true;
+    }
+  }
+}
+
 var COMPONENT_NAME = 'router-cache';
 var Component = {
   name: COMPONENT_NAME,
@@ -570,6 +578,12 @@ var Component = {
   render: function render() {
     var slot = this.$slots["default"];
     var vnode = getFirstComponentChild(slot);
+    var rawChild = vnode || slot && slot[0];
+
+    if (hasParentTransition(this.$vnode)) {
+      return rawChild;
+    }
+
     var parent = this.$parent;
     var depth = 0;
     var inactive = false;
@@ -641,6 +655,7 @@ var Component = {
       }
 
       globalStack.unshift(key);
+      vnode.data.routerCache = true;
       vnode.data.keepAlive = true;
     }
 
@@ -648,7 +663,7 @@ var Component = {
       console.log("all cache key: %c".concat(JSON.stringify(globalStack.getStore())), 'color: orange');
     }
 
-    return vnode || slot && slot[0];
+    return rawChild;
   },
   beforeDestroy: function beforeDestroy() {
     for (var key in this.cache) {

@@ -24,6 +24,14 @@ function getFirstComponentChild(children) {
   }
 }
 
+function hasParentTransition(vnode) {
+  while ((vnode = vnode.parent)) {
+    if (vnode.data.routerCache) {
+      return true
+    }
+  }
+}
+
 const COMPONENT_NAME = 'router-cache'
 
 export default {
@@ -38,6 +46,11 @@ export default {
   render() {
     const slot = this.$slots.default
     const vnode = getFirstComponentChild(slot)
+
+    const rawChild = vnode || (slot && slot[0])
+    if (hasParentTransition(this.$vnode)) {
+      return rawChild
+    }
 
     let parent = this.$parent
 
@@ -99,12 +112,13 @@ export default {
         }
       }
       globalStack.unshift(key)
+      vnode.data.routerCache = true
       vnode.data.keepAlive = true
     }
     if (config.isDebugger) {
       console.log(`all cache key: %c${JSON.stringify(globalStack.getStore())}`, 'color: orange')
     }
-    return vnode || (slot && slot[0])
+    return rawChild
   },
   beforeDestroy() {
     for (const key in this.cache) {

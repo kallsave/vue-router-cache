@@ -49,7 +49,7 @@ Vue.use(VueRouterCache, {
   <div class="app">
     <transition
       :name="transitionName"
-      :mode="mode"
+      :mode="transitionMode"
       :duration="transitionDuration">
       <router-cache>
         <router-view></router-view>
@@ -63,21 +63,21 @@ Vue.use(VueRouterCache, {
 -----------
 ```javascript
 
-// 判断浏览器路由方向对相应的方向做过渡动画
+// 判断浏览器路由方向对相应的方向结合transition做过渡动画
 watch: {
   $route: {
     handler(to, from) {
       this.transitionDuration = TRANSITION_DURATION
       if (to.params.direction === 'back') {
         this.transitionName = 'move-left'
-        this.mode = ''
+        this.transitionMode = ''
       } else if (to.params.direction === 'forward') {
         this.transitionName = 'move-right'
-        this.mode = ''
+        this.transitionMode = ''
       } else {
         // replace
         this.transitionName = ''
-        this.mode = ''
+        this.transitionMode = ''
       }
     },
   }
@@ -156,6 +156,26 @@ routerCache.remove({name: 'mainNumberList'})
 |removeAll||删除所有页面的缓存|是|
 |getStore||查看系统中的页面缓存|是|
 |has|location|查看系统中的页面缓存是否有参数页面|否|
+
+页面重刷后依然想记住页面的前进后退关系
+-----------
+```javascript
+import router from './router'
+import VueRouterCache from 'vue-router-cache'
+
+Vue.use(VueRouterCache, {
+  router: router,
+  // 在配置VueRouterCache的时候使用getHistoryStack和setHistoryStack函数,把历史记录存在本地储存里
+  getHistoryStack() {
+    const str = window.sessionStorage.getItem('historyStack')
+    return JSON.parse(str)
+  },
+  setHistoryStack(history) {
+    const str = JSON.stringify(history)
+    window.sessionStorage.setItem('historyStack', str)
+  }
+})
+```
 
 单例模式和多例模式对比
 -----------
