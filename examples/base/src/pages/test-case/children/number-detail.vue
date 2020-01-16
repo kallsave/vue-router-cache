@@ -77,16 +77,16 @@ export default {
       if (isSingleMode) {
         this.$global.confirm.show({
           title: '要手动删除上个页面缓存吗',
-          text: `执行this.$routerCache.remove('/testCase/number-list')`,
+          text: `执行this.$routerCache.remove('/test-case/number-list')`,
           confirmText: '确定',
           cancelText: '不需要',
           onConfirm: () => {
-            this.$routerCache.remove('/testCase/number-list')
+            this.$routerCache.remove('/test-case/number-list')
             // or
             // this.$routerCache.remove({name: 'testCaseNumberList'})
             // or
             // this.$routerCache.remove({
-            //   path: '/testCase/number-list'
+            //   path: '/test-case/number-list'
             // })
             this.$router.back()
           },

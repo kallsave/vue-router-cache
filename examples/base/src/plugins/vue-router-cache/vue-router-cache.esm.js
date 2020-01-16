@@ -533,7 +533,10 @@ var NONE = '';
 var historyStateEvent = new Events();
 window.addEventListener('hashchange', function () {
   if (historyStack.getByIndex(1) === window.location.href) {
+    console.log('---back---');
     historyStateEvent.emit(BACK);
+  } else {
+    historyStateEvent.emit(FORWARD);
   }
 });
 
@@ -557,14 +560,6 @@ function getFirstComponentChild(children) {
   }
 }
 
-function hasParentRouterCache(vnode) {
-  while (vnode = vnode.parent) {
-    if (vnode.data.routerCache) {
-      return true;
-    }
-  }
-}
-
 var COMPONENT_NAME = 'router-cache';
 var Component = {
   name: COMPONENT_NAME,
@@ -579,11 +574,7 @@ var Component = {
     var slot = this.$slots["default"];
     var vnode = getFirstComponentChild(slot);
     var rawChild = vnode || slot && slot[0];
-
-    if (hasParentRouterCache(this.$vnode)) {
-      return rawChild;
-    }
-
+    var key;
     var parent = this.$parent;
     var depth = 0;
     var inactive = false;
@@ -607,8 +598,6 @@ var Component = {
     var matched = this.$route.matched[depth];
 
     if (vnode && matched) {
-      var key;
-
       if (config.isSingleMode) {
         key = routerCache.resolveKeyFromRoute(matched);
       } else {
@@ -684,8 +673,20 @@ var Component = {
 };
 
 var direction = NONE;
+var routerPromise;
+var routerPromiseResolve;
+
+function refreshRouterPromise() {
+  routerPromise = new Promise(function (resolve) {
+    routerPromiseResolve = resolve;
+  });
+}
+
+refreshRouterPromise();
+routerPromiseResolve();
 historyStateEvent.on(BACK, function () {
   direction = BACK;
+  routerPromiseResolve();
   historyStack.shift();
   config.setHistoryStack(historyStack.getStore());
   var route = config.router.history.current;
@@ -704,6 +705,10 @@ historyStateEvent.on(BACK, function () {
     }
   }
 });
+historyStateEvent.on(FORWARD, function () {
+  direction = FORWARD;
+  routerPromiseResolve();
+});
 
 var routerMiddle = function routerMiddle(Vue, config) {
   var router = config.router;
@@ -713,10 +718,13 @@ var routerMiddle = function routerMiddle(Vue, config) {
   var originGo = router.go.bind(router);
 
   router.push = function (location, onComplete, onAbort) {
+    direction = FORWARD;
+
     if (config.isSingleMode && routerCache.has(location)) {
       routerCache.removeBackInclue(location);
     }
 
+    routerPromiseResolve();
     originPush(location, onComplete, onAbort);
   };
 
@@ -730,17 +738,21 @@ var routerMiddle = function routerMiddle(Vue, config) {
       routerCache.removeBackInclue(location);
     }
 
+    routerPromiseResolve();
     originReplace(location, onComplete, onAbort);
   };
 
   router.go = function (n) {
-    if (n > 0) {
+    // dev: go(n > 1)会导致方向判断错误
+    if (n > 1) {
       direction = FORWARD;
+      routerPromiseResolve();
     } else if (n < -1) {
       direction = BACK;
       historyStack.removeBackByIndex(-n);
       config.setHistoryStack(historyStack.getStore());
       routerCache.removeBackByIndex(-n);
+      routerPromiseResolve();
     }
 
     originGo(n);
@@ -749,16 +761,23 @@ var routerMiddle = function routerMiddle(Vue, config) {
   router.beforeEach(function (to, from, next) {
     // let hashchange I/0 event trigger callback before next
     // dev: use Promise instance of setTimeout
-    window.setTimeout(function () {
+    // window.setTimeout(() => {
+    //   to.params[directionKey] = direction
+    //   next()
+    // }, 16)
+    routerPromise.then(function () {
       to.params[directionKey] = direction;
+      console.log(direction);
       next();
-    }, 16);
+      refreshRouterPromise();
+    });
   });
   defineReactive(router.history, 'current', router.history.current, function () {
     Vue.nextTick(function () {
       var href = window.location.href;
 
       if (direction !== BACK && historyStack.getHeader() !== href) {
+        console.log('unshift');
         historyStack.unshift(href);
         config.setHistoryStack(historyStack.getStore());
       }

@@ -24,14 +24,6 @@ function getFirstComponentChild(children) {
   }
 }
 
-function hasParentRouterCache(vnode) {
-  while ((vnode = vnode.parent)) {
-    if (vnode.data.routerCache) {
-      return true
-    }
-  }
-}
-
 const COMPONENT_NAME = 'router-cache'
 
 export default {
@@ -46,15 +38,10 @@ export default {
   render() {
     const slot = this.$slots.default
     const vnode = getFirstComponentChild(slot)
-
     const rawChild = vnode || (slot && slot[0])
 
-    if (hasParentRouterCache(this.$vnode)) {
-      return rawChild
-    }
-
+    let key
     let parent = this.$parent
-
     let depth = 0
     let inactive = false
     while (parent && parent._routerRoot !== parent) {
@@ -73,7 +60,6 @@ export default {
     const matched = this.$route.matched[depth]
 
     if (vnode && matched) {
-      let key
       if (config.isSingleMode) {
         key = routerCache.resolveKeyFromRoute(matched)
       } else {

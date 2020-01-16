@@ -27,7 +27,11 @@
 </template>
 
 <script>
-import { getLetterDetail, updateLetterDetail, deleteLetterDetail } from '@/api/list.js'
+import {
+  getLetterDetail,
+  updateLetterDetail,
+  deleteLetterDetail
+} from '@/api/list.js'
 import Btn from './components/btn.vue'
 import { isSingleMode } from '@/config.js'
 import scrollMixins from './mixins/scroll.js'
@@ -76,7 +80,7 @@ export default {
     deleteLetterDetail() {
       deleteLetterDetail(this.numberId, this.letterId).then((res) => {
         if (res.data && res.data.code === 1) {
-          this.$routerCache.removeBackUntil({name: 'testCaseEnter'})
+          this.$routerCache.removeBackUntil({name: 'mainEnter'})
           this.$router.back()
         }
       })
