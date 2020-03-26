@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.3.1
+ * vue-router-cache.js v0.3.2
  * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
@@ -540,6 +540,8 @@
   window.addEventListener('hashchange', function () {
     if (historyStack.getByIndex(1) === window.location.href) {
       historyStateEvent.emit(BACK);
+    } else {
+      historyStateEvent.emit(FORWARD);
     }
   });
 
@@ -563,14 +565,6 @@
     }
   }
 
-  function hasParentRouterCache(vnode) {
-    while (vnode = vnode.parent) {
-      if (vnode.data.routerCache) {
-        return true;
-      }
-    }
-  }
-
   var COMPONENT_NAME = 'router-cache';
   var Component = {
     name: COMPONENT_NAME,
@@ -585,11 +579,7 @@
       var slot = this.$slots["default"];
       var vnode = getFirstComponentChild(slot);
       var rawChild = vnode || slot && slot[0];
-
-      if (hasParentRouterCache(this.$vnode)) {
-        return rawChild;
-      }
-
+      var key;
       var parent = this.$parent;
       var depth = 0;
       var inactive = false;
@@ -613,8 +603,6 @@
       var matched = this.$route.matched[depth];
 
       if (vnode && matched) {
-        var key;
-
         if (config.isSingleMode) {
           key = routerCache.resolveKeyFromRoute(matched);
         } else {
@@ -710,6 +698,9 @@
       }
     }
   });
+  historyStateEvent.on(FORWARD, function () {
+    direction = FORWARD;
+  });
 
   var routerMiddle = function routerMiddle(Vue, config) {
     var router = config.router;
@@ -719,6 +710,8 @@
     var originGo = router.go.bind(router);
 
     router.push = function (location, onComplete, onAbort) {
+      direction = FORWARD;
+
       if (config.isSingleMode && routerCache.has(location)) {
         routerCache.removeBackInclue(location);
       }
@@ -740,7 +733,8 @@
     };
 
     router.go = function (n) {
-      if (n > 0) {
+      // dev: go(n > 1)会导致方向判断错误
+      if (n > 1) {
         direction = FORWARD;
       } else if (n < -1) {
         direction = BACK;
@@ -754,7 +748,6 @@
 
     router.beforeEach(function (to, from, next) {
       // let hashchange I/0 event trigger callback before next
-      // dev: use Promise instance of setTimeout
       window.setTimeout(function () {
         to.params[directionKey] = direction;
         next();
@@ -801,7 +794,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '0.3.1'
+    version: '0.3.2'
   };
 
   return VuerouterCache;

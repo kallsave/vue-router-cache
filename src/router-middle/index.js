@@ -13,21 +13,8 @@ import { globalMultiKeyMap } from '../store/index'
 
 let direction = NONE
 
-let routerPromise
-let routerPromiseResolve
-
-function refreshRouterPromise() {
-  routerPromise = new Promise((resolve) => {
-    routerPromiseResolve = resolve
-  })
-}
-
-refreshRouterPromise()
-routerPromiseResolve()
-
 historyStateEvent.on(BACK, () => {
   direction = BACK
-  routerPromiseResolve()
   historyStack.shift()
   config.setHistoryStack(historyStack.getStore())
   const route = config.router.history.current
@@ -45,7 +32,6 @@ historyStateEvent.on(BACK, () => {
 
 historyStateEvent.on(FORWARD, () => {
   direction = FORWARD
-  routerPromiseResolve()
 })
 
 const routerMiddle = (Vue, config) => {
@@ -61,7 +47,6 @@ const routerMiddle = (Vue, config) => {
     if (config.isSingleMode && routerCache.has(location)) {
       routerCache.removeBackInclue(location)
     }
-    routerPromiseResolve()
     originPush(location, onComplete, onAbort)
   }
 
@@ -73,7 +58,6 @@ const routerMiddle = (Vue, config) => {
     if (config.isSingleMode && routerCache.has(location)) {
       routerCache.removeBackInclue(location)
     }
-    routerPromiseResolve()
     originReplace(location, onComplete, onAbort)
   }
 
@@ -81,38 +65,27 @@ const routerMiddle = (Vue, config) => {
     // dev: go(n > 1)会导致方向判断错误
     if (n > 1) {
       direction = FORWARD
-      routerPromiseResolve()
     } else if (n < -1) {
       direction = BACK
       historyStack.removeBackByIndex(-n)
       config.setHistoryStack(historyStack.getStore())
       routerCache.removeBackByIndex(-n)
-      routerPromiseResolve()
     }
     originGo(n)
   }
 
   router.beforeEach((to, from, next) => {
     // let hashchange I/0 event trigger callback before next
-    // dev: use Promise instance of setTimeout
-    // window.setTimeout(() => {
-    //   to.params[directionKey] = direction
-    //   next()
-    // }, 16)
-
-    routerPromise.then(() => {
+    window.setTimeout(() => {
       to.params[directionKey] = direction
-      console.log(direction)
       next()
-      refreshRouterPromise()
-    })
+    }, 16)
   })
 
   defineReactive(router.history, 'current', router.history.current, () => {
     Vue.nextTick(() => {
       const href = window.location.href
       if (direction !== BACK && historyStack.getHeader() !== href) {
-        console.log('unshift')
         historyStack.unshift(href)
         config.setHistoryStack(historyStack.getStore())
       }

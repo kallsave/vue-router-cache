@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.3.1
+ * vue-router-cache.js v0.3.2
  * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
@@ -533,7 +533,6 @@ var NONE = '';
 var historyStateEvent = new Events();
 window.addEventListener('hashchange', function () {
   if (historyStack.getByIndex(1) === window.location.href) {
-    console.log('---back---');
     historyStateEvent.emit(BACK);
   } else {
     historyStateEvent.emit(FORWARD);
@@ -673,20 +672,8 @@ var Component = {
 };
 
 var direction = NONE;
-var routerPromise;
-var routerPromiseResolve;
-
-function refreshRouterPromise() {
-  routerPromise = new Promise(function (resolve) {
-    routerPromiseResolve = resolve;
-  });
-}
-
-refreshRouterPromise();
-routerPromiseResolve();
 historyStateEvent.on(BACK, function () {
   direction = BACK;
-  routerPromiseResolve();
   historyStack.shift();
   config.setHistoryStack(historyStack.getStore());
   var route = config.router.history.current;
@@ -707,7 +694,6 @@ historyStateEvent.on(BACK, function () {
 });
 historyStateEvent.on(FORWARD, function () {
   direction = FORWARD;
-  routerPromiseResolve();
 });
 
 var routerMiddle = function routerMiddle(Vue, config) {
@@ -724,7 +710,6 @@ var routerMiddle = function routerMiddle(Vue, config) {
       routerCache.removeBackInclue(location);
     }
 
-    routerPromiseResolve();
     originPush(location, onComplete, onAbort);
   };
 
@@ -738,7 +723,6 @@ var routerMiddle = function routerMiddle(Vue, config) {
       routerCache.removeBackInclue(location);
     }
 
-    routerPromiseResolve();
     originReplace(location, onComplete, onAbort);
   };
 
@@ -746,13 +730,11 @@ var routerMiddle = function routerMiddle(Vue, config) {
     // dev: go(n > 1)会导致方向判断错误
     if (n > 1) {
       direction = FORWARD;
-      routerPromiseResolve();
     } else if (n < -1) {
       direction = BACK;
       historyStack.removeBackByIndex(-n);
       config.setHistoryStack(historyStack.getStore());
       routerCache.removeBackByIndex(-n);
-      routerPromiseResolve();
     }
 
     originGo(n);
@@ -760,24 +742,16 @@ var routerMiddle = function routerMiddle(Vue, config) {
 
   router.beforeEach(function (to, from, next) {
     // let hashchange I/0 event trigger callback before next
-    // dev: use Promise instance of setTimeout
-    // window.setTimeout(() => {
-    //   to.params[directionKey] = direction
-    //   next()
-    // }, 16)
-    routerPromise.then(function () {
+    window.setTimeout(function () {
       to.params[directionKey] = direction;
-      console.log(direction);
       next();
-      refreshRouterPromise();
-    });
+    }, 16);
   });
   defineReactive(router.history, 'current', router.history.current, function () {
     Vue.nextTick(function () {
       var href = window.location.href;
 
       if (direction !== BACK && historyStack.getHeader() !== href) {
-        console.log('unshift');
         historyStack.unshift(href);
         config.setHistoryStack(historyStack.getStore());
       }
@@ -814,7 +788,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.3.1'
+  version: '0.3.2'
 };
 
 export default VuerouterCache;

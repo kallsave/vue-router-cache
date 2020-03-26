@@ -1,12 +1,12 @@
 import Events from '../util/events'
 import historyStack from './history-stack'
 import { BACK, FORWARD } from './history-direction-name'
+import config from '../config/index'
 
 const historyStateEvent = new Events()
 
 window.addEventListener('hashchange', () => {
   if (historyStack.getByIndex(1) === window.location.href) {
-    console.log('---back---')
     historyStateEvent.emit(BACK)
   } else {
     historyStateEvent.emit(FORWARD)
