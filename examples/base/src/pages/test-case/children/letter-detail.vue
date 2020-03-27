@@ -17,7 +17,7 @@
           <btn v-if="isSingleMode" style="background: #ff1133;" @click.native="deleteLetterDetail">删除并返回</btn>
         </div>
         <div class="sticky-footer">
-          <btn v-if="isSingleMode" @click.native="back">返回</btn>
+          <btn @click.native="back">返回</btn>
           <btn v-if="isSingleMode" @click.native="removeCacheBack">销毁上个列表页的缓存并返回</btn>
           <btn v-if="!isSingleMode" @click.native="pageTurnLetterList">push到新的列表页</btn>
         </div>

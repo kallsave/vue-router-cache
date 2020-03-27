@@ -8,6 +8,6 @@ export const globalCache = []
 
 export const globalMultiKeyMap = Object.create(null)
 
-defineReactive(config, 'max', config.max, (newVal) => {
+defineReactive(config, 'max', (newVal) => {
   globalStack.updateSize(newVal)
 })

@@ -82,9 +82,9 @@ const routerMiddle = (Vue, config) => {
     }, 16)
   })
 
-  defineReactive(router.history, 'current', router.history.current, () => {
+  defineReactive(router.history, 'current', () => {
     Vue.nextTick(() => {
-      const href = window.location.href
+      const href = document.URL
       if (direction !== BACK && historyStack.getHeader() !== href) {
         historyStack.unshift(href)
         config.setHistoryStack(historyStack.getStore())

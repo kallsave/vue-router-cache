@@ -4,7 +4,7 @@ import config from '../config/index'
 
 const historyStack = new Stack()
 
-defineReactive(config, 'getHistoryStack', config.max, (newVal) => {
+defineReactive(config, 'getHistoryStack', (newVal) => {
   const list = newVal()
   if (!list) {
     return

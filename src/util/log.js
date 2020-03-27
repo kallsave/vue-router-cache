@@ -3,5 +3,5 @@ export function warn(text) {
 }
 
 export function error(text) {
-  console.error(`error: ${text}`)
+  console.error(`%cerror: ${text}`, 'color: orange')
 }

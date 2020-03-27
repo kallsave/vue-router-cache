@@ -58,7 +58,6 @@ export default {
     }
 
     const matched = this.$route.matched[depth]
-
     if (vnode && matched) {
       if (config.isSingleMode) {
         key = routerCache.resolveKeyFromRoute(matched)
@@ -67,11 +66,12 @@ export default {
         if (!globalMultiKeyMap[baseKey]) {
           globalMultiKeyMap[baseKey] = new MapStack()
         }
-        if (this.$route.params[config.directionKey] !== BACK) {
+        const lastKey = globalMultiKeyMap[baseKey].getByIndex(0)
+        if (this.$route.params[config.directionKey] !== BACK || !lastKey) {
           key = `${baseKey}_${globalMultiKeyMap[baseKey].getSize()}`
           globalMultiKeyMap[baseKey].unshift(key)
         } else {
-          key = globalMultiKeyMap[baseKey].getByIndex(0)
+          key = lastKey
         }
       }
       if (this.cache[key]) {

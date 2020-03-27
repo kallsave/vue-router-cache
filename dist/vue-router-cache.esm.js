@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.3.2
+ * vue-router-cache.js v0.3.3
  * (c) 2019-2020 kallsave
  * Released under the MIT License.
  */
@@ -329,7 +329,8 @@ function checkInt(n) {
 
   return typeof n === 'number' && n > 0 && (n | 0) === n;
 }
-function defineReactive(data, key, val, fn) {
+function defineReactive(data, key, fn) {
+  var val = data[key];
   Object.defineProperty(data, key, {
     enumerable: true,
     configurable: true,
@@ -337,6 +338,10 @@ function defineReactive(data, key, val, fn) {
       return val;
     },
     set: function set(newVal) {
+      if (key === 'value') {
+        console.log('newVal', newVal);
+      }
+
       if (newVal === val) {
         return;
       }
@@ -351,7 +356,7 @@ function defineReactive(data, key, val, fn) {
 var globalStack = new MapStack(config.max);
 var globalCache = [];
 var globalMultiKeyMap = Object.create(null);
-defineReactive(config, 'max', config.max, function (newVal) {
+defineReactive(config, 'max', function (newVal) {
   globalStack.updateSize(newVal);
 });
 
@@ -510,7 +515,7 @@ function () {
 }();
 
 var historyStack = new Stack();
-defineReactive(config, 'getHistoryStack', config.max, function (newVal) {
+defineReactive(config, 'getHistoryStack', function (newVal) {
   var list = newVal();
 
   if (!list) {
@@ -606,11 +611,13 @@ var Component = {
           globalMultiKeyMap[baseKey] = new MapStack();
         }
 
-        if (this.$route.params[config.directionKey] !== BACK) {
+        var lastKey = globalMultiKeyMap[baseKey].getByIndex(0);
+
+        if (this.$route.params[config.directionKey] !== BACK || !lastKey) {
           key = "".concat(baseKey, "_").concat(globalMultiKeyMap[baseKey].getSize());
           globalMultiKeyMap[baseKey].unshift(key);
         } else {
-          key = globalMultiKeyMap[baseKey].getByIndex(0);
+          key = lastKey;
         }
       }
 
@@ -631,9 +638,9 @@ var Component = {
             this.oldComponentInstance = vnode.componentInstance;
           }
         } else {
-          var lastKey = globalStack.getFooter();
+          var _lastKey = globalStack.getFooter();
 
-          routerCache._remove(lastKey);
+          routerCache._remove(_lastKey);
 
           if (!inactive) {
             this.cache[key] = vnode;
@@ -747,9 +754,9 @@ var routerMiddle = function routerMiddle(Vue, config) {
       next();
     }, 16);
   });
-  defineReactive(router.history, 'current', router.history.current, function () {
+  defineReactive(router.history, 'current', function () {
     Vue.nextTick(function () {
-      var href = window.location.href;
+      var href = document.URL;
 
       if (direction !== BACK && historyStack.getHeader() !== href) {
         historyStack.unshift(href);
@@ -761,16 +768,20 @@ var routerMiddle = function routerMiddle(Vue, config) {
   });
 };
 
+function error(text) {
+  console.error("%cerror: ".concat(text), 'color: orange');
+}
+
 function install(Vue) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   if (!options.router) {
-    console.error('parameter %crouter', 'color: orange', 'is required');
+    error('parameter router is required');
     return;
   }
 
-  if (options.max && !checkInt(options.max)) {
-    console.error('parameter %cmax', 'color: orange', 'must be an integer');
+  if (!checkInt(options.max)) {
+    error('parameter max must be an integer');
     return;
   }
 
@@ -788,7 +799,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.3.2'
+  version: '0.3.3'
 };
 
 export default VuerouterCache;

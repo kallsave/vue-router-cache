@@ -3,14 +3,15 @@ import routerCache from './api/router-cache'
 import Component from './components/router-cache'
 import routerMiddle from './router-middle/index'
 import { checkInt } from './util/lang'
+import { error } from './util/log'
 
 function install(Vue, options = {}) {
   if (!options.router) {
-    console.error('parameter %crouter', 'color: orange', 'is required')
+    error('parameter router is required')
     return
   }
-  if (options.max && !checkInt(options.max)) {
-    console.error('parameter %cmax', 'color: orange', 'must be an integer')
+  if (!checkInt(options.max)) {
+    error('parameter max must be an integer')
     return
   }
   if (install.installed) {
@@ -26,7 +27,7 @@ function install(Vue, options = {}) {
 const VuerouterCache = {
   install,
   routerCache,
-  version: '0.3.2'
+  version: '0.3.3'
 }
 
 export default VuerouterCache

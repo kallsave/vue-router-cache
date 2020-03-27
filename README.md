@@ -8,8 +8,9 @@ vue-router-cache
 
 - 提供浏览器路由方向(forward、back、replace)
 - 在知道路由是forward、back、replace的基础上,浏览器进入新页面缓存新页面,浏览器触发后退(back)时自动删除离开页面缓存,从而实现前进刷新后退缓存
-- 提供管理缓存的api方法,这些方法的参数和vue-router的push方法的参数一致,这样做保证了代码的可读性
 - 对累积的页面缓存可能导致的内存泄漏做了保护机制,提供max参数,当页面缓存达到max,会自动把最后方的页面缓存删除
+- 提供方便使用的多例模式(类似小程序页面)和手动清除页面缓存的单例模式
+- 单例提供管理缓存的api方法,这些方法的参数和vue-router的push方法的参数一致,这样做保证了代码的可读性
 - 支持嵌套路由 (嵌套路由请在最里层的router-view包裹router-cache,外层的router-view不要包裹router-cache)
 
 在线案例
@@ -30,7 +31,8 @@ import VueRouterCache from 'vue-router-cache'
 Vue.use(VueRouterCache, {
   router: router,
   max: 10,
-  isSingleMode: true,
+  // 多例模式
+  isSingleMode: false,
   isDebugger: true,
   directionKey: 'direction',
   getHistoryStack() {
@@ -75,7 +77,7 @@ watch: {
         this.transitionName = 'move-right'
         this.transitionMode = ''
       } else {
-        // replace
+        // replace or first come in
         this.transitionName = ''
         this.transitionMode = ''
       }
@@ -84,13 +86,23 @@ watch: {
 }
 ```
 
-清除页面缓存方法使用例子
+多例模式下,后退的页面总是缓存的,不能手动删除缓存
+-----------
+```javascript
+// back的时候如果想更新数据利用activated
+export default {
+  activated() {
+    
+  },
+}
+```
+
+单例模式下,清除页面缓存方法的例子
 -----------
 ```javascript
 // 在vue组件实例中清除缓存
 
 // 从详情页修改了数据需要回退到列表页时手动删除列表页的缓存让列表页刷新的例子
-
 export default {
   methods: {
     // 用back的方式,推荐
@@ -120,13 +132,44 @@ export default {
     }
   }
 }
+
+// 或者利用activated更新局部数据
+export default {
+  activated() {
+    
+  },
+}
+```
+
+单例模式下,当前页面不使用缓存的例子
+-----------
+```javascript
+import VueRouterCache from 'vue-router-cache'
+
+export default {
+  beforeRouteEnter (to, from, next) {
+    // 这个页面的路由名字是mainNumberList
+    VueRouterCache.routerCache.remove({name: 'mainNumberList'})
+    // or
+    // 这个页面的路径是/main/number-list
+    VueRouterCache.routerCache.remove({name: '/main/number-list'})
+    next()
+  },
+}
+
+// 或者利用activated替代mounted
+export default {
+  activated() {
+    
+  },
+}
 ```
 
 ```javascript
 // 在js文件中清除缓存
-import { routerCache } from 'vue-router-cache'
+import VueRouterCache from 'vue-router-cache'
 
-routerCache.remove({name: 'mainNumberList'})
+VueRouterCache.remove({name: 'mainNumberList'})
 ```
 
 配置说明
@@ -157,7 +200,7 @@ routerCache.remove({name: 'mainNumberList'})
 |getStore||查看系统中的页面缓存|是|
 |has|location|查看系统中的页面缓存是否有参数页面|否|
 
-页面重刷后依然想记住页面的前进后退关系
+页面重刷后依然想记住页面的前进后退关系的配置
 -----------
 ```javascript
 import router from './router'
@@ -165,7 +208,7 @@ import VueRouterCache from 'vue-router-cache'
 
 Vue.use(VueRouterCache, {
   router: router,
-  // 在配置VueRouterCache的时候使用getHistoryStack和setHistoryStack函数,把历史记录存在本地储存里
+  // 在配置VueRouterCache的时候使用getHistoryStack和setHistoryStack函数,把历史记录存在本地储存里(由于不同端的本地储存不一样,所以自行选择储存的方式)
   getHistoryStack() {
     const str = window.sessionStorage.getItem('historyStack')
     return JSON.parse(str)
@@ -179,10 +222,12 @@ Vue.use(VueRouterCache, {
 
 单例模式和多例模式对比
 -----------
+- 最大的区别是单例模式可以手动删除页面缓存,而多例模式不能手动删除页面缓存而是通过activated来更新局部数据
+
 - 单例模式是指系统中一个路由对应的组件(缓存实例)只存在一个,比如A=>B=>C=>A,系统中只会存在3个缓存实例,所以路由和缓存实例(key)是一一对应的。
 - 多例模式是指系统中一个路由对应的组件(缓存实例)可以存在多个,比如A=>B=>C=>A,系统中会存在4个缓存实例,所以路由和缓存实例(key)是一对多的关系。
-- 多例模式系统性能存在浪费,多例模式可以说是简单模式,如果A要回跳C页面需要C页面刷新,只能push到C页面,多例模式能做的事情单例模式都能实现。
-- 单例模式系统的性能高,有灵活的手动清除缓存的api,如果A要回跳C页面需要C页面刷新,可以调用api清除C页面缓存然后back到C页面(推荐)。也可以直接push到C页面(但是这样浏览器会比执行back多存历史记录)
+- 多例模式系统代码好维护。（加载过的页面都有不同的缓存）
+- 单例模式系统的性能要高（加载过的同一个页面只会有一个缓存）,有手动清除缓存的api,如果A要回跳C页面需要C页面刷新,可以调用api清除C页面缓存然后back到C页面。也可以直接push到C页面(但是这样浏览器会比执行back多存历史记录)。但是代码会不好维护。
 
 这个插件开发是需要关闭webpack热更新
 -----------

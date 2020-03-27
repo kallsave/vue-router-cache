@@ -94,6 +94,8 @@ export default {
             this.$router.back()
           }
         })
+      } else {
+        this.$router.back()
       }
     },
     go() {

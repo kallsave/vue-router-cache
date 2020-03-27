@@ -4,7 +4,9 @@
       :name="transitionName"
       :mode="transitionMode"
       :duration="transitionDuration">
-      <router-view class="router-view app"></router-view>
+      <router-cache>
+        <router-view class="router-view"></router-view>
+      </router-cache>
      </transition>
   </div>
 </template>

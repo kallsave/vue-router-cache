@@ -1,5 +1,10 @@
+import { isSingleMode } from '@/config.js'
+
 export default {
   activated() {
+    if (!isSingleMode) {
+      this.pullingDownHandler()
+    }
     this.$nextTick(() => {
       this.$refs.scroll.refresh()
     })

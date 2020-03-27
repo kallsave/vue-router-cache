@@ -5,7 +5,8 @@ export function checkInt(n) {
   return typeof n === 'number' && n > 0 && (n | 0) === n
 }
 
-export function defineReactive(data, key, val, fn) {
+export function defineReactive(data, key, fn) {
+  let val = data[key]
   Object.defineProperty(data, key, {
     enumerable: true,
     configurable: true,
@@ -13,6 +14,9 @@ export function defineReactive(data, key, val, fn) {
       return val
     },
     set(newVal) {
+      if (key === 'value') {
+        console.log('newVal', newVal)
+      }
       if (newVal === val) {
         return
       }
