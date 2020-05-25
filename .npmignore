@@ -1,6 +1,6 @@
 /build
-/node_modules
+node_modules
 /examples
 /test
 /scripts
-
+/.npmrc

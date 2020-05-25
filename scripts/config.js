@@ -1,18 +1,21 @@
 const path = require('path')
-const cjs = require('rollup-plugin-commonjs')
-const node = require('rollup-plugin-node-resolve')
+const node = require('@rollup/plugin-node-resolve')
+const cjs = require('@rollup/plugin-commonjs')
+const replace = require('@rollup/plugin-replace')
 const babel = require('rollup-plugin-babel')
 const eslint = require('rollup-plugin-eslint').eslint
 
 const util = require('./util')
-const version = require('../package.json').version
-const name = require('../package.json').name
+const package = require('../package.json')
+const author = package.author
+const name = package.name
 const apiName = util.createApiName(name)
+const version = package.version
 
 const banner =
   '/*!\n' +
   ` * ${name}.js v${version}\n` +
-  ` * (c) 2019-${new Date().getFullYear()} kallsave\n` +
+  ` * (c) 2019-${new Date().getFullYear()} ${author}\n` +
   ' * Released under the MIT License.\n' +
   ' */'
 
@@ -21,6 +24,10 @@ const resolve = (p) => {
 }
 
 const plugins = [
+  replace({
+    include: 'src/index.js',
+    VERSION: version,
+  }),
   eslint({
     include: [
       resolve('src/**/*.js')
@@ -28,55 +35,50 @@ const plugins = [
   }),
   node(),
   cjs(),
+  babel(),
 ]
+
+const input = resolve('src/index.js')
 
 const buildMap = {
   esm: {
-    input: resolve('src/index.js'),
+    input,
     output: {
       file: resolve(`dist/${name}.esm.js`),
-      format: 'es',
+      format: 'esm',
       banner: banner
     },
-    plugins: plugins.concat([
-      babel()
-    ])
+    plugins,
   },
   umd: {
-    input: resolve('src/index.js'),
+    input,
     output: {
       file: resolve(`dist/${name}.umd.js`),
       format: 'umd',
       name: apiName,
       banner: banner
     },
-    plugins: plugins.concat([
-      babel()
-    ])
+    plugins,
   },
   main: {
-    input: resolve('src/index.js'),
+    input,
     output: {
       file: resolve(`dist/${name}.js`),
       format: 'umd',
       name: apiName,
       banner: banner
     },
-    plugins: plugins.concat([
-      babel()
-    ])
+    plugins,
   },
   min: {
-    input: resolve('src/index.js'),
+    input,
     output: {
       file: resolve(`dist/${name}.min.js`),
       format: 'umd',
       name: apiName,
       banner: banner
     },
-    plugins: plugins.concat([
-      babel()
-    ])
+    plugins,
   }
 }
 
