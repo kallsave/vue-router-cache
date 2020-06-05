@@ -33,8 +33,7 @@ module.exports = {
       'named': 'never',
       'asyncArrow': 'always'
     }],
-    'no-unused-vars': 'off',
-    'no-useless-constructor': 'off',
-    "lines-between-class-members": 'off'
+    'lines-between-class-members': 'off',
+    'prefer-const': 'error',
   }
 }

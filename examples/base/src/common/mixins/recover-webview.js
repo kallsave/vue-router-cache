@@ -1,6 +1,5 @@
 import {
   hasData,
-  getData
 } from '@/common/helpers/dom.js'
 
 export default {

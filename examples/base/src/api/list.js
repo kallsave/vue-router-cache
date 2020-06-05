@@ -515,7 +515,7 @@ function createApi() {
   })
 }
 
-function createId(list) {
+export function createId(list) {
   return list.length + ''
 }
 
@@ -614,12 +614,12 @@ export function updateLetterDetail(numberId, letterId, text) {
     createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
-        let item = list[i]
+        const item = list[i]
         /* eslint eqeqeq: 'off' */
         if (item.id == numberId) {
           const letterList = item.children
           for (let i = 0; i < letterList.length; i++) {
-            let letterItem = letterList[i]
+            const letterItem = letterList[i]
             /* eslint eqeqeq: 'off' */
             if (letterItem.id == letterId) {
               letterItem.text = text
@@ -641,14 +641,14 @@ export function deleteLetterDetail(numberId, letterId) {
     createApi().then(() => {
       const list = tpLocalStorage.get('list')
       for (let i = 0; i < list.length; i++) {
-        let item = list[i]
+        const item = list[i]
         /* eslint eqeqeq: 'off' */
         if (item.id == numberId) {
           const letterList = item.children
           if (letterList) {
             let index
             for (let i = 0; i < letterList.length; i++) {
-              let letterItem = letterList[i]
+              const letterItem = letterList[i]
               /* eslint eqeqeq: 'off' */
               if (letterItem.id == letterId) {
                 index = i

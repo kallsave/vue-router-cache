@@ -1,3 +1,19 @@
+const hasOwnProperty = Object.prototype.hasOwnProperty
+
+export function hasOwn(obj, key) {
+  return hasOwnProperty.call(obj, key)
+}
+
+const _toString = Object.prototype.toString
+
+function toRawType(value) {
+  return _toString.call(value).slice(8, -1)
+}
+
+function isObject(value) {
+  return value !== null && typeof value === 'object'
+}
+
 export const MOBILE_MAX_SIZE = 640
 
 export const UA = window.navigator.userAgent.toLowerCase()
@@ -36,42 +52,46 @@ export function getUrlParams(currentUrl = window.location.href) {
   return result
 }
 
-export function checkClass(o) {
-  return Object.prototype.toString.call(o).slice(8, -1)
-}
-
-function deepClone(o) {
+// 深度克隆
+function deepClone(value) {
   let ret
-  let instance = checkClass(o)
-  if (instance === 'Array') {
-    ret = []
-  } else if (instance === 'Object') {
+  const type = toRawType(value)
+  if (type === 'Object') {
     ret = {}
+  } else if (type === 'Array') {
+    ret = []
   } else {
-    return o
+    return value
   }
 
-  for (let key in o) {
-    let copy = o[key]
-    ret[key] = deepClone(copy)
+  for (const key in value) {
+    const copy = value[key]
+    value[key] = deepClone(copy)
   }
 
   return ret
 }
 
-function deepAssign(to, from) {
-  for (let key in from) {
-    if (!to[key] || typeof to[key] !== 'object') {
-      to[key] = from[key]
-    } else {
-      deepAssign(to[key], from[key])
+// 深度合并
+function deepAssign(origin, mixin) {
+  for (const key in mixin) {
+    const targetValue = origin[key]
+    const mixinValue = mixin[key]
+    if (!hasOwn(origin, key)) {
+      origin[key] = mixinValue
+    } else if (
+      isObject(targetValue) &&
+      isObject(mixinValue) &&
+      toRawType(targetValue) === toRawType(mixinValue)
+    ) {
+      deepAssign(targetValue, mixinValue)
     }
   }
 }
 
 export function multiDeepClone(target, ...rest) {
   for (let i = 0; i < rest.length; i++) {
-    let source = deepClone(rest[i])
+    const source = deepClone(rest[i])
     deepAssign(target, source)
   }
   return target
