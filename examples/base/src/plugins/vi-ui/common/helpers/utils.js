@@ -2,7 +2,7 @@
  * @Author: kallsave
  * @Date: 2018-10-15 11:07:37
  * @Last Modified by: kallsave
- * @Last Modified time: 2020-06-05 14:02:16
+ * @Last Modified time: 2020-06-06 23:29:12
  */
 
 const hasOwnProperty = Object.prototype.hasOwnProperty
@@ -103,7 +103,8 @@ export function spliceArray() {
   })
 }
 
-export function deepClone(value) {
+// 深度克隆
+function deepClone(value) {
   let ret
   const type = toRawType(value)
   if (type === 'Object') {
@@ -116,7 +117,7 @@ export function deepClone(value) {
 
   for (const key in value) {
     const copy = value[key]
-    value[key] = deepClone(copy)
+    ret[key] = deepClone(copy)
   }
 
   return ret
@@ -139,11 +140,11 @@ function deepAssign(origin, mixin) {
   }
 }
 
-// 支持多参数的深度克隆,后面的优先级最大
+// 深度克隆多参数版,后面的参数优先级最大
 export function multiDeepClone(target, ...rest) {
-  for (let i = 0, len = rest.length; i < len; i++) {
-    const mixin = deepClone(rest[i])
-    deepAssign(target, mixin)
+  for (let i = 0; i < rest.length; i++) {
+    const source = deepClone(rest[i])
+    deepAssign(target, source)
   }
   return target
 }

@@ -66,7 +66,7 @@ function deepClone(value) {
 
   for (const key in value) {
     const copy = value[key]
-    value[key] = deepClone(copy)
+    ret[key] = deepClone(copy)
   }
 
   return ret
@@ -89,6 +89,7 @@ function deepAssign(origin, mixin) {
   }
 }
 
+// 深度克隆多参数版,后面的参数优先级最大
 export function multiDeepClone(target, ...rest) {
   for (let i = 0; i < rest.length; i++) {
     const source = deepClone(rest[i])
