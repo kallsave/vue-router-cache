@@ -6,12 +6,46 @@ export function hasOwn(obj, key) {
 
 const _toString = Object.prototype.toString
 
-function toRawType(value) {
+export function toRawType(value) {
   return _toString.call(value).slice(8, -1)
 }
 
-function isObject(value) {
-  return value !== null && typeof value === 'object'
+export function deepClone(value) {
+  let ret
+  const type = toRawType(value)
+
+  if (type === 'Object') {
+    ret = {}
+  } else if (type === 'Array') {
+    ret = []
+  } else {
+    return value
+  }
+
+  Object.keys(value).forEach((key) => {
+    const copy = value[key]
+    ret[key] = deepClone(copy)
+  })
+
+  return ret
+}
+
+export function deepAssign(origin, mixin) {
+  for (const key in mixin) {
+    if (!origin[key] || typeof origin[key] !== 'object') {
+      origin[key] = mixin[key]
+    } else {
+      deepAssign(origin[key], mixin[key])
+    }
+  }
+}
+
+export function multiDeepClone(target, ...rest) {
+  for (let i = 0; i < rest.length; i++) {
+    const clone = deepClone(rest[i])
+    deepAssign(target, clone)
+  }
+  return target
 }
 
 export const MOBILE_MAX_SIZE = 640
@@ -50,52 +84,6 @@ export function getUrlParams(currentUrl = window.location.href) {
     }
   }
   return result
-}
-
-// 深度克隆
-function deepClone(value) {
-  let ret
-  const type = toRawType(value)
-  if (type === 'Object') {
-    ret = {}
-  } else if (type === 'Array') {
-    ret = []
-  } else {
-    return value
-  }
-
-  for (const key in value) {
-    const copy = value[key]
-    ret[key] = deepClone(copy)
-  }
-
-  return ret
-}
-
-// 深度合并
-function deepAssign(origin, mixin) {
-  for (const key in mixin) {
-    const targetValue = origin[key]
-    const mixinValue = mixin[key]
-    if (!hasOwn(origin, key)) {
-      origin[key] = mixinValue
-    } else if (
-      isObject(targetValue) &&
-      isObject(mixinValue) &&
-      toRawType(targetValue) === toRawType(mixinValue)
-    ) {
-      deepAssign(targetValue, mixinValue)
-    }
-  }
-}
-
-// 深度克隆多参数版,后面的参数优先级最大
-export function multiDeepClone(target, ...rest) {
-  for (let i = 0; i < rest.length; i++) {
-    const source = deepClone(rest[i])
-    deepAssign(target, source)
-  }
-  return target
 }
 
 export function camelize(str) {

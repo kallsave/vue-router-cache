@@ -1,10 +1,3 @@
-/*
- * @Author: kallsave
- * @Date: 2018-10-15 11:07:37
- * @Last Modified by: kallsave
- * @Last Modified time: 2020-06-06 23:29:12
- */
-
 const hasOwnProperty = Object.prototype.hasOwnProperty
 
 export function hasOwn(obj, key) {
@@ -13,15 +6,48 @@ export function hasOwn(obj, key) {
 
 const _toString = Object.prototype.toString
 
-function toRawType(value) {
+export function toRawType(value) {
   return _toString.call(value).slice(8, -1)
 }
 
-function isObject(value) {
-  return value !== null && typeof value === 'object'
+export function deepClone(value) {
+  let ret
+  const type = toRawType(value)
+
+  if (type === 'Object') {
+    ret = {}
+  } else if (type === 'Array') {
+    ret = []
+  } else {
+    return value
+  }
+
+  Object.keys(value).forEach((key) => {
+    const copy = value[key]
+    ret[key] = deepClone(copy)
+  })
+
+  return ret
 }
 
-// '-'转驼峰
+export function deepAssign(origin, mixin) {
+  for (const key in mixin) {
+    if (!origin[key] || typeof origin[key] !== 'object') {
+      origin[key] = mixin[key]
+    } else {
+      deepAssign(origin[key], mixin[key])
+    }
+  }
+}
+
+export function multiDeepClone(target, ...rest) {
+  for (let i = 0; i < rest.length; i++) {
+    const clone = deepClone(rest[i])
+    deepAssign(target, clone)
+  }
+  return target
+}
+
 export function camelize(str) {
   str = String(str)
   return str.replace(/-(\w)/g, function (m, c) {
@@ -60,7 +86,7 @@ export function styleTogglePx(style, mode = true) {
 
   const map = {}
 
-  for (let key in style) {
+  for (const key in style) {
     if (list.indexOf(key) !== -1) {
       if (mode && !isNaN(style[key] - 0)) {
         map[key] = padPx(style[key])
@@ -81,7 +107,6 @@ export function styleRemovePx(style) {
   return styleTogglePx(style, false)
 }
 
-// 数组合并并且去重
 export function assignArray() {
   const arr = [].concat.apply([], arguments)
   const ret = []
@@ -93,60 +118,12 @@ export function assignArray() {
   return ret
 }
 
-// 去掉数组中指定的元素
-// 第一个参数是需要操作的数组,后面的参数是包含需要去掉的元素的数组
 export function spliceArray() {
   const arr = arguments[0]
   const spliceList = [].concat.apply([], [].slice.call(arguments, 1))
   return arr.filter((item) => {
     return spliceList.indexOf(item) === -1
   })
-}
-
-// 深度克隆
-function deepClone(value) {
-  let ret
-  const type = toRawType(value)
-  if (type === 'Object') {
-    ret = {}
-  } else if (type === 'Array') {
-    ret = []
-  } else {
-    return value
-  }
-
-  for (const key in value) {
-    const copy = value[key]
-    ret[key] = deepClone(copy)
-  }
-
-  return ret
-}
-
-// 深度合并
-function deepAssign(origin, mixin) {
-  for (const key in mixin) {
-    const targetValue = origin[key]
-    const mixinValue = mixin[key]
-    if (!hasOwn(origin, key)) {
-      origin[key] = mixinValue
-    } else if (
-      isObject(targetValue) &&
-      isObject(mixinValue) &&
-      toRawType(targetValue) === toRawType(mixinValue)
-    ) {
-      deepAssign(targetValue, mixinValue)
-    }
-  }
-}
-
-// 深度克隆多参数版,后面的参数优先级最大
-export function multiDeepClone(target, ...rest) {
-  for (let i = 0; i < rest.length; i++) {
-    const source = deepClone(rest[i])
-    deepAssign(target, source)
-  }
-  return target
 }
 
 const DEFAULT_TIME_SLICE = 400

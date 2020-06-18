@@ -3,11 +3,11 @@
 module.exports = {
   root: true,
   parserOptions: {
-    "ecmaVersion": 2017
+    'ecmaVersion': 2017
   },
   env: {
-    "node": true,
-    "commonjs": true,
+    'node': true,
+    'commonjs': true,
   },
   extends: [
     // https://github.com/standard/standard/blob/master/docs/RULES-en.md

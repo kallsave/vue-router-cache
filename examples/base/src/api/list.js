@@ -515,10 +515,6 @@ function createApi() {
   })
 }
 
-export function createId(list) {
-  return list.length + ''
-}
-
 export function getNumberList() {
   return new Promise((resolve) => {
     createApi().then(() => {

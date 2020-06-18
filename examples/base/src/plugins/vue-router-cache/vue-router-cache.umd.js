@@ -1,6 +1,6 @@
 /*!
- * vue-router-cache.js v0.3.2
- * (c) 2019-2020 kallsave
+ * vue-router-cache.js v0.3.3
+ * (c) 2019-2020 kallsave <415034609@qq.com>
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -73,6 +73,19 @@
     return _setPrototypeOf(o, p);
   }
 
+  function _isNativeReflectConstruct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+
+    try {
+      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -89,9 +102,26 @@
     return _assertThisInitialized(self);
   }
 
-  var Stack =
-  /*#__PURE__*/
-  function () {
+  function _createSuper(Derived) {
+    var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+    return function () {
+      var Super = _getPrototypeOf(Derived),
+          result;
+
+      if (hasNativeReflectConstruct) {
+        var NewTarget = _getPrototypeOf(this).constructor;
+
+        result = Reflect.construct(Super, arguments, NewTarget);
+      } else {
+        result = Super.apply(this, arguments);
+      }
+
+      return _possibleConstructorReturn(this, result);
+    };
+  }
+
+  var Stack = /*#__PURE__*/function () {
     function Stack() {
       var max = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Infinity;
 
@@ -295,15 +325,15 @@
 
     return Stack;
   }();
-  var MapStack =
-  /*#__PURE__*/
-  function (_Stack) {
+  var MapStack = /*#__PURE__*/function (_Stack) {
     _inherits(MapStack, _Stack);
+
+    var _super = _createSuper(MapStack);
 
     function MapStack() {
       _classCallCheck(this, MapStack);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(MapStack).apply(this, arguments));
+      return _super.apply(this, arguments);
     }
 
     _createClass(MapStack, [{
@@ -335,7 +365,8 @@
 
     return typeof n === 'number' && n > 0 && (n | 0) === n;
   }
-  function defineReactive(data, key, val, fn) {
+  function defineReactive(data, key, fn) {
+    var val = data[key];
     Object.defineProperty(data, key, {
       enumerable: true,
       configurable: true,
@@ -343,6 +374,10 @@
         return val;
       },
       set: function set(newVal) {
+        if (key === 'value') {
+          console.log('newVal', newVal);
+        }
+
         if (newVal === val) {
           return;
         }
@@ -357,7 +392,7 @@
   var globalStack = new MapStack(config.max);
   var globalCache = [];
   var globalMultiKeyMap = Object.create(null);
-  defineReactive(config, 'max', config.max, function (newVal) {
+  defineReactive(config, 'max', function (newVal) {
     globalStack.updateSize(newVal);
   });
 
@@ -478,9 +513,7 @@
     }
   };
 
-  var Events =
-  /*#__PURE__*/
-  function () {
+  var Events = /*#__PURE__*/function () {
     function Events() {
       _classCallCheck(this, Events);
 
@@ -516,7 +549,7 @@
   }();
 
   var historyStack = new Stack();
-  defineReactive(config, 'getHistoryStack', config.max, function (newVal) {
+  defineReactive(config, 'getHistoryStack', function (newVal) {
     var list = newVal();
 
     if (!list) {
@@ -612,11 +645,13 @@
             globalMultiKeyMap[baseKey] = new MapStack();
           }
 
-          if (this.$route.params[config.directionKey] !== BACK) {
+          var lastKey = globalMultiKeyMap[baseKey].getByIndex(0);
+
+          if (this.$route.params[config.directionKey] !== BACK || !lastKey) {
             key = "".concat(baseKey, "_").concat(globalMultiKeyMap[baseKey].getSize());
             globalMultiKeyMap[baseKey].unshift(key);
           } else {
-            key = globalMultiKeyMap[baseKey].getByIndex(0);
+            key = lastKey;
           }
         }
 
@@ -637,9 +672,9 @@
               this.oldComponentInstance = vnode.componentInstance;
             }
           } else {
-            var lastKey = globalStack.getFooter();
+            var _lastKey = globalStack.getFooter();
 
-            routerCache._remove(lastKey);
+            routerCache._remove(_lastKey);
 
             if (!inactive) {
               this.cache[key] = vnode;
@@ -753,9 +788,9 @@
         next();
       }, 16);
     });
-    defineReactive(router.history, 'current', router.history.current, function () {
+    defineReactive(router.history, 'current', function () {
       Vue.nextTick(function () {
-        var href = window.location.href;
+        var href = document.URL;
 
         if (direction !== BACK && historyStack.getHeader() !== href) {
           historyStack.unshift(href);
@@ -767,16 +802,20 @@
     });
   };
 
+  function error(text) {
+    console.error("%cerror: ".concat(text), 'color: orange');
+  }
+
   function install(Vue) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     if (!options.router) {
-      console.error('parameter %crouter', 'color: orange', 'is required');
+      error('parameter router is required');
       return;
     }
 
-    if (options.max && !checkInt(options.max)) {
-      console.error('parameter %cmax', 'color: orange', 'must be an integer');
+    if (!checkInt(options.max)) {
+      error('parameter max must be an integer');
       return;
     }
 
@@ -794,7 +833,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '0.3.2'
+    version: '0.3.3'
   };
 
   return VuerouterCache;

@@ -1,6 +1,6 @@
 /*!
- * vue-router-cache.js v0.3.3
- * (c) 2019-2020 kallsave
+ * vue-router-cache.js v1.0.0
+ * (c) 2019-2020 kallsave <415034609@qq.com>
  * Released under the MIT License.
  */
 var noop = function noop() {};
@@ -67,6 +67,19 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -83,9 +96,26 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
-var Stack =
-/*#__PURE__*/
-function () {
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function () {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+var Stack = /*#__PURE__*/function () {
   function Stack() {
     var max = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Infinity;
 
@@ -289,15 +319,15 @@ function () {
 
   return Stack;
 }();
-var MapStack =
-/*#__PURE__*/
-function (_Stack) {
+var MapStack = /*#__PURE__*/function (_Stack) {
   _inherits(MapStack, _Stack);
+
+  var _super = _createSuper(MapStack);
 
   function MapStack() {
     _classCallCheck(this, MapStack);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MapStack).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(MapStack, [{
@@ -477,72 +507,10 @@ var routerCache = {
   }
 };
 
-var Events =
-/*#__PURE__*/
-function () {
-  function Events() {
-    _classCallCheck(this, Events);
-
-    this.map = {};
-  }
-
-  _createClass(Events, [{
-    key: "on",
-    value: function on(name, fn) {
-      if (this.map[name]) {
-        this.map[name].push(fn);
-        return;
-      }
-
-      this.map[name] = [fn];
-    }
-  }, {
-    key: "emit",
-    value: function emit(name) {
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      if (this.map[name]) {
-        this.map[name].forEach(function (fn) {
-          fn.apply(void 0, args);
-        });
-      }
-    }
-  }]);
-
-  return Events;
-}();
-
-var historyStack = new Stack();
-defineReactive(config, 'getHistoryStack', function (newVal) {
-  var list = newVal();
-
-  if (!list) {
-    return;
-  }
-
-  var length = list.length;
-
-  for (var i = length - 1; i > -1; i--) {
-    var item = list[i];
-    historyStack.unshift(item);
-  }
-});
-
 var BACK = 'back';
 var FORWARD = 'forward';
 var REPLACE = 'replace';
 var NONE = '';
-
-var historyStateEvent = new Events();
-window.addEventListener('hashchange', function () {
-  if (historyStack.getByIndex(1) === window.location.href) {
-    historyStateEvent.emit(BACK);
-  } else {
-    historyStateEvent.emit(FORWARD);
-  }
-});
 
 function isDef(v) {
   return v !== undefined && v !== null;
@@ -678,6 +646,66 @@ var Component = {
   }
 };
 
+var historyStack = new Stack();
+defineReactive(config, 'getHistoryStack', function (newVal) {
+  var list = newVal();
+
+  if (!list) {
+    return;
+  }
+
+  var length = list.length;
+
+  for (var i = length - 1; i > -1; i--) {
+    var item = list[i];
+    historyStack.unshift(item);
+  }
+});
+
+var Events = /*#__PURE__*/function () {
+  function Events() {
+    _classCallCheck(this, Events);
+
+    this.map = {};
+  }
+
+  _createClass(Events, [{
+    key: "on",
+    value: function on(name, fn) {
+      if (this.map[name]) {
+        this.map[name].push(fn);
+        return;
+      }
+
+      this.map[name] = [fn];
+    }
+  }, {
+    key: "emit",
+    value: function emit(name) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (this.map[name]) {
+        this.map[name].forEach(function (fn) {
+          fn.apply(void 0, args);
+        });
+      }
+    }
+  }]);
+
+  return Events;
+}();
+
+var historyStateEvent = new Events();
+window.addEventListener('hashchange', function () {
+  if (historyStack.getByIndex(1) === window.location.href) {
+    historyStateEvent.emit(BACK);
+  } else {
+    historyStateEvent.emit(FORWARD);
+  }
+});
+
 var direction = NONE;
 historyStateEvent.on(BACK, function () {
   direction = BACK;
@@ -799,7 +827,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '0.3.3'
+  version: '1.0.0'
 };
 
 export default VuerouterCache;

@@ -27,7 +27,7 @@ function install(Vue, options = {}) {
 const VuerouterCache = {
   install,
   routerCache,
-  version: '0.3.3'
+  version: 'VERSION'
 }
 
 export default VuerouterCache

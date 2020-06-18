@@ -7,21 +7,6 @@ const TRANSITION_DURATION = {
   leave: 330
 }
 
-// function hasChildrenRouterView(vm, mostDepth, depth) {
-//   for (let i = 0; i < vm.$children.length; i++) {
-//     const item = vm.$children[i]
-//     const vnodeData = item.$vnode && item.$vnode.data
-//     if (vnodeData.routerView) {
-//       const routerViewDepth = vnodeData.routerViewDepth
-//       depth = depth !== undefined ? depth : routerViewDepth
-//       return hasChildrenRouterView(item, routerViewDepth, depth)
-//     } else {
-//       return hasChildrenRouterView(item, mostDepth, depth)
-//     }
-//   }
-//   return mostDepth !== undefined && mostDepth !== depth
-// }
-
 export default {
   data() {
     return {

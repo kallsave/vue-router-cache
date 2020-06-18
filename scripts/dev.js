@@ -10,23 +10,20 @@ const TARGET = process.env.TARGET
 
 async function buildEntry() {
   const build = buildMap[TARGET]
-
-  if (build) {
-    await (() => {
-      return new Promise((resolve) => {
-        const watcher = rollup.watch(build)
-        watcher.on('event', event => {
-          console.log(event.code)
-          if (event.code === 'END') {
-            copy('dist', `examples/${EXAMPLE}/src/plugins/${name}/`, function (err) {
-              console.log(err)
-            })
-            resolve()
-          }
-        })
+  await (() => {
+    return new Promise((resolve) => {
+      const watcher = rollup.watch(build)
+      watcher.on('event', event => {
+        console.log(event.code)
+        if (event.code === 'END') {
+          copy('dist', `examples/${EXAMPLE}/src/plugins/${name}/`, function (err) {
+            console.log(err)
+          })
+          resolve()
+        }
       })
-    })()
-  }
+    })
+  })()
   await (() => {
     return new Promise((resolve) => {
       const cmd = `cd examples/${EXAMPLE} && npm run dev`

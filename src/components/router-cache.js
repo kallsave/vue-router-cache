@@ -1,5 +1,4 @@
 import { MapStack } from '../util/stack'
-import historyStateEvent from '../history/history-state-event'
 import { BACK } from '../history/history-direction-name'
 import { globalCache, globalStack, globalMultiKeyMap } from '../store/index'
 import routerCache from '../api/router-cache'

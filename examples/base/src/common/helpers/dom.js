@@ -1,4 +1,4 @@
-import { camelize, hasOwn } from './utils.js'
+import { camelize } from './utils.js'
 
 export function hasClass(el, className) {
   const reg = new RegExp('(^|\\s)' + className + '(\\s|$)')
@@ -6,18 +6,22 @@ export function hasClass(el, className) {
 }
 
 export function addClass(el, className) {
+  /* istanbul ignore if */
   if (hasClass(el, className)) {
     return
   }
+
   const newClass = el.className.split(' ')
   newClass.push(className)
   el.className = newClass.join(' ')
 }
 
 export function removeClass(el, className) {
+  /* istanbul ignore if */
   if (!hasClass(el, className)) {
     return
   }
+
   const reg = new RegExp('(^|\\s)' + className + '(\\s|$)', 'g')
   el.className = el.className.replace(reg, ' ')
 }
@@ -87,13 +91,13 @@ export function prefixStyle(style) {
     if (baseStyle) {
       const cssPrefixStyle = browserPrefix[key] ? browserPrefix[key] + '-' + baseStyle : baseStyle
       const keyName = camelize(cssPrefixStyle)
-      if (hasOwn(elementStyle, keyName)) {
+      if (elementStyle[keyName] !== undefined) {
         return endEventListenerPrefixList[baseStyle][keyName]
       }
     } else {
       const cssPrefixStyle = browserPrefix[key] ? browserPrefix[key] + '-' + style : style
       const keyName = camelize(cssPrefixStyle)
-      if (hasOwn(elementStyle, keyName)) {
+      if (elementStyle[keyName] !== undefined) {
         return keyName
       }
     }
@@ -103,12 +107,12 @@ export function prefixStyle(style) {
 
 export function getMatchedTarget(e, targetClassName) {
   let el = e.target
+
   while (el && !hasClass(el, targetClassName)) {
-    if (el === e.currentTarget) {
-      return null
-    }
+    if (el === e.currentTarget) return null
     el = el.parentNode
   }
+
   return el
 }
 
