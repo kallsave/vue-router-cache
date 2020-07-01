@@ -1,4 +1,4 @@
-export function checkInt(n) {
+export function isInt(n) {
   if (n === Infinity) {
     return true
   }
@@ -14,9 +14,6 @@ export function defineReactive(data, key, fn) {
       return val
     },
     set(newVal) {
-      if (key === 'value') {
-        console.log('newVal', newVal)
-      }
       if (newVal === val) {
         return
       }

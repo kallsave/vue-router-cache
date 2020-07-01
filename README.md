@@ -169,7 +169,7 @@ export default {
 // 在js文件中清除缓存
 import VueRouterCache from 'vue-router-cache'
 
-VueRouterCache.remove({name: 'mainNumberList'})
+VueRouterCache.routerCache.remove({name: 'mainNumberList'})
 ```
 
 配置说明

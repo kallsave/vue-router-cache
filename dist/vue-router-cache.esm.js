@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v1.0.0
+ * vue-router-cache.js v1.0.1
  * (c) 2019-2020 kallsave <415034609@qq.com>
  * Released under the MIT License.
  */
@@ -352,7 +352,7 @@ var MapStack = /*#__PURE__*/function (_Stack) {
   return MapStack;
 }(Stack);
 
-function checkInt(n) {
+function isInt(n) {
   if (n === Infinity) {
     return true;
   }
@@ -368,10 +368,6 @@ function defineReactive(data, key, fn) {
       return val;
     },
     set: function set(newVal) {
-      if (key === 'value') {
-        console.log('newVal', newVal);
-      }
-
       if (newVal === val) {
         return;
       }
@@ -803,21 +799,22 @@ function error(text) {
 function install(Vue) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  if (!options.router) {
-    error('parameter router is required');
-    return;
-  }
-
-  if (!checkInt(options.max)) {
-    error('parameter max must be an integer');
-    return;
-  }
-
   if (install.installed) {
     return;
   }
 
   install.installed = true;
+
+  if (!options.router) {
+    error('parameter router is required');
+    return;
+  }
+
+  if (!isInt(options.max)) {
+    error('parameter max must be an integer');
+    return;
+  }
+
   Object.assign(config, options);
   Vue.prototype.$routerCache = routerCache;
   Vue.component(Component.name, Component);
@@ -827,7 +824,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '1.0.0'
+  version: '1.0.1'
 };
 
 export default VuerouterCache;

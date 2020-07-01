@@ -1,6 +1,6 @@
 {
   "name": "vue-router-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a cache and manage vue-router with single case or multiple cases mode plugin",
   "main": "dist/vue-router-cache.js",
   "umd:main": "dist/vue-router-cache.umd.js",
@@ -17,6 +17,7 @@
   "scripts": {
     "dev": "cross-env EXAMPLE=base TARGET=esm node scripts/dev.js",
     "build": "node scripts/build.js",
+    "prod": "sh scripts/publish.sh",
     "test": "jest"
   },
   "author": "kallsave <415034609@qq.com>",

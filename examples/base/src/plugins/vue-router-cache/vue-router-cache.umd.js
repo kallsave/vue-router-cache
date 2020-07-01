@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v0.3.3
+ * vue-router-cache.js v1.0.0
  * (c) 2019-2020 kallsave <415034609@qq.com>
  * Released under the MIT License.
  */
@@ -513,70 +513,10 @@
     }
   };
 
-  var Events = /*#__PURE__*/function () {
-    function Events() {
-      _classCallCheck(this, Events);
-
-      this.map = {};
-    }
-
-    _createClass(Events, [{
-      key: "on",
-      value: function on(name, fn) {
-        if (this.map[name]) {
-          this.map[name].push(fn);
-          return;
-        }
-
-        this.map[name] = [fn];
-      }
-    }, {
-      key: "emit",
-      value: function emit(name) {
-        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          args[_key - 1] = arguments[_key];
-        }
-
-        if (this.map[name]) {
-          this.map[name].forEach(function (fn) {
-            fn.apply(void 0, args);
-          });
-        }
-      }
-    }]);
-
-    return Events;
-  }();
-
-  var historyStack = new Stack();
-  defineReactive(config, 'getHistoryStack', function (newVal) {
-    var list = newVal();
-
-    if (!list) {
-      return;
-    }
-
-    var length = list.length;
-
-    for (var i = length - 1; i > -1; i--) {
-      var item = list[i];
-      historyStack.unshift(item);
-    }
-  });
-
   var BACK = 'back';
   var FORWARD = 'forward';
   var REPLACE = 'replace';
   var NONE = '';
-
-  var historyStateEvent = new Events();
-  window.addEventListener('hashchange', function () {
-    if (historyStack.getByIndex(1) === window.location.href) {
-      historyStateEvent.emit(BACK);
-    } else {
-      historyStateEvent.emit(FORWARD);
-    }
-  });
 
   function isDef(v) {
     return v !== undefined && v !== null;
@@ -712,6 +652,66 @@
     }
   };
 
+  var historyStack = new Stack();
+  defineReactive(config, 'getHistoryStack', function (newVal) {
+    var list = newVal();
+
+    if (!list) {
+      return;
+    }
+
+    var length = list.length;
+
+    for (var i = length - 1; i > -1; i--) {
+      var item = list[i];
+      historyStack.unshift(item);
+    }
+  });
+
+  var Events = /*#__PURE__*/function () {
+    function Events() {
+      _classCallCheck(this, Events);
+
+      this.map = {};
+    }
+
+    _createClass(Events, [{
+      key: "on",
+      value: function on(name, fn) {
+        if (this.map[name]) {
+          this.map[name].push(fn);
+          return;
+        }
+
+        this.map[name] = [fn];
+      }
+    }, {
+      key: "emit",
+      value: function emit(name) {
+        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
+
+        if (this.map[name]) {
+          this.map[name].forEach(function (fn) {
+            fn.apply(void 0, args);
+          });
+        }
+      }
+    }]);
+
+    return Events;
+  }();
+
+  var historyStateEvent = new Events();
+  window.addEventListener('hashchange', function () {
+    if (historyStack.getByIndex(1) === window.location.href) {
+      historyStateEvent.emit(BACK);
+    } else {
+      historyStateEvent.emit(FORWARD);
+    }
+  });
+
   var direction = NONE;
   historyStateEvent.on(BACK, function () {
     direction = BACK;
@@ -833,7 +833,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '0.3.3'
+    version: '1.0.0'
   };
 
   return VuerouterCache;
