@@ -85,7 +85,7 @@ watch: {
 }
 ```
 
-多例模式下,后退的页面总是缓存的,不能手动删除缓存
+多例模式下,后退的页面总是缓存的,不能手动删除缓存,利用activated钩子更新局部数据
 -----------
 ```javascript
 // back的时候如果想更新数据利用activated
@@ -131,8 +131,20 @@ export default {
     }
   }
 }
+```
 
-// 或者利用activated更新局部数据
+单例模式下,js文件清除页面缓存方法的例子
+-----------
+```javascript
+// 在js文件中清除缓存
+import VueRouterCache from 'vue-router-cache'
+// 删除路由名字为mainNumberList的页面缓存
+VueRouterCache.routerCache.remove({name: 'mainNumberList'})
+```
+
+或者不清除缓存,利用activated钩子更新局部数据,这样代码更好维护
+-----------
+```javascript
 export default {
   activated() {
     
@@ -153,13 +165,6 @@ export default {
     next()
   },
 }
-```
-
-```javascript
-// 在js文件中清除缓存
-import VueRouterCache from 'vue-router-cache'
-// 删除路由名字为mainNumberList的页面缓存
-VueRouterCache.routerCache.remove({name: 'mainNumberList'})
 ```
 
 配置说明
@@ -221,6 +226,11 @@ Vue.use(VueRouterCache, {
 - 多例模式系统代码好维护。（加载过的页面都有不同的缓存）
 - 单例模式系统的性能要高（加载过的同一个页面只会有一个缓存）,有手动清除缓存的api,如果A要回跳C页面需要C页面刷新,可以调用api清除C页面缓存然后back到C页面。也可以直接push到C页面(但是这样浏览器会比执行back多存历史记录)。但是代码会不好维护。
 
+
+建议
+-----------
+- 用法虽然多,但是为了代码的可维护性和降低复杂度,建议不要使用手动删除缓存的方式,而是通过activated去更新局部数据,类似小程序的页面模式
+s
 这个插件开发是需要关闭webpack热更新
 -----------
 在开发环境使用这个插件保存代码会出现白屏,这是因为webpack热更新会分析改动代码来决定哪个模块热更新还是重刷,
