@@ -1,7 +1,3 @@
-<div align="center">
-  <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1573523396242" class="icon" viewBox="0 0 1024 1024" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15665" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><defs><style type="text/css"></style></defs><path d="M890.434783 133.565217l-200.347826 534.26087-44.52174-289.391304-289.391304-44.52174 534.26087-200.347826z m133.565217-133.565217L0 356.173913l556.521739 111.304348 111.304348 556.521739L1024 0z" p-id="15666"></path></svg>
-</div>
-
 vue-router-cache
 ========================================
 一个实现原生app前进刷新后退缓存并提供浏览器路由方向、灵活手动管理缓存api的vue-router插件
@@ -80,7 +76,7 @@ watch: {
         this.transitionName = 'move-right'
         this.transitionMode = ''
       } else {
-        // replace or first come in
+        // replace或者第一次进来时
         this.transitionName = ''
         this.transitionMode = ''
       }
@@ -108,27 +104,27 @@ export default {
 // 从详情页修改了数据需要回退到列表页时手动删除列表页的缓存让列表页刷新的例子
 export default {
   methods: {
-    // 用back的方式,推荐
+    // 方式1: 用back的方式,推荐
     back() {
       // remove的参数是location,和this.$router.push的参数是一样的
       this.$routerCache.remove({name: 'mainNumberList'})
 
-      // or
+      // 或者用路径的形式作为参数:
       // this.$routerCache.remove('/main/number-list')
 
-      // or
+      // 或者用路径的形式作为参数:
       // this.$routerCache.remove({
       //   path: '/main/number-list'
       // })
       
       this.$router.back()
     },
-    // 用push的方式,但是浏览器会比使用back的方式多出额外的历史记录
+    // 方式2: 用push的方式,但是浏览器会比使用back的方式多出额外的历史记录
     push() {
       // 直接使用push
       this.$router.push({name: 'mainNumberList'})
     },
-    // 用replace的方式
+    // 方式3: 用replace的方式
     replace() {
       // 直接使用replace
       this.$router.replace({name: 'mainNumberList'})
@@ -144,7 +140,7 @@ export default {
 }
 ```
 
-不希望当前页面通过router-cache走缓存
+不希望当前页面走缓存
 -----------
 ```javascript
 import VueRouterCache from 'vue-router-cache'
@@ -152,20 +148,9 @@ import VueRouterCache from 'vue-router-cache'
 export default {
   beforeRouteEnter(to, from, next) {
     // 注意,一定要在render之前执行skip
+    // 推荐在beforeRouteEnter钩子上使用
     VueRouterCache.routerCache.skip()
     next()
-  },
-}
-```
-
-多例模式下,不希望这个页面通过router-cache走缓存
------------
-```javascript
-import VueRouterCache from 'vue-router-cache'
-
-export default {
-  beforeRouteEnter(to, from, next) {
-    VueRouterCache.routerCache.skip()
   },
 }
 ```
@@ -173,7 +158,7 @@ export default {
 ```javascript
 // 在js文件中清除缓存
 import VueRouterCache from 'vue-router-cache'
-
+// 删除路由名字为mainNumberList的页面缓存
 VueRouterCache.routerCache.remove({name: 'mainNumberList'})
 ```
 
