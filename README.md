@@ -1,6 +1,9 @@
+<div align="center">
+  <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1573523396242" class="icon" viewBox="0 0 1024 1024" width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15665" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><defs><style type="text/css"></style></defs><path d="M890.434783 133.565217l-200.347826 534.26087-44.52174-289.391304-289.391304-44.52174 534.26087-200.347826z m133.565217-133.565217L0 356.173913l556.521739 111.304348 111.304348 556.521739L1024 0z" p-id="15666"></path></svg>
+</div>
+
 vue-router-cache
 ========================================
-
 一个实现原生app前进刷新后退缓存并提供浏览器路由方向、灵活手动管理缓存api的vue-router插件
 
 特性
@@ -141,26 +144,28 @@ export default {
 }
 ```
 
-单例模式下,当前页面不使用缓存的例子
+不希望当前页面通过router-cache走缓存
 -----------
 ```javascript
 import VueRouterCache from 'vue-router-cache'
 
 export default {
-  beforeRouteEnter (to, from, next) {
-    // 这个页面的路由名字是mainNumberList
-    VueRouterCache.routerCache.remove({name: 'mainNumberList'})
-    // or
-    // 这个页面的路径是/main/number-list
-    VueRouterCache.routerCache.remove({name: '/main/number-list'})
+  beforeRouteEnter(to, from, next) {
+    // 注意,一定要在render之前执行skip
+    VueRouterCache.routerCache.skip()
     next()
   },
 }
+```
 
-// 或者利用activated替代mounted
+多例模式下,不希望这个页面通过router-cache走缓存
+-----------
+```javascript
+import VueRouterCache from 'vue-router-cache'
+
 export default {
-  activated() {
-    
+  beforeRouteEnter(to, from, next) {
+    VueRouterCache.routerCache.skip()
   },
 }
 ```
@@ -194,11 +199,12 @@ VueRouterCache.routerCache.remove({name: 'mainNumberList'})
 |remove|location|删除参数页面的缓存|否|
 |removeBackUntil|location|删除当前页面直到参数页面的缓存(不包括参数页面)|否|
 |removeBackInclue|location|删除当前页面一直到参数页面的缓存(包括参数页面)|否|
-|removeBackByIndex|number|删除从当前页面开始第n个页面的缓存|可以用但是没必要|
+|removeBackByIndex|number|删除从当前页面开始第n个页面的缓存|是|
 |removeExclude|location|删除除了参数页面以外的所有页面的缓存|否|
 |removeAll||删除所有页面的缓存|是|
 |getStore||查看系统中的页面缓存|是|
 |has|location|查看系统中的页面缓存是否有参数页面|否|
+|skip||当前页面不走页面缓存,注意最好在beforeRouteEnter钩子上执行|是|
 
 页面重刷后依然想记住页面的前进后退关系的配置
 -----------
@@ -208,7 +214,8 @@ import VueRouterCache from 'vue-router-cache'
 
 Vue.use(VueRouterCache, {
   router: router,
-  // 在配置VueRouterCache的时候使用getHistoryStack和setHistoryStack函数,把历史记录存在本地储存里(由于不同端的本地储存不一样,所以自行选择储存的方式)
+  // 在配置VueRouterCache的时候使用getHistoryStack和setHistoryStack函数
+  // 把历史记录存在本地储存里(由于不同端的本地储存不一样,所以自行选择储存的方式)
   getHistoryStack() {
     const str = window.sessionStorage.getItem('historyStack')
     return JSON.parse(str)

@@ -3,6 +3,7 @@ import { BACK } from '../history/history-direction-name'
 import { globalCache, globalStack, globalMultiKeyMap } from '../store/index'
 import routerCache from '../api/router-cache'
 import config from '../config/index'
+import { log } from '../util/log'
 
 function isDef(v) {
   return v !== undefined && v !== null
@@ -20,6 +21,18 @@ function getFirstComponentChild(children) {
         return c
       }
     }
+  }
+}
+
+function showUsingCacheKey(config, key) {
+  if (config.isDebugger) {
+    log(`using cache key: ${key}`)
+  }
+}
+
+function showAllCacheKeys(config, globalStack) {
+  if (config.isDebugger) {
+    log(`all cache keys: ${JSON.stringify(globalStack.getStore())}`)
   }
 }
 
@@ -58,6 +71,12 @@ export default {
 
     const matched = this.$route.matched[depth]
     if (vnode && matched) {
+      if (routerCache._isSkip) {
+        routerCache._isSkip = false
+        showAllCacheKeys(config, globalStack)
+        return rawChild
+      }
+
       if (config.isSingleMode) {
         key = routerCache.resolveKeyFromRoute(matched)
       } else {
@@ -79,9 +98,7 @@ export default {
         } else {
           vnode.componentInstance = this.cache[key].componentInstance
         }
-        if (config.isDebugger) {
-          console.log(`using cache key: %c${key}`, 'color: orange')
-        }
+        showUsingCacheKey(config, key)
       } else {
         if (!globalStack.checkFull()) {
           if (!inactive) {
@@ -101,9 +118,7 @@ export default {
       vnode.data.routerCache = true
       vnode.data.keepAlive = true
     }
-    if (config.isDebugger) {
-      console.log(`all cache key: %c${JSON.stringify(globalStack.getStore())}`, 'color: orange')
-    }
+    showAllCacheKeys(config, globalStack)
     return rawChild
   },
   beforeDestroy() {

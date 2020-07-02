@@ -13,15 +13,13 @@ module.exports = {
     // https://github.com/standard/standard/blob/master/docs/RULES-en.md
     'standard'
   ],
-  // add your custom rules here
   rules: {
     'arrow-parens': 'off',
     'comma-dangle': 'off',
     'eol-last': 'off',
-    // allow async-await
-    'generator-star-spacing': 'off',
-    // allow debugger during development
+    'generator-star-spacsing': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'space-before-function-paren': ['error', {
       'anonymous': 'always',
       'named': 'never',

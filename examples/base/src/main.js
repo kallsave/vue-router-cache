@@ -13,13 +13,15 @@ import { getUrlParams } from '@/common/helpers/utils.js'
 // ios的输入框失焦,webview无法回弹的hack
 import recoverWebviewMixin from '@/common/mixins/recover-webview.js'
 
+const env = process.env.NODE_ENV
+
 Vue.use(ViUi)
 
 Vue.use(VueRouterCache, {
   router: router,
   max: 10,
   isSingleMode: isSingleMode,
-  isDebugger: false,
+  isDebugger: env === 'development',
   directionKey: 'direction',
   getHistoryStack() {
     const str = window.sessionStorage.getItem('historyStack')

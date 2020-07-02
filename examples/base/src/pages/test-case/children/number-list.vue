@@ -21,8 +21,14 @@
 import ColorList from './components/color-list.vue'
 import { getNumberList } from '@/api/list.js'
 import scrollMixins from './mixins/scroll.js'
+/* eslint-disable */
+import VueRouterCache from 'vue-router-cache'
 
 export default {
+  beforeRouteEnter(to, from, next) {
+    // VueRouterCache.routerCache.skip()
+    next()
+  },
   components: {
     ColorList,
   },

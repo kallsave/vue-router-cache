@@ -102,6 +102,9 @@ const routerCache = {
   has(location) {
     const key = this.resolveKeyFromLocation(location)
     return globalStack.has(key)
+  },
+  skip() {
+    this._isSkip = true
   }
 }
 

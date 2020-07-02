@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v1.0.0
+ * vue-router-cache.js v1.0.1
  * (c) 2019-2020 kallsave <415034609@qq.com>
  * Released under the MIT License.
  */
@@ -500,6 +500,9 @@ var routerCache = {
   has: function has(location) {
     var key = this.resolveKeyFromLocation(location);
     return globalStack.has(key);
+  },
+  skip: function skip() {
+    this._isSkip = true;
   }
 };
 
@@ -507,6 +510,14 @@ var BACK = 'back';
 var FORWARD = 'forward';
 var REPLACE = 'replace';
 var NONE = '';
+
+/* eslint-disable */
+function error(text) {
+  console.error("%cerror: ".concat(text), 'color: orange');
+}
+function log(text) {
+  console.log("%c".concat(text), 'color: orange');
+}
 
 function isDef(v) {
   return v !== undefined && v !== null;
@@ -525,6 +536,18 @@ function getFirstComponentChild(children) {
         return c;
       }
     }
+  }
+}
+
+function showUsingCacheKey(config, key) {
+  if (config.isDebugger) {
+    log("using cache key: ".concat(key));
+  }
+}
+
+function showAllCacheKeys(config, globalStack) {
+  if (config.isDebugger) {
+    log("all cache keys: ".concat(JSON.stringify(globalStack.getStore())));
   }
 }
 
@@ -566,6 +589,12 @@ var Component = {
     var matched = this.$route.matched[depth];
 
     if (vnode && matched) {
+      if (routerCache._isSkip) {
+        routerCache._isSkip = false;
+        showAllCacheKeys(config, globalStack);
+        return rawChild;
+      }
+
       if (config.isSingleMode) {
         key = routerCache.resolveKeyFromRoute(matched);
       } else {
@@ -592,9 +621,7 @@ var Component = {
           vnode.componentInstance = this.cache[key].componentInstance;
         }
 
-        if (config.isDebugger) {
-          console.log("using cache key: %c".concat(key), 'color: orange');
-        }
+        showUsingCacheKey(config, key);
       } else {
         if (!globalStack.checkFull()) {
           if (!inactive) {
@@ -618,10 +645,7 @@ var Component = {
       vnode.data.keepAlive = true;
     }
 
-    if (config.isDebugger) {
-      console.log("all cache key: %c".concat(JSON.stringify(globalStack.getStore())), 'color: orange');
-    }
-
+    showAllCacheKeys(config, globalStack);
     return rawChild;
   },
   beforeDestroy: function beforeDestroy() {
@@ -792,10 +816,6 @@ var routerMiddle = function routerMiddle(Vue, config) {
   });
 };
 
-function error(text) {
-  console.error("%cerror: ".concat(text), 'color: orange');
-}
-
 function install(Vue) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -824,7 +844,7 @@ function install(Vue) {
 var VuerouterCache = {
   install: install,
   routerCache: routerCache,
-  version: '1.0.0'
+  version: '1.0.1'
 };
 
 export default VuerouterCache;
