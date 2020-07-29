@@ -18,7 +18,8 @@
     "dev": "cross-env EXAMPLE=base TARGET=esm node scripts/dev.js",
     "build": "node scripts/build.js",
     "prod": "sh scripts/publish.sh",
-    "test": "jest"
+    "test": "jest",
+    "cypress": "cypress open"
   },
   "author": "kallsave <415034609@qq.com>",
   "license": "MIT",
@@ -30,6 +31,7 @@
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-replace": "^2.3.2",
     "cross-env": "^5.2.1",
+    "cypress": "^4.11.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^10.0.0",

@@ -32,7 +32,7 @@ import {
   updateLetterDetail,
   deleteLetterDetail
 } from '@/api/list.js'
-import Btn from './components/btn.vue'
+import Btn from '@/components/btn.vue'
 import { isSingleMode } from '@/config.js'
 import scrollMixins from './mixins/scroll.js'
 

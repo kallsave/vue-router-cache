@@ -1,8 +1,11 @@
 <template>
   <div :class="$style['list']">
-    <div class="item"
+    <div
+      ref="item"
+      class="item"
+      :id="`item${index}`"
       v-for="(item, index) in data"
-      :key="index"
+      :key="item.id"
       :style="setStyle(index, item)"
       @click="clickHandler(item, index)"
       @animationend="animationend(index)">
@@ -47,6 +50,7 @@ export default {
       }
     },
     clickHandler(item, index) {
+      this.$refs.item[index].style.background = 'gold'
       this.isFinishAnimation = true
       this.$emit(EVENT_ITEM_CLICK, item, index)
     }

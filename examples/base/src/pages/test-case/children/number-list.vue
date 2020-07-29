@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import ColorList from './components/color-list.vue'
+import ColorList from '@/components/color-list.vue'
 import { getNumberList } from '@/api/list.js'
 import scrollMixins from './mixins/scroll.js'
 /* eslint-disable */

@@ -32,7 +32,7 @@
 <script>
 import { getNumberDetail, updateNumberDetail } from '@/api/list.js'
 import { isSingleMode } from '@/config.js'
-import Btn from './components/btn.vue'
+import Btn from '@/components/btn.vue'
 import scrollMixins from './mixins/scroll.js'
 
 export default {

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import ColorList from './components/color-list.vue'
+import ColorList from '@/components/color-list.vue'
 import { getLetterList } from '@/api/list.js'
 import scrollMixins from './mixins/scroll.js'
 
