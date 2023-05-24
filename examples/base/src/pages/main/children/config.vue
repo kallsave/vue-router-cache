@@ -2,9 +2,12 @@
   <vi-page>
     <div :class="$style['config']">
       <div class="wrapper">
-         <div class="mode">
-           <span class="mode-placeholder">使用单例模式</span>
-           <vi-switch v-model="isSingleMode" @change="change"></vi-switch>
+        <div class="mode">
+          <span class="mode-placeholder">使用单例模式</span>
+          <vi-switch
+            v-model="isSingleMode"
+            @change="change"
+          ></vi-switch>
         </div>
         <div class="instruction">
           <div class="group">
@@ -17,7 +20,7 @@
             比如A=>B=>C=>A,系统中会存在4个缓存实例,
             所以路由和缓存实例(key)是一对多的关系。
           </div>
-           <div class="group">
+          <div class="group">
             多例模式系统性能存在浪费,
             多例模式可以说是简单模式,
             如果A要回跳C页面需要C页面刷新,只能push到C页面,
@@ -42,7 +45,7 @@
 <script>
 import tpLocalStorage from '@/store/cache/local-storage/index.js'
 import { isSingleMode } from '@/config.js'
-import Btn from './components/btn.vue'
+import Btn from '@/components/btn.vue'
 
 export default {
   components: {

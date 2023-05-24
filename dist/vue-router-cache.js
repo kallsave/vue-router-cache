@@ -1,16 +1,15 @@
 /*!
- * vue-router-cache.js v1.0.3
- * (c) 2019-2020 kallsave <415034609@qq.com>
+ * vue-router-cache.js v1.0.4
+ * (c) 2019-2023 kallsave <415034609@qq.com>
  * Released under the MIT License.
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.VueRouterCache = factory());
-}(this, (function () { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.VueRouterCache = factory());
+})(this, (function () { 'use strict';
 
   var noop = function noop() {};
-
   var config = {
     max: Infinity,
     directionKey: 'direction',
@@ -25,28 +24,27 @@
       throw new TypeError("Cannot call a class as a function");
     }
   }
-
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
       var descriptor = props[i];
       descriptor.enumerable = descriptor.enumerable || false;
       descriptor.configurable = true;
       if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
+      Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
     }
   }
-
   function _createClass(Constructor, protoProps, staticProps) {
     if (protoProps) _defineProperties(Constructor.prototype, protoProps);
     if (staticProps) _defineProperties(Constructor, staticProps);
+    Object.defineProperty(Constructor, "prototype", {
+      writable: false
+    });
     return Constructor;
   }
-
   function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function");
     }
-
     subClass.prototype = Object.create(superClass && superClass.prototype, {
       constructor: {
         value: subClass,
@@ -54,83 +52,85 @@
         configurable: true
       }
     });
+    Object.defineProperty(subClass, "prototype", {
+      writable: false
+    });
     if (superClass) _setPrototypeOf(subClass, superClass);
   }
-
   function _getPrototypeOf(o) {
-    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
       return o.__proto__ || Object.getPrototypeOf(o);
     };
     return _getPrototypeOf(o);
   }
-
   function _setPrototypeOf(o, p) {
-    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
       o.__proto__ = p;
       return o;
     };
-
     return _setPrototypeOf(o, p);
   }
-
   function _isNativeReflectConstruct() {
     if (typeof Reflect === "undefined" || !Reflect.construct) return false;
     if (Reflect.construct.sham) return false;
     if (typeof Proxy === "function") return true;
-
     try {
-      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
       return true;
     } catch (e) {
       return false;
     }
   }
-
   function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
-
     return self;
   }
-
   function _possibleConstructorReturn(self, call) {
     if (call && (typeof call === "object" || typeof call === "function")) {
       return call;
+    } else if (call !== void 0) {
+      throw new TypeError("Derived constructors may only return object or undefined");
     }
-
     return _assertThisInitialized(self);
   }
-
   function _createSuper(Derived) {
     var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-    return function () {
+    return function _createSuperInternal() {
       var Super = _getPrototypeOf(Derived),
-          result;
-
+        result;
       if (hasNativeReflectConstruct) {
         var NewTarget = _getPrototypeOf(this).constructor;
-
         result = Reflect.construct(Super, arguments, NewTarget);
       } else {
         result = Super.apply(this, arguments);
       }
-
       return _possibleConstructorReturn(this, result);
     };
+  }
+  function _toPrimitive(input, hint) {
+    if (typeof input !== "object" || input === null) return input;
+    var prim = input[Symbol.toPrimitive];
+    if (prim !== undefined) {
+      var res = prim.call(input, hint || "default");
+      if (typeof res !== "object") return res;
+      throw new TypeError("@@toPrimitive must return a primitive value.");
+    }
+    return (hint === "string" ? String : Number)(input);
+  }
+  function _toPropertyKey(arg) {
+    var key = _toPrimitive(arg, "string");
+    return typeof key === "symbol" ? key : String(key);
   }
 
   var Stack = /*#__PURE__*/function () {
     function Stack() {
       var max = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Infinity;
-
       _classCallCheck(this, Stack);
-
       this.max = max;
       this.init();
     }
-
     _createClass(Stack, [{
       key: "init",
       value: function init() {
@@ -140,28 +140,22 @@
       key: "_unshift",
       value: function _unshift(item) {
         this.list.unshift(item);
-
         if (this.list.length > this.max) {
           return this.list.pop();
         }
-
         return null;
       }
     }, {
       key: "unshift",
       value: function unshift() {
         var removeList = [];
-
         for (var i = 0; i < arguments.length; i++) {
           var item = arguments[i];
-
           var removeItem = this._unshift(item);
-
           if (removeItem) {
             removeList.push(removeItem);
           }
         }
-
         return removeList;
       }
     }, {
@@ -170,35 +164,28 @@
         if (this.list.length) {
           return this.list.shift();
         }
-
         return null;
       }
     }, {
       key: "_remove",
       value: function _remove(item) {
         var index = this.list.indexOf(item);
-
         if (index !== -1) {
           return this.list.splice(index, 1)[0];
         }
-
         return null;
       }
     }, {
       key: "remove",
       value: function remove() {
         var removeList = [];
-
         for (var i = 0; i < arguments.length; i++) {
           var item = arguments[i];
-
           var removeItem = this._remove(item);
-
           if (removeItem) {
             removeList.push(removeItem);
           }
         }
-
         return removeList;
       }
     }, {
@@ -207,29 +194,24 @@
         if (this.list[index]) {
           return this.list.splice(index, 1)[0];
         }
-
         return null;
       }
     }, {
       key: "removeBackUntil",
       value: function removeBackUntil(item) {
         var index = this.list.indexOf(item);
-
         if (index !== -1) {
           return this.list.splice(0, index);
         }
-
         return this.list.splice(0);
       }
     }, {
       key: "removeBackInclue",
       value: function removeBackInclue(item) {
         var index = this.list.indexOf(item);
-
         if (index !== -1) {
           return this.list.splice(0, index + 1);
         }
-
         return this.list.splice(0);
       }
     }, {
@@ -238,24 +220,20 @@
         if (index <= this.list.length - 1) {
           return this.list.splice(0, index);
         }
-
         return this.list.splice(0);
       }
     }, {
       key: "removeExclude",
       value: function removeExclude() {
         var removeList = [];
-
         for (var i = 0; i < this.list.length; i++) {
           var item = this.list[i];
-
           if (Array.prototype.indexOf.call(arguments, item) === -1) {
             var remove = this.list.splice(i, 1)[0];
             Array.prototype.push.call(removeList, remove);
             i--;
           }
         }
-
         return removeList;
       }
     }, {
@@ -267,13 +245,10 @@
       key: "replace",
       value: function replace(item) {
         var removeItem = this.shift();
-
         if (removeItem) {
           this._unshift(item);
-
           return removeItem;
         }
-
         return null;
       }
     }, {
@@ -322,39 +297,29 @@
         return this.max === this.list.length;
       }
     }]);
-
     return Stack;
   }();
   var MapStack = /*#__PURE__*/function (_Stack) {
     _inherits(MapStack, _Stack);
-
     var _super = _createSuper(MapStack);
-
     function MapStack() {
       _classCallCheck(this, MapStack);
-
       return _super.apply(this, arguments);
     }
-
     _createClass(MapStack, [{
       key: "_unshift",
       value: function _unshift(item) {
         var index = this.list.indexOf(item);
-
         if (index !== -1) {
           this.list.splice(index, 1);
         }
-
         this.list.unshift(item);
-
         if (this.list.length > this.max) {
           return this.list.pop();
         }
-
         return null;
       }
     }]);
-
     return MapStack;
   }(Stack);
 
@@ -362,7 +327,6 @@
     if (n === Infinity) {
       return true;
     }
-
     return typeof n === 'number' && n > 0 && (n | 0) === n;
   }
   function defineReactive(data, key, fn) {
@@ -377,7 +341,6 @@
         if (newVal === val) {
           return;
         }
-
         var oldVal = val;
         val = newVal;
         typeof fn === 'function' && fn(newVal, oldVal);
@@ -405,9 +368,10 @@
       for (var i = 0; i < globalCache.length; i++) {
         var globalCacheItem = globalCache[i];
         var cache = globalCacheItem.cache;
-
         if (cache[removeItem]) {
-          cache[removeItem].componentInstance.$destroy();
+          if (cache[removeItem].componentInstance) {
+            cache[removeItem].componentInstance.$destroy();
+          }
           cache[removeItem] = null;
           delete cache[removeItem];
         }
@@ -421,14 +385,12 @@
     },
     shift: function shift() {
       var removeItem = globalStack.shift();
-
       if (removeItem) {
         this.removeGlobalCacheFromItem(removeItem);
       }
     },
     _remove: function _remove(key) {
       var removeList = globalStack.remove(key);
-
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
       }
@@ -437,62 +399,52 @@
       for (var i = 0; i < arguments.length; i++) {
         var item = arguments[i];
         var key = this.resolveKeyFromLocation(item);
-
         this._remove(key);
       }
     },
     _removeBackUntil: function _removeBackUntil(key) {
       var removeList = globalStack.removeBackUntil(key);
-
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
       }
     },
     removeBackUntil: function removeBackUntil(location) {
       var key = this.resolveKeyFromLocation(location);
-
       this._removeBackUntil(key);
     },
     _removeBackInclue: function _removeBackInclue(key) {
       var removeList = globalStack.removeBackInclue(key);
-
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
       }
     },
     removeBackInclue: function removeBackInclue(location) {
       var key = this.resolveKeyFromLocation(location);
-
       this._removeBackInclue(key);
     },
     removeBackByIndex: function removeBackByIndex(index) {
       var removeList = globalStack.removeBackByIndex(index);
-
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
       }
     },
     _removeExclude: function _removeExclude() {
       var removeList = globalStack.removeExclude.apply(globalStack, arguments);
-
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
       }
     },
     removeExclude: function removeExclude() {
       var excludeList = [];
-
       for (var i = 0; i < arguments.length; i++) {
         var item = arguments[i];
         var key = this.resolveKeyFromLocation(item);
         excludeList.push(key);
       }
-
       this._removeExclude.apply(this, excludeList);
     },
     removeAll: function removeAll() {
       var removeList = globalStack.removeAll();
-
       if (removeList.length) {
         this.removeGlobalCacheFromList(removeList);
       }
@@ -528,35 +480,29 @@
   function isDef(v) {
     return v !== undefined && v !== null;
   }
-
   function isAsyncPlaceholder(node) {
     return node.isComment && node.asyncFactory;
   }
-
   function getFirstComponentChild(children) {
     if (Array.isArray(children)) {
       for (var i = 0; i < children.length; i++) {
         var c = children[i];
-
         if (isDef(c) && (isDef(c.componentOptions) || isAsyncPlaceholder(c))) {
           return c;
         }
       }
     }
   }
-
   function showUsingCacheKey(config, key) {
     if (config.isDebugger) {
       log("using cache key: ".concat(key));
     }
   }
-
   function showAllCacheKeys(config, globalStack) {
     if (config.isDebugger) {
       log("all cache keys: ".concat(JSON.stringify(globalStack.getStore())));
     }
   }
-
   var COMPONENT_NAME = 'router-cache';
   var Component = {
     name: COMPONENT_NAME,
@@ -575,43 +521,33 @@
       var parent = this.$parent;
       var depth = 0;
       var inactive = false;
-
       while (parent && parent._routerRoot !== parent) {
         var vnodeData = parent.$vnode && parent.$vnode.data;
-
         if (vnodeData) {
           if (vnodeData.routerView) {
             depth++;
           }
-
           if (parent._inactive) {
             inactive = true;
           }
         }
-
         parent = parent.$parent;
       }
-
       var matched = this.$route.matched[depth];
-
       if (vnode && matched) {
         if (routerCache._isSkip) {
           routerCache._isSkip = false;
           showAllCacheKeys(config, globalStack);
           return rawChild;
         }
-
         if (config.isSingleMode) {
           key = routerCache.resolveKeyFromRoute(matched);
         } else {
           var baseKey = routerCache.resolveKeyFromRoute(matched);
-
           if (!globalMultiKeyMap[baseKey]) {
             globalMultiKeyMap[baseKey] = new MapStack();
           }
-
           var lastKey = globalMultiKeyMap[baseKey].getByIndex(0);
-
           if (this.$route.params[config.directionKey] !== BACK || !lastKey) {
             key = "".concat(baseKey, "_").concat(globalMultiKeyMap[baseKey].getSize());
             globalMultiKeyMap[baseKey].unshift(key);
@@ -619,14 +555,12 @@
             key = lastKey;
           }
         }
-
         if (this.cache[key]) {
           if (inactive) {
             vnode.componentInstance = this.oldComponentInstance;
           } else {
             vnode.componentInstance = this.cache[key].componentInstance;
           }
-
           showUsingCacheKey(config, key);
         } else {
           if (!globalStack.checkFull()) {
@@ -636,21 +570,17 @@
             }
           } else {
             var _lastKey = globalStack.getFooter();
-
             routerCache._remove(_lastKey);
-
             if (!inactive) {
               this.cache[key] = vnode;
               this.oldComponentInstance = vnode.componentInstance;
             }
           }
         }
-
         globalStack.unshift(key);
         vnode.data.routerCache = true;
         vnode.data.keepAlive = true;
       }
-
       showAllCacheKeys(config, globalStack);
       return rawChild;
     },
@@ -658,16 +588,13 @@
       for (var key in this.cache) {
         routerCache._remove(key);
       }
-
       var index;
-
       for (var i = 0; i < globalCache.length; i++) {
         if (this.cache === globalCache[i]) {
           index = i;
           break;
         }
       }
-
       globalCache.splice(index, 1);
     }
   };
@@ -675,13 +602,10 @@
   var historyStack = new Stack();
   defineReactive(config, 'getHistoryStack', function (newVal) {
     var list = newVal();
-
     if (!list) {
       return;
     }
-
     var length = list.length;
-
     for (var i = length - 1; i > -1; i--) {
       var item = list[i];
       historyStack.unshift(item);
@@ -691,10 +615,8 @@
   var Events = /*#__PURE__*/function () {
     function Events() {
       _classCallCheck(this, Events);
-
       this.map = {};
     }
-
     _createClass(Events, [{
       key: "on",
       value: function on(name, fn) {
@@ -702,7 +624,6 @@
           this.map[name].push(fn);
           return;
         }
-
         this.map[name] = [fn];
       }
     }, {
@@ -711,7 +632,6 @@
         for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
           args[_key - 1] = arguments[_key];
         }
-
         if (this.map[name]) {
           this.map[name].forEach(function (fn) {
             fn.apply(void 0, args);
@@ -719,7 +639,6 @@
         }
       }
     }]);
-
     return Events;
   }();
 
@@ -738,17 +657,13 @@
     historyStack.shift();
     config.setHistoryStack(historyStack.getStore());
     var route = config.router.history.current;
-
     if (config.isSingleMode) {
       var key = routerCache.resolveKeyFromRoute(route);
-
       routerCache._remove(key);
     } else {
       var baseKey = routerCache.resolveKeyFromRoute(route);
-
       if (globalMultiKeyMap[baseKey]) {
         var _key = globalMultiKeyMap[baseKey].shift();
-
         routerCache._remove(_key);
       }
     }
@@ -756,37 +671,29 @@
   historyStateEvent.on(FORWARD, function () {
     direction = FORWARD;
   });
-
   var routerMiddle = function routerMiddle(Vue, config) {
     var router = config.router;
     var directionKey = config.directionKey;
     var originPush = router.push.bind(router);
     var originReplace = router.replace.bind(router);
     var originGo = router.go.bind(router);
-
     router.push = function (location, onComplete, onAbort) {
       direction = FORWARD;
-
       if (config.isSingleMode && routerCache.has(location)) {
         routerCache.removeBackInclue(location);
       }
-
       originPush(location, onComplete, onAbort);
     };
-
     router.replace = function (location, onComplete, onAbort) {
       direction = REPLACE;
       historyStack.shift();
       config.setHistoryStack(historyStack.getStore());
       routerCache.shift();
-
       if (config.isSingleMode && routerCache.has(location)) {
         routerCache.removeBackInclue(location);
       }
-
       originReplace(location, onComplete, onAbort);
     };
-
     router.go = function (n) {
       // dev: go(n > 1)会导致方向判断错误
       if (n > 1) {
@@ -797,10 +704,8 @@
         config.setHistoryStack(historyStack.getStore());
         routerCache.removeBackByIndex(-n);
       }
-
       originGo(n);
     };
-
     router.beforeEach(function (to, from, next) {
       // let hashchange I/0 event trigger callback before next
       window.setTimeout(function () {
@@ -811,12 +716,10 @@
     defineReactive(router.history, 'current', function () {
       Vue.nextTick(function () {
         var href = document.URL;
-
         if (direction !== BACK && historyStack.getHeader() !== href) {
           historyStack.unshift(href);
           config.setHistoryStack(historyStack.getStore());
         }
-
         direction = FORWARD;
       });
     });
@@ -824,35 +727,29 @@
 
   function install(Vue) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
     if (install.installed) {
       return;
     }
-
     install.installed = true;
-
     if (!options.router) {
       error('parameter router is required');
       return;
     }
-
     if (!isInt(options.max)) {
       error('parameter max must be an integer');
       return;
     }
-
     Object.assign(config, options);
     Vue.prototype.$routerCache = routerCache;
     Vue.component(Component.name, Component);
     routerMiddle(Vue, config);
   }
-
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '1.0.3'
+    version: '1.0.4'
   };
 
   return VuerouterCache;
 
-})));
+}));

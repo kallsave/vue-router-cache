@@ -15,7 +15,9 @@ const routerCache = {
       const globalCacheItem = globalCache[i]
       const cache = globalCacheItem.cache
       if (cache[removeItem]) {
-        cache[removeItem].componentInstance.$destroy()
+        if (cache[removeItem].componentInstance) {
+          cache[removeItem].componentInstance.$destroy()
+        }
         cache[removeItem] = null
         delete cache[removeItem]
       }
