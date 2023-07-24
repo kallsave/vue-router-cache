@@ -62,7 +62,6 @@ const routerMiddle = (Vue, config) => {
   }
 
   router.go = (n) => {
-    // dev: go(n > 1)会导致方向判断错误
     if (n > 0) {
       direction = FORWARD
     } else if (n < 0) {

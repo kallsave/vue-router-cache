@@ -15,6 +15,7 @@ function install(Vue, options = {}) {
     error('parameter router is required')
     return
   }
+
   if (!isInt(options.max)) {
     error('parameter max must be an integer')
     return

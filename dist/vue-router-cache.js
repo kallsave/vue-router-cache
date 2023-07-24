@@ -1,5 +1,5 @@
 /*!
- * vue-router-cache.js v1.0.4
+ * vue-router-cache.js v1.0.6
  * (c) 2019-2023 kallsave <415034609@qq.com>
  * Released under the MIT License.
  */
@@ -14,6 +14,7 @@
     max: Infinity,
     directionKey: 'direction',
     isSingleMode: true,
+    routerMode: 'hash',
     isDebugger: false,
     getHistoryStack: noop,
     setHistoryStack: noop
@@ -369,11 +370,11 @@
         var globalCacheItem = globalCache[i];
         var cache = globalCacheItem.cache;
         if (cache[removeItem]) {
-          if (cache[removeItem].componentInstance) {
-            cache[removeItem].componentInstance.$destroy();
+          var componentInstance = cache[removeItem].componentInstance;
+          if (componentInstance) {
+            componentInstance.$destroy();
+            delete cache[removeItem];
           }
-          cache[removeItem] = null;
-          delete cache[removeItem];
         }
       }
     },
@@ -643,13 +644,25 @@
   }();
 
   var historyStateEvent = new Events();
-  window.addEventListener('hashchange', function () {
+  function historyChange() {
     if (historyStack.getByIndex(1) === window.location.href) {
       historyStateEvent.emit(BACK);
     } else {
       historyStateEvent.emit(FORWARD);
     }
-  });
+  }
+  switch (config.routerMode) {
+    case 'hash':
+      {
+        window.addEventListener('hashchange', historyChange);
+        break;
+      }
+    case 'history':
+      {
+        window.addEventListener('popstate', historyChange);
+        break;
+      }
+  }
 
   var direction = NONE;
   historyStateEvent.on(BACK, function () {
@@ -695,10 +708,9 @@
       originReplace(location, onComplete, onAbort);
     };
     router.go = function (n) {
-      // dev: go(n > 1)会导致方向判断错误
-      if (n > 1) {
+      if (n > 0) {
         direction = FORWARD;
-      } else if (n < -1) {
+      } else if (n < 0) {
         direction = BACK;
         historyStack.removeBackByIndex(-n);
         config.setHistoryStack(historyStack.getStore());
@@ -747,7 +759,7 @@
   var VuerouterCache = {
     install: install,
     routerCache: routerCache,
-    version: '1.0.4'
+    version: '1.0.6'
   };
 
   return VuerouterCache;
